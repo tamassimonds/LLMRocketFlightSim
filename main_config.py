@@ -18,6 +18,11 @@ materials = {
         "yield_strength": 120e6,   
         "ultimate_strength": 200e6
     },
+    "paper": {
+        "density": 1000,           # kg/m³
+        "yield_strength": 10e6,   
+        "ultimate_strength": 20e6
+    },
     # add more materials as needed
 }
 
@@ -54,7 +59,7 @@ config = {
         "radius": 133 / 2000,       # [m]
         "length": 2.5,              # [m] (cylindrical section)
         "material": "aluminum",     # material key
-        "thickness": 0.005,         # [m] wall thickness
+        "thickness": 0.05,         # [m] wall thickness
     },
     "aerodynamics": {
         "nose_cone": {
@@ -68,7 +73,7 @@ config = {
             "tip_chord": 0.060,        # [m]
             "span": 0.110,             # [m]
             "cant_angle": 0.5,         # [degrees]
-            "material": "aluminum",    # material key
+            "material": "paper",       # material key
             "thickness": 0.005,        # [m] fin thickness
         },
         "tail": {
@@ -93,16 +98,15 @@ def compute_rocket_body_mass(body_config):
     L = body_config["length"]
     # Use material density from materials dict:
     density = materials[body_config["material"]]["density"]
-    # Volume of a cylindrical shell: V = π * L * (r^2 - (r-t)^2)
+    # Volume of a cylindrical shell: V = π * L * (r² - (r-t)²)
     volume = math.pi * L * (r**2 - (r - t)**2)
     return volume * density
 
 def compute_nose_cone_mass(nose_config, body_radius):
     r = body_radius  # assume nose base has same radius as rocket body
     L = nose_config["length"]
-    # Use material density from materials dict:
     density = materials[nose_config["material"]]["density"]
-    # Cone volume: V = 1/3 * π * r^2 * L
+    # Cone volume: V = 1/3 * π * r² * L
     volume = (1/3) * math.pi * r**2 * L
     return volume * density
 
@@ -112,7 +116,6 @@ def compute_fins_mass(fins_config):
     tip = fins_config["tip_chord"]
     span = fins_config["span"]
     thickness = fins_config.get("thickness", 0.005)
-    # Use material density from materials dict:
     density = materials[fins_config["material"]]["density"]
     # Approximate each fin as a trapezoidal prism:
     # Area = (root + tip)/2 * span, then volume = area * thickness
@@ -129,16 +132,12 @@ def compute_total_mass(cfg):
     return body_mass + nose_mass + fins_mass + motor_mass
 
 def compute_inertia(total_mass, cfg):
-    # For a simplified model we consider the rocket as a uniform rod.
-    # Total length is taken as the sum of body, nose cone, and tail lengths.
     L_body = cfg["rocket_body"]["length"]
     L_nose = cfg["aerodynamics"]["nose_cone"]["length"]
     L_tail = cfg["aerodynamics"]["tail"]["length"]
     L_total = L_body + L_nose + L_tail
     r = cfg["rocket_body"]["radius"]
-    # Transverse inertia (Ixx and Iyy): approximated as (1/12)*m*(L_total^2)
     I_trans = (1/12) * total_mass * L_total**2
-    # Longitudinal inertia (Izz): approximated as (1/2)*m*r^2
     I_long = 0.5 * total_mass * r**2
     return (I_trans, I_trans, I_long)
 
@@ -156,9 +155,7 @@ body_length = config["rocket_body"]["length"]
 nose_length = config["aerodynamics"]["nose_cone"]["length"]
 tail_length = config["aerodynamics"]["tail"]["length"]
 
-# Place nose cone on top (positive side) and tail on bottom (negative side)
 nose_position = body_length / 2 + nose_length / 2
-# Place fins near bottom of the body (this can be adjusted)
 fins_position = -body_length / 2 + 0.2
 tail_position = -body_length / 2 - tail_length / 2
 
@@ -167,9 +164,9 @@ tail_position = -body_length / 2 - tail_length / 2
 # =============================================================================
 env = Environment(latitude=32.990254, longitude=-106.974998, elevation=1400)
 tomorrow = datetime.date.today() + datetime.timedelta(days=1)
-env.set_date((tomorrow.year, tomorrow.month, tomorrow.day, 12))  # Hour given in UTC time
+env.set_date((tomorrow.year, tomorrow.month, tomorrow.day, 12))  # UTC hour
 env.set_atmospheric_model(type="Forecast", file="GFS")
-env.info()
+# env.info()
 
 # =============================================================================
 # ROCKET SETUP
@@ -180,31 +177,27 @@ rocket = Rocket(
     inertia=inertia,
     power_off_drag="powerOffDragCurve.csv",
     power_on_drag="powerOnDragCurve.csv",
-    center_of_mass_without_motor=0,  # (Could be computed more precisely)
+    center_of_mass_without_motor=0,
     coordinate_system_orientation="tail_to_nose",
 )
 
-# (Optionally, add rail button positions to the config)
 rocket.set_rail_buttons(
     upper_button_position=0.0818,
     lower_button_position=-0.618,
     angular_position=45,
 )
 
-# Add the selected motor
 motor_choice = config["motor"]["choice"]
 motor_config = config["motor"]["available"][motor_choice]
 motor = SolidMotor(**motor_config)
-rocket.add_motor(motor, position=-1.255)  # Position can be made configurable
+rocket.add_motor(motor, position=-1.255)
 
-# Add nose cone using computed position
 rocket.add_nose(
     length=config["aerodynamics"]["nose_cone"]["length"],
     kind=config["aerodynamics"]["nose_cone"]["kind"],
     position=nose_position,
 )
 
-# Add trapezoidal fins using the config and computed position
 fin_conf = config["aerodynamics"]["fins"]
 rocket.add_trapezoidal_fins(
     n=fin_conf["number"],
@@ -216,7 +209,6 @@ rocket.add_trapezoidal_fins(
     airfoil=("NACA0012-radians.txt", "radians"),
 )
 
-# Add tail
 tail_conf = config["aerodynamics"]["tail"]
 rocket.add_tail(
     top_radius=tail_conf["top_radius"],
@@ -225,7 +217,7 @@ rocket.add_tail(
     position=tail_position,
 )
 
-rocket.all_info()
+# rocket.all_info()
 
 # =============================================================================
 # FLIGHT SETUP & EXECUTION
@@ -237,9 +229,8 @@ flight = Flight(
     inclination=config["launch"]["inclination"],
     heading=config["launch"]["heading"],
 )
-flight.all_info()
+# flight.all_info()
 
-# Export the trajectory to a KML file for visualization in Google Earth, etc.
 flight.export_kml(
     file_name="trajectory.kml",
     extrude=True,
@@ -249,26 +240,51 @@ flight.export_kml(
 # =============================================================================
 # POST-FLIGHT ANALYSIS & MATERIAL FAILURE CHECKS
 # =============================================================================
-# Retrieve the final time from the flight time array
 t_final = flight.time[-1]
-
-# Evaluate the flight's x and y functions at the final time (flight.x and flight.y are callable)
 x_final = flight.x(t_final)
 y_final = flight.y(t_final)
 horizontal_distance = math.sqrt(x_final**2 + y_final**2)
 flight_time = t_final
-max_apogee = flight.apogee  # apogee is provided as a scalar property
+max_apogee = flight.apogee  # scalar property
 
-# --- Material Failure Check for Fins ---
-# Approximate each fin's planform area: (root + tip)/2 * span
+# --- Fin Failure Check (as before) ---
 fin_area = (fin_conf["root_chord"] + fin_conf["tip_chord"]) / 2 * fin_conf["span"]
-# Retrieve fin material properties
 fin_material = materials[fin_conf["material"]]
-# Use maximum dynamic pressure from flight (in Pa) and approximate aerodynamic force on one fin
 fin_force = flight.max_dynamic_pressure * fin_area
-# Compute a failure threshold (force per fin) based on the fin's ultimate strength
-failure_threshold = fin_material["ultimate_strength"] * fin_area
-fin_failed = fin_force > failure_threshold
+failure_threshold_fin = fin_material["ultimate_strength"] * fin_area
+fin_failed = fin_force > failure_threshold_fin
+
+print("Fin Force: ", fin_force)
+print("Fin Failure Threshold: ", failure_threshold_fin)
+
+# --- Body Tube Failure Checks ---
+# For the body tube, assume the drag force is applied over the side area:
+radius_body = config["rocket_body"]["radius"]
+length_body = config["rocket_body"]["length"]
+diameter_body = 2 * radius_body
+
+# Approximate drag force on the body tube:
+F_body = flight.max_dynamic_pressure * (length_body * diameter_body)
+# Approximate bending moment (assume force acts at mid-length)
+M_bend = F_body * (length_body / 2)
+# Section modulus for a thin-walled circular tube: Z = π * r² * t
+Z_body = math.pi * (radius_body**2) * config["rocket_body"]["thickness"]
+sigma_bend = M_bend / Z_body
+
+# Approximate shear stress:
+A_shear = 2 * math.pi * radius_body * config["rocket_body"]["thickness"]
+tau_shear = F_body / A_shear
+
+body_material = materials[config["rocket_body"]["material"]]
+body_bending_failed = sigma_bend > body_material["yield_strength"]
+# For shear, assume failure if tau exceeds ~60% of yield strength
+body_shear_failed = tau_shear > (0.6 * body_material["yield_strength"])
+
+print("\n--- Body Tube Failure Checks ---")
+print("Body Drag Force: {:.2f} N".format(F_body))
+print("Bending Moment: {:.2f} N·m".format(M_bend))
+print("Bending Stress: {:.2f} Pa".format(sigma_bend))
+print("Shear Stress: {:.2f} Pa".format(tau_shear))
 
 # =============================================================================
 # PRINT SUMMARY OF FLIGHT & MATERIAL STATUS
@@ -281,6 +297,16 @@ if fin_failed:
     print("Warning: Fins failed under aerodynamic loads!")
 else:
     print("Fins survived the aerodynamic loads.")
+
+if body_bending_failed:
+    print("Warning: Body tube failed in bending!")
+else:
+    print("Body tube bending check passed.")
+
+if body_shear_failed:
+    print("Warning: Body tube failed in shear!")
+else:
+    print("Body tube shear check passed.")
 print("====================================\n")
 
 # =============================================================================
@@ -290,7 +316,6 @@ output_dir = "outputs"
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
-# Save all currently open figures as PNGs
 fig_nums = plt.get_fignums()
 for num in fig_nums:
     plt.figure(num)
