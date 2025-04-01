@@ -12,7 +12,7 @@ from src.utils.rocket_physics import (
     calculate_center_of_mass,
     calculate_motor_position
 )
-from motors.motor_loader import motors
+from src.models.motors.motor_loader import motors
 
 class RocketBuilder:
     """Builder class for creating RocketPy rocket models from configurations."""

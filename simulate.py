@@ -6,7 +6,7 @@ import os
 import argparse
 import json
 from src.models.simulation import RocketSimulation
-from motors.motor_loader import _save_predefined_motors
+from src.models.motors.motor_loader import _save_predefined_motors
 
 # Default configurations
 from default_configs import standard_config as default_config
