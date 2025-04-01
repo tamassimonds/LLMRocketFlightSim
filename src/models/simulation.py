@@ -182,29 +182,23 @@ class RocketSimulation:
     
     def print_summary(self):
         """Print a summary of the simulation results."""
-        if self.results is None:
-            if self.flight is not None:
-                self.analyze_results()
-            else:
-                raise ValueError("No flight to analyze. Run a simulation first.")
+        if not hasattr(self, 'results') or self.results is None:
+            print("No results to display. Run analyze_results() first.")
+            return
         
         flight_results = self.results["flight"]
         structural_results = self.results["structural"]
         material_results = self.results["materials"]
         
-        print("\n=== FLIGHT SUMMARY ===")
-        print(f"Flight Time: {flight_results['flight_time']:.2f} s")
+        print("\n=== FLIGHT RESULTS ===")
         print(f"Max Apogee: {flight_results['max_apogee']:.2f} m")
-        print(f"Horizontal Distance: {flight_results['horizontal_distance']:.2f} m")
+        print(f"Flight Time: {flight_results['flight_time']:.2f} s")
         print(f"Max Speed: {flight_results['max_speed']:.2f} m/s")
         print(f"Max Acceleration: {flight_results['max_acceleration']:.2f} m/s²")
-        print(f"Max Dynamic Pressure: {flight_results['max_dynamic_pressure']:.2f} Pa")
+        print(f"Horizontal Distance: {flight_results['horizontal_distance']:.2f} m")
         
         print("\n=== STRUCTURAL ANALYSIS ===")
-        if structural_results["overall_failure"]:
-            print("WARNING: Structural failure detected!")
-        else:
-            print("All structural components passed integrity checks.")
+        print(f"Overall Structural Failure: {structural_results['overall_failure']}")
         
         fin_results = structural_results["fins"]
         print("\nFin Analysis:")
@@ -226,8 +220,15 @@ class RocketSimulation:
         
         print("\n=== BILL OF MATERIALS ===")
         print(f"Total Cost: ${material_results['total_cost']:.2f}")
+        
+        # Print motor cost if available
+        if "motor" in material_results['costs']:
+            motor_cost = material_results['costs']["motor"]
+            print(f"  Motor ({self.config['motor_choice']}): ${motor_cost:.2f}")
+        
+        # Print material costs
         for material, mass in material_results['materials'].items():
             cost = material_results['costs'][material]
             print(f"  {material}: {mass:.2f} kg - ${cost:.2f}")
         
-        print("\n=========================") 
+        print("\n===========================") 

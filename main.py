@@ -56,7 +56,7 @@ config = {
     },
     "launch": {
         "rail_length": 8,  # [m]
-        "inclination": 90,   # [degrees]
+        "inclination": 45,   # [degrees]
         "heading": 0,        # [degrees]
     },
     "payload": {

@@ -75,7 +75,13 @@ class RocketBuilder:
         if motor_choice not in self.motor_configs:
             raise ValueError(f"Motor '{motor_choice}' not found in motor configurations.")
         
-        motor_config = self.motor_configs[motor_choice]
+        # Make a copy of the motor config and remove non-SolidMotor parameters
+        motor_config = self.motor_configs[motor_choice].copy()
+        
+        # Remove the cost parameter which is not accepted by SolidMotor
+        if 'cost' in motor_config:
+            motor_config.pop('cost')
+        
         self.motor = SolidMotor(**motor_config)
         
         # Calculate motor position at the back of the rocket

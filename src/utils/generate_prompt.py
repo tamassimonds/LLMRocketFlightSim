@@ -19,19 +19,19 @@ from src.models.motors import motors as available_motor_configs
 
 def generate_rocket_design_prompt(target_apogee, payload_mass=None, stability_margin=None, 
                                   horizontal_distance=None, price_bonus=None,
-                                wind_speed=0, wind_direction="N"):
+                                  wind_speed=0, wind_direction="N", material_options=None):
     """
     Generate a prompt for an LLM to design a rocket.
     
     Args:
         target_apogee (float): Target apogee in meters
         payload_mass (float): Mass of the payload in kg
-        stability_margin (float): Target stability margin
-        body_diameter (float): Body diameter in mm
-        fins_number (int): Number of fins
-        material_options (list): List of material options
+        stability_margin (float): Target stability margin in calibers
+        horizontal_distance (float): Target horizontal distance in meters
+        price_bonus (bool): Whether to emphasize cost optimization
         wind_speed (float): Wind speed in m/s
         wind_direction (str): Wind direction
+        material_options (list): List of material options
         
     Returns:
         str: Prompt for LLM
@@ -63,9 +63,12 @@ def generate_rocket_design_prompt(target_apogee, payload_mass=None, stability_ma
         prompt += f"- **Target Stability Margin**: {stability_margin} calibers\n"
         prompt += f"You are given extra points for being below the stability margin if you are within 10% of the target apogee\n"
     
-    if price_bonus is not None:
-        prompt += f"You are given extra points for how cheap the rocket is to build\n"
+    if horizontal_distance is not None:
+        prompt += f"- **Target Horizontal Distance**: {horizontal_distance} meters\n"
     
+    if price_bonus:
+        prompt += f"You are given extra points for how cheap the rocket is to build if within 10% of the target apogee\n"
+        prompt += f"Cost is calculated by material cost\n"
 
     prompt += f"""
 ## Available Materials
@@ -88,6 +91,9 @@ Based on the requirements and available components, design a rocket that will re
 5. Parachute specifications
 6. Launch rail configuration
 
+### Notes
+notes for the tail the top and bottom radius cannot be the same (causes error)
+
 ## Response Format
 
 Please provide your design as a Python dictionary that can be directly used in our simulation software. Use the following format:
@@ -103,7 +109,7 @@ config = {{
     }},
     "aerodynamics": {{
         "nose_cone": {{
-            "kind": "SHAPE",  # e.g., vonKarman, conical, elliptical
+            "kind": "SHAPE",  # "conical", "ogive", "elliptical", "tangent", "von karman", "parabolic", "powerseries" or "lvhaack".
             "length": LENGTH_IN_METERS,
             "material": "MATERIAL",
         }},
@@ -125,6 +131,7 @@ config = {{
     }},
     "parachutes": {{
         "main": {{
+            "name": "Main",
             "cd_s": AREA,
             "trigger": "apogee",
             "sampling_rate": 105,
@@ -132,6 +139,7 @@ config = {{
             "noise": (0, 8.3, 0.5),
         }},
         "drogue": {{
+            "name": "Drogue",
             "cd_s": AREA,
             "trigger": "apogee",
             "sampling_rate": 105,
@@ -162,8 +170,8 @@ def main():
     parser.add_argument("--apogee", type=float, required=True, help="Target apogee in meters")
     parser.add_argument("--payload", type=float, help="Payload mass in kg")
     parser.add_argument("--stability", type=float, help="Target stability margin in calibers")
-    parser.add_argument("--diameter", type=float, help="Body diameter in mm")
-    parser.add_argument("--fins", type=int, help="Number of fins")
+    parser.add_argument("--horizontal-distance", type=float, help="Target horizontal distance in meters")
+    parser.add_argument("--price-bonus", action="store_true", help="Emphasize cost optimization")
     parser.add_argument("--materials", type=str, help="Comma-separated list of materials")
     parser.add_argument("--wind-speed", type=float, default=0, help="Wind speed in m/s")
     parser.add_argument("--wind-direction", type=str, default="N", help="Wind direction (N, S, E, W, etc.)")
@@ -172,20 +180,20 @@ def main():
     args = parser.parse_args()
     
     # Parse materials if provided
-    materials = None
+    material_options = None
     if args.materials:
-        materials = [m.strip() for m in args.materials.split(",")]
+        material_options = [m.strip() for m in args.materials.split(",")]
     
     # Generate the prompt
     prompt = generate_rocket_design_prompt(
         target_apogee=args.apogee,
         payload_mass=args.payload,
         stability_margin=args.stability,
-        body_diameter=args.diameter,
-        fins_number=args.fins,
-        material_options=materials,
+        horizontal_distance=args.horizontal_distance,
+        price_bonus=args.price_bonus,
         wind_speed=args.wind_speed,
-        wind_direction=args.wind_direction
+        wind_direction=args.wind_direction,
+        material_options=material_options
     )
     
     # Output the prompt

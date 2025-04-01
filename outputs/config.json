@@ -1,0 +1,70 @@
+{
+  "motor_choice": "Pro75M1670",
+  "rocket_body": {
+    "radius": 0.075,
+    "length": 3.0,
+    "material": "carbon_fiber",
+    "thickness": 0.002
+  },
+  "aerodynamics": {
+    "nose_cone": {
+      "kind": "von karman",
+      "length": 0.6,
+      "material": "carbon_fiber"
+    },
+    "fins": {
+      "number": 4,
+      "root_chord": 0.2,
+      "tip_chord": 0.1,
+      "span": 0.15,
+      "cant_angle": 0,
+      "material": "composite",
+      "thickness": 0.003
+    },
+    "tail": {
+      "length": 0.1,
+      "top_radius": 0.075,
+      "bottom_radius": 0.074,
+      "material": "carbon_fiber"
+    }
+  },
+  "parachutes": {
+    "main": {
+      "name": "Main",
+      "cd_s": 1.0,
+      "trigger": "apogee",
+      "sampling_rate": 105,
+      "lag": 1.5,
+      "noise": [
+        0,
+        8.3,
+        0.5
+      ]
+    },
+    "drogue": {
+      "name": "Drogue",
+      "cd_s": 0.2,
+      "trigger": "apogee",
+      "sampling_rate": 105,
+      "lag": 1.5,
+      "noise": [
+        0,
+        8.3,
+        0.5
+      ]
+    }
+  },
+  "launch": {
+    "rail_length": 5.0,
+    "inclination": 85,
+    "heading": 90
+  },
+  "payload": {
+    "mass": 1.0,
+    "position": 0.5
+  },
+  "env": {
+    "wind_u": 20,
+    "wind_v": 0
+  }
+}

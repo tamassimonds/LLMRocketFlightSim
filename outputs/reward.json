@@ -1,0 +1,11 @@
+{
+  "apogee_target": 3000,
+  "apogee_actual": 2630.075913201769,
+  "apogee_error_percent": 12.330802893274374,
+  "apogee_reward": 65.22332321657656,
+  "apogee_weight": 0.7,
+  "cost_total": 1025.9101347661142,
+  "cost_reasonable_estimate": 80.0,
+  "cost_reward": 0,
+  "cost_weight": 0.3,
+  "structural_failure": 

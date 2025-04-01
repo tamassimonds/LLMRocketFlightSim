@@ -4,6 +4,7 @@ Functions for analyzing rocket flight performance and structural integrity.
 import math
 import numpy as np
 from src.models.materials import materials
+from src.models.motors.motors import motors
 
 def analyze_flight(flight):
     """
@@ -130,11 +131,20 @@ def calculate_bill_of_materials(config, component_masses):
 
     bom_cost = {}
     total_cost = 0
+    
+    # Calculate material costs
     for material_key, mass in bom.items():
         cost_per_kg = materials[material_key]["cost"]
         cost = mass * cost_per_kg
         bom_cost[material_key] = cost
         total_cost += cost
+    
+    # Add motor cost
+    motor_choice = config.get("motor_choice")
+    if motor_choice and motor_choice in motors:
+        motor_cost = motors[motor_choice].get("cost", 0)
+        bom_cost["motor"] = motor_cost
+        total_cost += motor_cost
 
     bom_analysis = {
         "materials": bom,

@@ -1,0 +1,104 @@
+# Rocket Design Task
+
+## Design Requirements
+
+- **Target Apogee**: 1000.0 meters
+- **Wind Conditions**: 0 m/s from N direction
+
+## Available Materials
+
+The following materials are available for the rocket components:
+aluminum, composite, fiberglass, carbon_fiber, balsa_wood, plywood, ABS_plastic
+
+## Available Motors
+
+| Name          | Manufacturer   |   Diameter (mm) |   Length (mm) |   Dry Mass (kg) |   Max Thrust (N) |   Avg Thrust (N) |   Burn Time (s) |   Total Impulse (Ns) |   Isp (s) |
+|:--------------|:---------------|----------------:|--------------:|----------------:|-----------------:|-----------------:|----------------:|---------------------:|----------:|
+| Pro75M1670    | CTI            |              75 |           757 |           1.815 |           2200   |           1533.9 |            3.9  |               6023.6 |     198   |
+| AeroTechK700W | AT             |              54 |           568 |           0.732 |           1029.3 |            658.7 |            3.5  |               2249   |     177.5 |
+| CesaroniM1670 | CTI            |              75 |           757 |           3.101 |           2200   |           1533.9 |            3.6  |               6023.6 |     198   |
+| AeroTechH128W | AT             |              29 |           194 |           0.108 |            190.5 |            141.2 |            1.29 |                176.5 |     191.3 |
+| CesaroniO3700 | CTI            |             161 |           957 |          14.194 |           4030.3 |           2836.9 |            8.2  |              29930.2 |     177.8 |
+| CesaroniO5800 | CTI            |             150 |           754 |          12.418 |           6395.5 |           5040.2 |            5.2  |              30382.7 |     222   |
+| CesaroniK160  | CTI            |              54 |           404 |           0.7   |            272.2 |            190.2 |            9.7  |               1521.7 |     182.9 |
+
+## Design Task
+
+Based on the requirements and available components, design a rocket that will reach the target apogee. Your design should include:
+
+1. Motor selection (choose from the available motors list)
+2. Body dimensions and material
+3. Nose cone dimensions and material
+4. Fin design and material
+5. Parachute specifications
+6. Launch rail configuration
+
+### Notes
+notes for the tail the top and bottom radius cannot be the same (causes error)
+
+## Response Format
+
+Please provide your design as a Python dictionary that can be directly used in our simulation software. Use the following format:
+
+```python
+config = {
+    "motor_choice": "MOTOR_NAME",  # Choose from available motors
+    "rocket_body": {
+        "radius": RADIUS_IN_METERS,  # Body radius in meters
+        "length": LENGTH_IN_METERS,  # Body length in meters
+        "material": "MATERIAL",  # Choose from available materials
+        "thickness": THICKNESS_IN_METERS,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "SHAPE",  # "conical", "ogive", "elliptical", "tangent", "von karman", "parabolic", "powerseries" or "lvhaack".
+            "length": LENGTH_IN_METERS,
+            "material": "MATERIAL",
+        },
+        "fins": {
+            "number": NUMBER_OF_FINS,
+            "root_chord": LENGTH_IN_METERS,
+            "tip_chord": LENGTH_IN_METERS,
+            "span": LENGTH_IN_METERS,
+            "cant_angle": ANGLE_IN_DEGREES,
+            "material": "MATERIAL",
+            "thickness": THICKNESS_IN_METERS,
+        },
+        "tail": {
+            "length": LENGTH_IN_METERS,
+            "top_radius": RADIUS_IN_METERS,
+            "bottom_radius": RADIUS_IN_METERS,
+            "material": "MATERIAL",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": AREA,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": AREA,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": LENGTH_IN_METERS,
+        "inclination": ANGLE_IN_DEGREES,
+        "heading": ANGLE_IN_DEGREES,
+    },
+    "payload": {
+        "mass": MASS_IN_KG,
+        "position": POSITION_IN_METERS,  # relative to rocket center
+    },
+}
+```
+
+Before answering you should provide your full reasoning for the design choices you made thinking like a rocket scientist.
