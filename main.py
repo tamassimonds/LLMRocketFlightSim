@@ -7,6 +7,10 @@ matplotlib.use('Agg')  # Use non-interactive backend to avoid popping up windows
 import matplotlib.pyplot as plt
 from rocketpy import Environment, Flight, Rocket, SolidMotor
 from rocketpy.plots import rocket_plots, flight_plots
+import numpy as np
+import pandas as pd
+
+from rocketpy import Environment, Function
 
 # =============================================================================
 # MATERIAL PROPERTIES DICTIONARY
@@ -119,15 +123,13 @@ motors = {
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
-# =============================================================================
-# CONFIGURATION (including payload support)
-# =============================================================================
+
 config = {
     "goal_altitude": 10000,  # [m] desired altitude
     "motor_choice": "CesaroniM1670",  # Which motor to use from the motors dict
     "rocket_body": {
         "radius": 166 / 2000,  # [m]
-        "length": 5,         # [m] cylindrical section
+        "length": 3,         # [m] cylindrical section
         "material": "fiberglass",  # material key
         "thickness": 0.005,  # [m] wall thickness
     },
@@ -185,8 +187,86 @@ config = {
         "mass": 5.0,      # payload mass in kg
         "position": 0.1,  # payload position in meters (positive is forward)
     },
+     "env": {
+        "wind_u": 20, #m/s
+        "wind_v": 0, #m/s
+    },
 }
 
+o3_config = optimal_config = {
+    "goal_altitude": 3000,  # target altitude: 3 km
+    "motor_choice": "AeroTechK700W",  # lightweight motor for the flight profile
+    "rocket_body": {
+        # Using a scaling factor of 0.56 for structural elements
+        "radius": (166 / 2000) * 0.56,  # ~0.0465 m
+        "length": 3 * 0.56,             # 1.68 m
+        "material": "fiberglass",
+        "thickness": 0.005 * 0.56,      # ~0.0028 m wall thickness
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "vonKarman",
+            "length": 0.55829 * 0.56,  # ~0.3126 m
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.520 * 0.56,  # ~0.2912 m
+            "tip_chord": 0.060 * 0.56,   # ~0.0336 m
+            "span": 0.210 * 0.56,        # ~0.1176 m
+            "cant_angle": 0.0,           # 0° to minimize lateral forces
+            "material": "fiberglass",
+            "thickness": 0.005 * 0.56,   # ~0.0028 m
+        },
+        "tail": {
+            "length": 0.060 * 0.56,         # ~0.0336 m
+            "top_radius": 0.0635 * 0.56,      # ~0.0356 m
+            "bottom_radius": 0.0435 * 0.56,   # ~0.0244 m
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 10.0,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 1.0,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 40,  # increased rail length to maintain a vertical trajectory longer
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 5.0,
+        "position": 0.5,  # shifting payload further forward for better stability
+    },
+   
+}
+
+data_env = {
+    'height': [0, 1000, 2000, 3000, 4000], # m
+    'pressure': [101325, 89876, 79508, 70122, 61653], # Pa
+    'temperature': [288.15, 281.65, 275.15, 268.65, 262.15], # K
+    'wind_u': config["env"]["wind_u"]*5, # m/s
+    'wind_v': config["env"]["wind_v"]*5, # m/s
+}
+
+
+
+
+config = o3_config
 
 # =============================================================================
 # HELPER FUNCTIONS: MASS & INERTIA CALCULATIONS
@@ -295,28 +375,24 @@ print("Computed inertia (Ixx, Iyy, Izz):", inertia)
 # =============================================================================
 # ENVIRONMENT SETUP WITH WEATHER CACHING
 # =============================================================================
-env = Environment(latitude=32.990254, longitude=-106.974998, elevation=1400)
-tomorrow = datetime.date.today() + datetime.timedelta(days=1)
-env.set_date((tomorrow.year, tomorrow.month, tomorrow.day, 12))
 
-cache_weather = True
-cache_dir = "weather_cache"
-if not os.path.exists(cache_dir):
-    os.makedirs(cache_dir)
-date_str = f"{tomorrow.year}-{tomorrow.month:02d}-{tomorrow.day:02d}"
-cache_filename = os.path.join(cache_dir, f"weather_{env.latitude}_{env.longitude}_{date_str}.json")
+df = pd.DataFrame(data_env)
 
-if cache_weather and os.path.exists(cache_filename):
-    print(f"Loading cached weather data from {cache_filename}")
-    env.set_atmospheric_model(type="Forecast", file=cache_filename)
-else:
-    print("Fetching new weather data.")
-    env.set_atmospheric_model(type="Forecast", file="GFS")
-    try:
-        shutil.copy("GFS", cache_filename)
-        print(f"Weather data cached to {cache_filename}")
-    except Exception as e:
-        print(f"Failed to cache weather data: {e}")
+# Create Function objects to represent the profiles
+pressure_func = Function(np.column_stack([df['height'], df['pressure']]))
+temperature_func = Function(np.column_stack([df['height'], df['temperature']]))
+wind_u_func = Function(np.column_stack([df['height'], df['wind_u']]))
+wind_v_func = Function(np.column_stack([df['height'], df['wind_v']]))
+
+# Set up the environment
+env = Environment()
+env.set_atmospheric_model(
+    type="custom_atmosphere",
+    pressure=pressure_func,
+    temperature=temperature_func,
+    wind_u=wind_u_func,
+    wind_v=wind_v_func,
+)
 
 # =============================================================================
 # ROCKET SETUP
@@ -542,3 +618,4 @@ fplots.energy_data(filename=os.path.join(output_dir, "flight_energy_data.png"))
 fplots.fluid_mechanics_data(filename=os.path.join(output_dir, "flight_fluid_mechanics_data.png"))
 fplots.stability_and_control_data(filename=os.path.join(output_dir, "flight_stability_and_control_data.png"))
 fplots.pressure_rocket_altitude(filename=os.path.join(output_dir, "flight_pressure_rocket_altitude.png"))
+
