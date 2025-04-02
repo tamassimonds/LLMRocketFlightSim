@@ -1,6 +1,6 @@
 # RocketEnv
 
-A modularasdsd as d framework for rocket flight simulation based on RocketPy.
+A modular framework for rocket flight simulation based on RocketPy.
 
 ## Project Overview
 
