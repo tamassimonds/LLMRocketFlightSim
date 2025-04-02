@@ -4,7 +4,7 @@ Motor configuration loader and management.
 import os
 import json
 from pathlib import Path
-from.src.models.motors.motors import motors
+from rocket_package.src.models.motors.motors import motors
 import numpy as np
 
 class MotorLoader:

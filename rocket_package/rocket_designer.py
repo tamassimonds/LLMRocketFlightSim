@@ -29,17 +29,17 @@ project_root = Path(__file__).resolve().parent
 sys.path.append(str(project_root))
 
 # Import required modules
-from.src.utils.generate_prompt import generate_rocket_design_prompt
-from.src.utils.inference import generate_text
-from.src.utils.model_parser import (
+from rocket_package.src.utils.generate_prompt import generate_rocket_design_prompt
+from rocket_package.src.utils.inference import generate_text
+from rocket_package.src.utils.model_parser import (
     extract_config_from_response,
     add_wind_settings,
     save_model_outputs
 )
-from.src.utils.design_rule_check import check_rocket_configuration, generate_drc_report
-from.src.models.simulation import RocketSimulation
-from.src.models.materials import materials
-from.src.models.motors import motors as available_motor_configs
+from rocket_package.src.utils.design_rule_check import check_rocket_configuration, generate_drc_report
+from rocket_package.src.models.simulation import RocketSimulation
+from rocket_package.src.models.materials import materials
+from rocket_package.src.models.motors import motors as available_motor_configs
 
 # Check for API keys
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")

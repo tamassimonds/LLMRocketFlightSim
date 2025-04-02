@@ -2,7 +2,7 @@
 Utility functions for rocket physics calculations.
 """
 import math
-from.src.models.materials import materials
+from rocket_package.src.models.materials import materials
 
 def compute_rocket_body_mass(body_config):
     """

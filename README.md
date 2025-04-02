@@ -87,7 +87,7 @@ python example_simulation.py --save-motors
 Create your own simulation script:
 
 ```python
-from.src.models.simulation import RocketSimulation
+from rocket_package.src.models.simulation import RocketSimulation
 from default_configs import standard_config
 
 # Initialize simulation with custom configuration

@@ -6,7 +6,7 @@ It checks for basic physical constraints and design rules to catch obvious error
 """
 
 from typing import Dict, Any, List, Tuple
-from.src.models.motors.motors import motors
+from rocket_package.src.models.motors.motors import motors
 
 def check_rocket_configuration(config: Dict[str, Any]) -> Tuple[bool, List[str]]:
     """

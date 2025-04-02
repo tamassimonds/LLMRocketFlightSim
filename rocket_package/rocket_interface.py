@@ -34,7 +34,7 @@ from .src.utils.model_parser import (
 from .src.utils.design_rule_check import check_rocket_configuration
 
 # Import for simulation
-from .src.models.simulation import RocketSimulation
+from rocket_package.src.models.simulation import RocketSimulation
 
 # Import for reward calculation from existing module
 from .src.utils.reward import calculate_reward, format_reward_report

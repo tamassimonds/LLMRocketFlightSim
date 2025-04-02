@@ -3,8 +3,8 @@ Functions for analyzing rocket flight performance and structural integrity.
 """
 import math
 import numpy as np
-from.src.models.materials import materials
-from.src.models.motors.motors import motors
+from rocket_package.src.models.materials import materials
+from rocket_package.src.models.motors.motors import motors
 
 def analyze_flight(flight):
     """
