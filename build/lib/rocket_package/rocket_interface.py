@@ -29,20 +29,20 @@ sys.path.append(str(project_root))
 # Import required modules with error handling
 try:
     # Import for configuration extraction
-    from src.utils.model_parser import (
+    from.src.utils.model_parser import (
         extract_config_from_response,
         add_wind_settings,
         save_model_outputs
     )
     
     # Import for design rule check
-    from src.utils.design_rule_check import check_rocket_configuration
+    from.src.utils.design_rule_check import check_rocket_configuration
     
     # Import for simulation
-    from src.models.simulation import RocketSimulation
+    from.src.models.simulation import RocketSimulation
     
     # Import for reward calculation from existing module
-    from src.utils.reward import calculate_reward, format_reward_report
+    from.src.utils.reward import calculate_reward, format_reward_report
     
 except ImportError as e:
     print(f"Error importing required modules: {e}")

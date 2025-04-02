@@ -4,13 +4,13 @@ Rocket flight simulation classes.
 import os
 import matplotlib.pyplot as plt
 from rocketpy import Flight
-from src.models.rocket_builder import RocketBuilder
-from src.utils.environment_utils import (
+from.src.models.rocket_builder import RocketBuilder
+from.src.utils.environment_utils import (
     setup_environment_from_data, 
     setup_environment_with_cache,
     create_constant_wind_environment
 )
-from src.analysis.rocket_analysis import analyze_rocket
+from.src.analysis.rocket_analysis import analyze_rocket
 
 class RocketSimulation:
     """Manage rocket flight simulations."""

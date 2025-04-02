@@ -13,9 +13,9 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 
 import tabulate
-from src.models.materials import materials
-from src.models.motors import EngFileLoader
-from src.models.motors import motors as available_motor_configs
+from.src.models.materials import materials
+from.src.models.motors import EngFileLoader
+from.src.models.motors import motors as available_motor_configs
 
 def generate_rocket_design_prompt(target_apogee, payload_mass=None, stability_margin=None, 
                                   horizontal_distance=None, price_bonus=None,

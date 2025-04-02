@@ -2,7 +2,7 @@
 Rocket builder class for creating rocket models from configurations.
 """
 from rocketpy import Rocket, SolidMotor
-from src.utils.rocket_physics import (
+from.src.utils.rocket_physics import (
     compute_rocket_body_mass,
     compute_nose_cone_mass,
     compute_fins_mass,
@@ -12,7 +12,7 @@ from src.utils.rocket_physics import (
     calculate_center_of_mass,
     calculate_motor_position
 )
-from src.models.motors.motor_loader import motors
+from.src.models.motors.motor_loader import motors
 from pathlib import Path
 
 class RocketBuilder:

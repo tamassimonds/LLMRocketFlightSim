@@ -2,8 +2,8 @@
 import os
 import argparse
 import json
-from src.models.simulation import RocketSimulation
-from src.models.motors.motor_loader import _save_predefined_motors
+from.src.models.simulation import RocketSimulation
+from.src.models.motors.motor_loader import _save_predefined_motors
 
 config = {
     "goal_altitude": 10000,  # [m] desired altitude

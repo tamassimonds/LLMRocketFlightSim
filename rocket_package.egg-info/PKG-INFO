@@ -35,7 +35,7 @@ RocketEnv/
 ├── configs/             # Engine files and config files
 ├── motors/              # Motor definitions and loader
 ├── outputs/             # Generated plots and KML files
-├── src/                 # Source code
+├──.src/                 # Source code
 │   ├── analysis/        # Analysis tools
 │   ├── models/          # Rocket and simulation models
 │   └── utils/           # Utility functions
@@ -101,7 +101,7 @@ python example_simulation.py --save-motors
 Create your own simulation script:
 
 ```python
-from src.models.simulation import RocketSimulation
+from.src.models.simulation import RocketSimulation
 from default_configs import standard_config
 
 # Initialize simulation with custom configuration

@@ -5,7 +5,7 @@ Parse RockSim .eng files for rocket motor specifications based on motors.py defi
 import numpy as np
 from pathlib import Path
 import tabulate
-from src.models.motors.motors import motors as motor_configs
+from.src.models.motors.motors import motors as motor_configs
 
 def parse_eng_file(file_path):
     """
