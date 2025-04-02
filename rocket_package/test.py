@@ -145,3 +145,5 @@ distance_reward = exp(-abs(response['simple_results']["apogee"] - target_apogee)
 # cost_reward = exp(-abs(response['simple_results']["total_cost"]) / (1000))
 
 reward += distance_reward
+
+print(reward)

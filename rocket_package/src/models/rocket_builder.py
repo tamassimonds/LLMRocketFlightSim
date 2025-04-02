@@ -13,6 +13,7 @@ from src.utils.rocket_physics import (
     calculate_motor_position
 )
 from src.models.motors.motor_loader import motors
+from pathlib import Path
 
 class RocketBuilder:
     """Builder class for creating RocketPy rocket models from configurations."""
@@ -106,8 +107,8 @@ class RocketBuilder:
             radius=self.config["rocket_body"]["radius"],
             mass=self.mass_data["total_mass"],
             inertia=compute_inertia(self.mass_data["total_mass"], self.config),
-            power_off_drag="configs/powerOffDragCurve.csv",
-            power_on_drag="configs/powerOnDragCurve.csv",
+            power_off_drag=str(Path(__file__).resolve().parent.parent.parent / "configs" / "powerOffDragCurve.csv"),
+            power_on_drag=str(Path(__file__).resolve().parent.parent.parent / "configs" / "powerOnDragCurve.csv"),
             center_of_mass_without_motor=self.mass_data["structure_com"],
             coordinate_system_orientation="tail_to_nose",
         )
@@ -146,7 +147,7 @@ class RocketBuilder:
             span=fin_conf["span"],
             position=self.component_positions["fins"],
             cant_angle=fin_conf["cant_angle"],
-            airfoil=("configs/NACA0012-radians.txt", "radians"),
+            airfoil=(str(Path(__file__).resolve().parent.parent.parent / "configs" / "NACA0012-radians.txt"), "radians"),
         )
         
         # Add tail

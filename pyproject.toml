@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rocket_package"
+version = "0.1.0"
+description = "A package for simulating rocket designs"
+authors = [
+    {name = "Toby Simonds", email = "tamassimonds@gmail.com"},
+]
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "requests>=2.25.1",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/toby-simonds/rocket_package"
+"Bug Tracker" = "https://github.com/toby-simonds/rocket_package/issues"
+
+[tool.setuptools]
+packages = ["rocket_package"]
+
+[tool.setuptools.package-data]
+rocket_package = ["*.txt", "*.dat"] 

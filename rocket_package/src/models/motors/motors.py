@@ -1,6 +1,8 @@
+from pathlib import Path
+
 motors = {
     "Pro75M1670": {
-        "thrust_source": "configs/Cesaroni_M1670.eng",
+        "thrust_source": str(Path(__file__).resolve().parent.parent.parent.parent / "configs" / "Cesaroni_M1670.eng"),
         "dry_mass": 1.815,
         "dry_inertia": (0.125, 0.125, 0.002),
         "nozzle_radius": 33 / 1000,
@@ -19,7 +21,7 @@ motors = {
         "cost": 520.00,  # Cost in USD
     },
     "AeroTechK700W": {
-        "thrust_source": "configs/AeroTech_K700W.eng",
+        "thrust_source": str(Path(__file__).resolve().parent.parent.parent.parent / "configs" / "AeroTech_K700W.eng"),
         "dry_mass": 0.732,
         "dry_inertia": (0.015, 0.015, 0.002),
         "nozzle_radius": 27 / 1000,
@@ -38,7 +40,7 @@ motors = {
         "cost": 180.00,  # Cost in USD
     },
     "CesaroniM1670": {
-        "thrust_source": "configs/Cesaroni_6026M1670-P.eng",
+        "thrust_source": str(Path(__file__).resolve().parent.parent.parent.parent / "configs" / "Cesaroni_6026M1670-P.eng"),
         "dry_mass": 3.101,
         "dry_inertia": (0.025, 0.025, 0.002),
         "nozzle_radius": 37.5 / 1000,
@@ -57,7 +59,7 @@ motors = {
         "cost": 550.00,  # Cost in USD
     },
     "AeroTechH128W": {
-        "thrust_source": "configs/AeroTech_H128W.eng",
+        "thrust_source": str(Path(__file__).resolve().parent.parent.parent.parent / "configs" / "AeroTech_H128W.eng"),
         "dry_mass": 0.108,
         "dry_inertia": (0.005, 0.005, 0.001),
         "nozzle_radius": 14.5 / 1000,
@@ -76,7 +78,7 @@ motors = {
         "cost": 65.00,  # Cost in USD
     },
     "CesaroniO3700": {
-        "thrust_source": "configs/Cesaroni_29920O3700-P.eng",
+        "thrust_source": str(Path(__file__).resolve().parent.parent.parent.parent / "configs" / "Cesaroni_29920O3700-P.eng"),
         "dry_mass": (31.351 - 17.157),  # Total weight - Propellant weight in kg
         "dry_inertia": (0.8, 0.8, 0.05),  # Estimated based on size/mass
         "nozzle_radius": 161/2000,  # Diameter/2 in meters
@@ -95,7 +97,7 @@ motors = {
         "cost": 1250.00,  # Cost in USD
     },
     "CesaroniO5800": {
-        "thrust_source": "configs/Cesaroni_30600O5800-P.eng",
+        "thrust_source": str(Path(__file__).resolve().parent.parent.parent.parent / "configs" / "Cesaroni_30600O5800-P.eng"),
         "dry_mass": (26.368 - 13.950),  # Total weight - Propellant weight in kg
         "dry_inertia": (0.6, 0.6, 0.04),  # Estimated based on size/mass
         "nozzle_radius": 161/2000,  # Diameter/2 in meters
@@ -114,7 +116,7 @@ motors = {
         "cost": 1100.00,  # Cost in USD
     },
     "CesaroniK160": {
-        "thrust_source": "configs/Cesaroni_1526K160-6.eng",
+        "thrust_source": str(Path(__file__).resolve().parent.parent.parent.parent / "configs" / "Cesaroni_1526K160-6.eng"),
         "dry_mass": (1.472 - 0.772),  # Total weight - Propellant weight in kg
         "dry_inertia": (0.012, 0.012, 0.001),  # Estimated based on size/mass
         "nozzle_radius": 54/2000,  # Diameter/2 in meters

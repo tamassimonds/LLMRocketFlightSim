@@ -1,3 +1,0 @@
-=== DESIGN RULE CHECK REPORT ===
-✅ All design rule checks passed!
-===============================

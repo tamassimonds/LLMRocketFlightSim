@@ -1,6 +1,20 @@
+Metadata-Version: 2.4
+Name: rocket_package
+Version: 0.1.0
+Summary: A package for simulating rocket designs
+Author-email: Toby Simonds <tamassimonds@gmail.com>
+Project-URL: Homepage, https://github.com/toby-simonds/rocket_package
+Project-URL: Bug Tracker, https://github.com/toby-simonds/rocket_package/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: requests>=2.25.1
+
 # RocketEnv
 
-A modularasdsd as d framework for rocket flight simulation based on RocketPy.
+A modular framework for rocket flight simulation based on RocketPy.
 
 ## Project Overview
 
