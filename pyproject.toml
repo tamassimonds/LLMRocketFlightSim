@@ -25,7 +25,7 @@ dependencies = [
 "Bug Tracker" = "https://github.com/toby-simonds/rocket_package/issues"
 
 [tool.setuptools]
-packages=["rocket_package", "rocket_package.src",  "rocket_package.configs", "rocket_package.src.analysis" "rocket_package.src.models", "rocket_package.src.utils"]
+packages=["rocket_package", "rocket_package.src",  "rocket_package.configs", "rocket_package.src.analysis", "rocket_package.src.models", "rocket_package.src.utils"]
 
 [tool.setuptools.package-data]
 rocket_package = ["*.txt", "*.dat"] 
