@@ -1,4 +1,5 @@
 from rocket_package.rocket_interface import process_llm_response
+
 from math import exp
 
 
@@ -135,7 +136,7 @@ This design should reliably reach 3000m while handling 20 m/s winds. Adjustments
 response = process_llm_response(LLM_response, 3000, wind_speed=20, wind_direction="E", save_outputs=False)
 
 reward = 0
-target_apogee = 1000
+target_apogee = 3000
 
 if response['simple_results']:
     reward += 0.05 #compiled so here's some reward
