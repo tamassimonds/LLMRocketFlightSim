@@ -25,3 +25,4 @@ packages=["rocket_package", "rocket_package.src", "rocket_package.configs", "roc
 
 [tool.setuptools.package-data]
 rocket_package = ["*.txt", "*.dat"] 
+"rocket_package.configs" = ["*.eng", "*.csv", "*.txt"]
