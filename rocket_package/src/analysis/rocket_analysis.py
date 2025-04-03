@@ -24,6 +24,7 @@ def analyze_flight(flight):
     max_apogee = flight.apogee
     max_speed = flight.max_speed
     max_acceleration = flight.max_acceleration
+    impact_velocity = flight.impact_velocity
     
     analysis = {
         "flight_time": flight_time,
@@ -31,7 +32,8 @@ def analyze_flight(flight):
         "horizontal_distance": horizontal_distance,
         "max_speed": max_speed,
         "max_acceleration": max_acceleration,
-        "max_dynamic_pressure": flight.max_dynamic_pressure
+        "max_dynamic_pressure": flight.max_dynamic_pressure,
+        "impact_velocity": impact_velocity
     }
     
     return analysis
