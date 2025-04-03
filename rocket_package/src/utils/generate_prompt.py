@@ -92,7 +92,14 @@ Based on the requirements and available components, design a rocket that will re
 6. Launch rail configuration
 
 ### Notes
-notes for the tail the top and bottom radius cannot be the same (causes error)
+DRC are run on the design so you need to make sure the design is feasible.
+Here are some of the checks:
+Notes for the tail the top and bottom radius cannot be the same (causes error)
+The material must be specified exactly as listed above
+The body radius must be greater than the motor radius
+
+
+
 
 ## Response Format
 

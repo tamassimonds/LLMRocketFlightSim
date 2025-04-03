@@ -181,7 +181,7 @@ class EngFileLoader:
             return "No motors found."
         
         # Define table headers
-        headers = ["Name", "Manufacturer", "Diameter (mm)", "Length (mm)", 
+        headers = ["Name", "Manufacturer", "Radius (mm)", "Length (mm)", 
                   "Dry Mass (kg)", "Max Thrust (N)", "Avg Thrust (N)", 
                   "Burn Time (s)", "Total Impulse (Ns)", "Isp (s)"]
         
