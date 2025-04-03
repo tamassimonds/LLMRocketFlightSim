@@ -1,124 +1,192 @@
-# RocketEnv
+# Rocket Package
 
-A modular framework for rocket flight simulation based on RocketPy.
+A Python package for rocket flight simulation and design analysis, built on RocketPy.
 
-## Project Overview
+## Overview
 
-This project provides an abstraction layer over RocketPy to simplify rocket building, configuration, and simulation. The code is organized into modular components, making it easy to:
-
-- Define rocket configurations
-- Manage motor definitions
-- Set up atmospheric conditions
-- Run flight simulations
-- Analyze flight performance
-- Check structural integrity
-- Calculate costs and bill of materials
-
-## Directory Structure
-
-```
-RocketEnv/
-├── configs/             # Engine files and config files
-├── motors/              # Motor definitions and loader
-├── outputs/             # Generated plots and KML files
-├──.src/                 # Source code
-│   ├── analysis/        # Analysis tools
-│   ├── models/          # Rocket and simulation models
-│   └── utils/           # Utility functions
-├── default_configs.py   # Default rocket configurations
-├── example_simulation.py # Example usage script
-└── README.md            # Project documentation
-```
+Rocket Package provides tools for rocket design, flight simulation, and performance evaluation. It's designed to work with LLM (Large Language Model) responses to evaluate and score rocket designs automatically.
 
 ## Installation
 
-1. Clone this repository
-2. Create a virtual environment (recommended):
-```bash
-python -m venv myenv
-source myenv/bin/activate  # On Windows: myenv\Scripts\activate
-```
-3. Install requirements:
-```bash
-pip install rocketpy numpy pandas matplotlib
-```
-
-## Quick Start
-
-Run a simulation with default settings:
+### From GitHub
 
 ```bash
-python example_simulation.py
+pip install git+https://github.com/tamassimonds/LLMRocketFlightSim.git
 ```
 
-Specify custom parameters:
+### Local Development
 
 ```bash
-python example_simulation.py --motor CesaroniM1670 --wind-u 10 --wind-v 5 --output my_results
+git clone https://github.com/tamassimonds/LLMRocketFlightSim.git
+cd LLMRocketFlightSim
+pip install -e .
 ```
 
-## Configuration
+## Usage
 
-Rocket configurations are defined as Python dictionaries. See `default_configs.py` for examples. Configuration parameters include:
-
-- Rocket body dimensions and materials
-- Aerodynamic components (nose cone, fins, tail)
-- Parachute properties
-- Launch conditions
-- Payload specifications
-- Environmental settings
-
-## Motors
-
-Motor configurations are stored in the `motors` directory. The first time you run the simulation with the `--save-motors` flag, JSON configuration files will be created for all predefined motors.
-
-```bash
-python example_simulation.py --save-motors
-```
-
-## Adding New Motors
-
-1. Add the motor thrust curve file (*.eng) to the `configs` directory
-2. Add the motor configuration to `motors/motor_loader.py` in the `motors` dictionary
-3. Run the script with `--save-motors` to generate the JSON configuration file
-
-## Customizing Simulations
-
-Create your own simulation script:
+### Basic Usage
 
 ```python
-from rocket_package.src.models.simulation import RocketSimulation
-from default_configs import standard_config
+from rocket_package.rocket_interface import process_llm_response
 
-# Initialize simulation with custom configuration
-simulation = RocketSimulation(standard_config)
+# Your LLM response containing a rocket design
+llm_response = """
+### Reasoning for Rocket Design Choices
 
-# Customize environment (constant 10 m/s eastward wind)
-simulation.setup_environment(env_type="constant_wind", wind_u=10, wind_v=0)
+#### **1. Motor Selection**
+- **Target Apogee**: 3000 meters is a moderately high altitude, requiring a motor with sufficient total impulse.
+- **Choice**: **Pro75M1670** (best balance of thrust, impulse, and weight).
 
-# Build and run
-simulation.build_rocket()
-simulation.run_simulation()
+... (truncated for brevity) ...
 
-# Analyze and output
-results = simulation.analyze_results()
-simulation.print_summary()
-simulation.save_plots()
+### Final Design (Python Dictionary)
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.075,
+        "length": 3,
+        "material": "carbon_fiber",
+        "thickness": 0.002,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.6,
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.2,
+            "tip_chord": 0.1,
+            "span": 0.15,
+            "cant_angle": 0,
+            "material": "composite",
+            "thickness": 0.003,
+        },
+        "tail": {
+            "length": 0.1,
+            "top_radius": 0.075,
+            "bottom_radius": 0.074,
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.0,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 5.0,
+        "inclination": 85,
+        "heading": 90,
+    },
+}
+```
+"""
 
-# Access specific results
-apogee = results["flight"]["max_apogee"]
-structural_failure = results["structural"]["overall_failure"]
-print(f"Apogee: {apogee:.2f} m")
-print(f"Structural failure: {structural_failure}")
+# Process the LLM response with a target apogee of 3000 meters
+response = process_llm_response(
+    llm_response, 
+    target_apogee=3000, 
+    wind_speed=20,  # m/s
+    wind_direction="E",  # East
+    save_outputs=True  # Save simulation outputs to files
+)
+
+# Calculate reward based on how close the rocket got to the target apogee
+from math import exp
+
+target_apogee = 3000
+reward = 0
+
+if response['simple_results']:
+    # Basic reward for valid design that could be simulated
+    reward += 0.05 
+    
+    # Calculate distance-based reward (exponential decay based on error)
+    distance_reward = exp(-abs(response['simple_results']["apogee"] - target_apogee) / (target_apogee*0.1))
+    reward += distance_reward
+
+print(f"Reward score: {reward}")
+print(f"Apogee: {response['simple_results']['apogee']} m")
 ```
 
-## Features
+### Design Rule Checks
 
-- **Automatic motor positioning**: Motors are automatically positioned at the back of the rocket based on the rocket's geometry
-- **Structural analysis**: Analyzes stress on fins and body tube to detect potential failures
-- **Cost calculation**: Computes bill of materials with costs
-- **Multiple environment types**: Support for fetching weather data, using cached data, or defining custom wind profiles
+The package includes design rule checks to validate rocket configurations:
+
+- Motor compatibility with body dimensions
+- Material validation
+- Component dimension constraints
+- Aerodynamic stability checks
+- Physical feasibility validation
+
+Key constraints include:
+- Top and bottom radius of the tail cannot be the same
+- Body radius must be larger than the motor radius
+- Body thickness must be less than body radius
+- Total rocket length has realistic bounds
+
+### Output Files
+
+When `save_outputs=True`, the following files are generated in the `outputs` directory:
+
+- Flight trajectory plots
+- 3D rocket visualization
+- Detailed simulation results
+- KML files for Google Earth visualization
+
+## Package Structure
+
+```
+rocket_package/
+├── configs/             # Engine files and configuration data
+├── src/                 # Source code
+│   ├── analysis/        # Analysis tools
+│   ├── models/          # Rocket and simulation models
+│   │   └── motors/      # Motor definitions
+│   └── utils/           # Utility functions
+├── rocket_interface.py  # Main interface for LLM integration
+├── rocket_designer.py   # Design optimization tools
+├── rocket_simulator.py  # Core simulation functionality
+├── calculate_reward.py  # Reward calculation utilities
+└── default_configs.py   # Default rocket configurations
+```
+
+## Available Motors
+
+The package includes several pre-configured motors:
+
+- Pro75M1670
+- AeroTechK700W
+- CesaroniM1670
+- AeroTechH128W
+- CesaroniO3700
+- CesaroniO5800
+- CesaroniK160
+
+## Dependencies
+
+- rocketpy
+- numpy
+- matplotlib
+- pandas
+- tabulate
 
 ## License
 
-This project is open source under the MIT License.
+MIT License
