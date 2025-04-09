@@ -1,0 +1,134 @@
+Below is a step-by-step explanation of how this revised design was conceived, focusing on hitting the target altitude more closely while controlling cost and ensuring structural integrity.
+
+────────────────────────────────────────────────────────
+1) Lessons From Previous Attempts
+────────────────────────────────────────────────────────
+• Attempt 1 used a smaller K-class motor and undershot the altitude.  
+• Attempt 2/3 used the Pro75M1670 motor, which nearly reached the target but had either structural issues (attempt 2) or a higher total cost (attempt 3).  
+• We will still use the Pro75M1670 motor (≈6024 Ns). We just need to refine the rocket dimensions and material choices to reduce cost and mass, yet keep it strong enough to avoid structural failures.
+
+────────────────────────────────────────────────────────
+2) Motor Choice
+────────────────────────────────────────────────────────
+• Retain the “Pro75M1670” from CTI. It offers enough impulse to approach 3048 m if the rocket is not overly heavy or draggy.
+
+────────────────────────────────────────────────────────
+3) Body Dimensions and Material
+────────────────────────────────────────────────────────
+• The motor radius is 0.075 m, so the rocket’s minimum internal radius must exceed 0.075 m.  
+• Choose 0.076 m radius to minimize frontal area (and hence drag), while still giving slight clearance for the motor.  
+• Body length of 1.3 m strikes a balance between keeping mass low and providing enough space for the parachute and payload.  
+• Material remains “fiberglass” for its good strength-to-weight ratio and moderate cost.  
+• Wall thickness 0.003 m (3 mm) is thicker than the minimal 2 mm used previously, which should help prevent structural failures under high thrust.
+
+────────────────────────────────────────────────────────
+4) Nose Cone
+────────────────────────────────────────────────────────
+• Shape: “ogive,” a common aerodynamic profile with decent supersonic performance and manageable manufacturing.  
+• Length: 0.3 m for a streamlined shape without adding excessive mass.  
+• Material: “fiberglass” to match the airframe.
+
+────────────────────────────────────────────────────────
+5) Fins
+────────────────────────────────────────────────────────
+• Three fins reduce weight and cost compared to four.  
+• Dimensions: a root chord of 0.14 m, tip chord 0.06 m, and a span of 0.1 m. This provides an adequate surface for stable flight near Mach speeds.  
+• Cant angle = 0°, which reduces build complexity, drag, and spin-induced stresses.  
+• Material: “plywood.” Although fiberglass or carbon fiber is stronger, plywood is cheaper while still being sufficiently robust for typical high-power flights.  
+• Thickness: 0.003 m (3 mm) to help withstand high loading.
+
+────────────────────────────────────────────────────────
+6) Tail Section
+────────────────────────────────────────────────────────
+• A short boat-tail can reduce base drag and give some structural protection around the motor.  
+• Length: 0.08 m.  
+• Top radius: 0.076 m to match the main body, and bottom radius: 0.065 m (must not be identical to avoid geometry errors).  
+• Material: “fiberglass.”
+
+────────────────────────────────────────────────────────
+7) Parachutes
+────────────────────────────────────────────────────────
+• Two-stage recovery system: a small drogue at apogee, then the main for a softer landing.  
+• Main parachute cd_s = 0.7: big enough to keep landing speed below ~5 m/s for a 4–5 kg total mass.  
+• Drogue cd_s = 0.05 for stable but relatively quick descent until main deployment.  
+• Both triggered at “apogee” for simplicity.
+
+────────────────────────────────────────────────────────
+8) Launch Configuration
+────────────────────────────────────────────────────────
+• 2.3 m rail helps ensure stable flight off the pad under the high thrust.  
+• Inclination: 90° so wind drift is minimized.  
+• Heading: 0° to keep the reference simple (“straight up” in many simulators).
+
+────────────────────────────────────────────────────────
+9) Payload
+────────────────────────────────────────────────────────
+• A nominal 0.2 kg payload near the upper half of the rocket (position = 0.65 m from center).  
+• This helps maintain a forward center of gravity for stable flight.
+
+────────────────────────────────────────────────────────
+Final Configuration Dictionary
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.076,        # Meters (> 0.075 m motor radius)
+        "length": 1.3,          # Main body length in meters
+        "material": "fiberglass",
+        "thickness": 0.003,     # 3 mm wall thickness
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.3,       # Nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.14,  # meters
+            "tip_chord": 0.06,   # meters
+            "span": 0.1,         # meters
+            "cant_angle": 0,     # degrees
+            "material": "plywood",
+            "thickness": 0.003,  # 3 mm fin thickness
+        },
+        "tail": {
+            "length": 0.08,      # meters
+            "top_radius": 0.076, # matches body radius
+            "bottom_radius": 0.065,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.7,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.05,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.3,  # meters
+        "inclination": 90,   # degrees
+        "heading": 0,        # degrees
+    },
+    "payload": {
+        "mass": 0.2,         # kg
+        "position": 0.65,    # meters from rocket center
+    }
+}
+```
+
+By slightly reducing the rocket’s diameter (thus lowering drag and mass), maintaining sufficient wall thickness (to avoid structural failure), and using plywood fins (cheaper than all-fiberglass fins), this design aims to approach the target 3048 m apogee more closely while keeping cost and landing speed within acceptable limits.

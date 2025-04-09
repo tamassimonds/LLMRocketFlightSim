@@ -1,0 +1,99 @@
+Below is the full reasoning for the design improvements we made and the resulting configuration.
+
+──────────────────────────────
+Reasoning:
+
+1. Objective – Reaching an apogee of 3048 m  
+  Our previous flights with the high‐impulse “CesaroniO5800” motor were falling short (≈1920 m) when extra mass and drag lowered the net altitude. To push the design closer to the 3048 m target we must both maximize the effective impulse and minimize unnecessary mass and drag. We accomplish this by trimming overall dimensions, reducing wall thickness and payload mass while still keeping the structure robust.
+
+2. Motor Selection  
+  We continue to use the “CesaroniO5800” motor because of its high total impulse (≈30382.7 Ns) and relatively low mass (≈12.4 kg). Its stated radius is 150 mm (0.15 m), so every other component must have dimensions slightly larger than that (and we will choose 0.17 m for the body radius).
+
+3. Rocket Body  
+  • We choose a body radius of 0.17 m—just enough above the motor radius for proper clearance, which minimizes frontal area (reducing drag).  
+  • The overall body length is reduced to 2.4 m (down from previous 2.8–3.0 m designs) so that the rocket is lean and lower in weight, yet still long enough to house the motor, recovery system and aerodynamic surfaces.  
+  • We keep the strong “composite” for the body for its proven strength/weight benefits while reducing wall thickness slightly to 0.007 m (from earlier 0.008–0.009 m) in order to lower mass and cost.
+
+4. Aerodynamics  
+  a. Nose Cone – We use an “ogive” nose cone with a 0.5 m length. A shorter but smooth ogive minimizes drag while still providing a gradual transition along the body. “fiberglass” is chosen because of its smooth finish and light weight.  
+  b. Fins – To trim weight and drag we opt for 3 fins rather than 4. Their dimensions are scaled down:
+  • Root chord: 0.18 m and tip chord: 0.09 m (for proper tapering), with a span of 0.25 m.  
+  • A very small cant angle of 0.5° helps with damping without adding extra side force.  
+  • “ABS_plastic” is chosen for fins: this material is cost‐effective and provides sufficient stiffness while keeping mass lower than heavier composites. The thickness is set to 0.004 m.
+  c. Tail – For additional stability a small fin‐like tail is used. With a 0.3 m length and radii of 0.03 m (top) and 0.05 m (bottom) the design meets the tolerances (radii not equal) while keeping extra drag low. “ABS_plastic” is again used here to be consistent with the lightweight fin design.
+
+5. Parachute Recovery System  
+  Safe recovery is critical. We slightly increase the effective drag area of the main parachute (cd_s = 0.45) to target a landing impact of less than 5 m/s. The drogue remains at cd_s = 0.3 to provide an early drag boost. Both are set to trigger at apogee (sampling_rate = 105 Hz, lag = 1.5 s, noise = (0, 8.3, 0.5)).
+
+6. Launch Rail and Wind Mitigation  
+  The wind is 5 m/s coming from the east. To help the rocket ride out crosswind effects before free flight, we choose a slightly longer rail (4.0 m). An inclination of 90° (vertical launch) paired with a rail heading of 90° (east) is chosen as a countermeasure against the wind’s push which tends to shift the flight path laterally.
+
+7. Payload  
+  Finally, we reduce the payload mass to 0.2 kg (down from 0.3–0.5 kg in previous attempts) and place it at 0.4 m from the center. This decreases overall mass, improving the mass ratio and thus helping to achieve a higher apogee.
+
+──────────────────────────────
+Final configuration in Python dictionary format:
+
+------------------------------------------------
+
+config = {
+    "motor_choice": "CesaroniO5800",  # High impulse motor for reaching high apogee
+    "rocket_body": {
+        "radius": 0.17,               # in meters; must be > motor radius (0.15 m)
+        "length": 2.4,                # overall body length is trimmed to reduce mass and drag
+        "material": "composite",      # provides a high strength-to-weight ratio
+        "thickness": 0.007,           # slightly reduced wall thickness to save weight and cost
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",          # low-drag, streamlined shape
+            "length": 0.5,            # shorter nose cone reduces drag while ensuring smooth flow
+            "material": "fiberglass", # light with a smooth finish
+        },
+        "fins": {
+            "number": 3,              # three fins reduce weight and drag compared to four
+            "root_chord": 0.18,       # provides adequate lift at the base of the fin
+            "tip_chord": 0.09,        # tapers to minimize drag
+            "span": 0.25,             # fin span chosen for adequate control authority
+            "cant_angle": 0.5,        # very slight cant to help damp yaw oscillations
+            "material": "ABS_plastic",# cost-effective and lightweight
+            "thickness": 0.004,       # fin thickness in meters
+        },
+        "tail": {
+            "length": 0.3,            # tail length for additional stability
+            "top_radius": 0.03,         # top radius in meters (different from bottom)
+            "bottom_radius": 0.05,      # bottom radius in meters to satisfy design checks
+            "material": "ABS_plastic",  # selected to be lightweight and cost-effective
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.45,             # larger area for stronger deceleration
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,              # drogue chute for early drag
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 4.0,           # increased rail length to help counteract crosswinds
+        "inclination": 90,            # vertical launch (90°)
+        "heading": 90,                # rail heading set to 90° to help offset an east wind
+    },
+    "payload": { 
+        "mass": 0.2,                # reduced payload mass to improve the mass ratio
+        "position": 0.4,            # payload positioned closer to the center for better stability
+    },
+}
+
+──────────────────────────────
+This design reduces overall mass and drag (by trimming fuselage length and wall thickness, and lowering payload weight) while keeping the aerodynamic surfaces effective and ensuring robust recovery. The improved configuration should help push the apogee closer to 3048 m while still meeting cost and safety requirements.

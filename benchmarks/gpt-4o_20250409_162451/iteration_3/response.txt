@@ -1,0 +1,107 @@
+To improve upon the previous attempts, we need to address the structural integrity failure and reduce the cost while maintaining a close proximity to the target apogee. Let's go through the design process step by step, adjusting the previous setup to enhance performance while minimizing expenses.
+
+### Key Adjustments Needed:
+1. **Improve Structural Integrity**: Ensure the rocket handles stress without failure.
+2. **Reduce Overall Cost**: Choose more cost-effective materials.
+3. **Maintain Apogee Proximity**: Choose a balanced motor while considering the impulse needed.
+
+### Design Adjustments:
+
+#### Step 1: Motor Selection
+- Motor performance is crucial for reaching the target apogee but must avoid excess weight and maintain cost limits.
+- **New Motor**: Continue with the **CesaroniM1670**, providing a moderate balance between thrust and cost.
+  
+#### Step 2: Rocket Body Design
+- **Radius and Length**: Maintain a radius of 0.1 meters and length of 2.8 meters to accommodate the motor, yet optimize for cost by reducing weight.
+- **Material**: Switch to **aluminum** for the rocket body, which balances cost and structural strength at the expense of a slight increase in mass.
+- **Thickness**: Set at 0.004 meters to ensure the structural integrity required for flight.
+
+#### Step 3: Nose Cone Design
+- **Kind**: Use a **tangent** shape for better aerodynamics.
+- **Length and Material**: Use a length of 0.35 meters and **fiberglass** to maintain both durability and cost-effectiveness.
+
+#### Step 4: Fin Design
+- **Material**: Use **plywood** which is more economical than carbon fiber or balsa wood, especially for fins, where weight savings are secondary to cost.
+- **Number and Dimensions**: Use 3 fins to reduce material cost, with dimensions adjusted for efficiency:
+  - **Root Chord**: 0.22 meters
+  - **Tip Chord**: 0.1 meters
+  - **Span**: 0.3 meters
+  - **Cant Angle**: 2 degrees for stability and minimal roll.
+  - **Thickness**: 0.004 meters.
+
+#### Step 5: Tail Design
+- **Material**: Continue with **fiberglass** for cost and weight efficiency.
+- Adjust **length** to 0.15 meters, with a **top radius** of 0.06 meters and **bottom radius** of 0.07 meters.
+
+#### Step 6: Parachute Design
+- **Main cd_s**: Optimize to 0.4 for adequate descent speed.
+- **Drogue cd_s**: Optimize to 0.2 for initial descent stability.
+
+#### Step 7: Launch Rail Configuration
+- Maintain **rail length** at 6 meters, **inclination** at 87 degrees for slightly off-vertical launch, and **heading** at 270 degrees to compensate for easterly wind drift.
+
+Here's the updated configuration:
+
+```python
+config = {
+    "motor_choice": "CesaroniM1670",
+    "rocket_body": {
+        "radius": 0.1,  # Body radius in meters
+        "length": 2.8,   # Body length in meters
+        "material": "aluminum",
+        "thickness": 0.004,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "tangent",
+            "length": 0.35,  # Nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.22,  # Fin root chord in meters
+            "tip_chord": 0.1,  # Fin tip chord in meters
+            "span": 0.3,         # Fin span in meters
+            "cant_angle": 2,   # Cant angle in degrees
+            "material": "plywood",
+            "thickness": 0.004,   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.15,  # Tail length in meters
+            "top_radius": 0.06,  # Top radius in meters
+            "bottom_radius": 0.07,  # Bottom radius in meters
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.4,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 6,  # Length of the launch rail in meters
+        "inclination": 87,   # Rail inclination in degrees
+        "heading": 270,      # Launch heading in degrees
+    },
+    "payload": {
+        "mass": 0.5,  # Payload mass in kg
+        "position": 1.4  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+### Summary
+This configuration aims to hit the target apogee with tighter cost management and enhanced structural integrity. Adjustments include using aluminum for the rocket body, which offers an improved strength-to-cost ratio and optimizing other dimensions and materials to meet the mission criteria effectively.

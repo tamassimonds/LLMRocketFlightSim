@@ -1,0 +1,133 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Analysis of Previous Attempts
+
+Analyzing the four previous attempts reveals important insights:
+
+1. **First attempt**: AeroTechK700W motor - Failed structurally, reached only 2194.76m (27.99% error)
+2. **Second attempt**: Pro75M1670 with carbon fiber - Passed structural tests, reached 2672.04m (12.33% error), expensive ($857.43)
+3. **Third attempt**: Pro75M1670 with fiberglass/plywood - Passed structural tests, reached 2801.12m (8.10% error), lower cost ($602.32)
+4. **Fourth attempt**: Pro75M1670 with thinner walls and balsa wood fins - Failed structurally, reached 2852.72m (6.41% error)
+
+The key lesson is that we need to balance structural integrity with performance. The third attempt was structurally sound but undershot the apogee, while the fourth attempt got closer to the target but failed structurally due to material thinning.
+
+## Refined Design Strategy
+
+I'll use the Pro75M1670 motor which has proven to be appropriate for our target apogee, but make these critical adjustments:
+
+1. **Maintain structural integrity**: Return to the material thicknesses that passed structural tests
+2. **Increase altitude slightly**: Make targeted aerodynamic improvements
+3. **Optimize for cost**: Use cost-effective materials that still provide adequate strength
+
+## Material and Thickness Selection
+
+- **Body**: Fiberglass with 0.003m thickness (proven to be structurally sound in attempt #3)
+- **Nose cone**: Fiberglass (good strength-to-weight ratio)
+- **Fins**: Plywood (balsa wood failed structurally in attempt #4)
+- **Tail**: Fiberglass (consistent with body)
+
+## Aerodynamic Optimizations
+
+To increase altitude without compromising structural integrity:
+- **Nose cone**: Longer, more aerodynamic shape (0.26m)
+- **Body radius**: Slightly reduced to 0.079m (still provides clearance for motor)
+- **Fin design**: Optimized for stability with minimal drag
+- **Launch angle**: Adjusted to 85° to compensate for wind and maximize vertical component
+
+## Recovery System Calculation
+
+For a safe landing speed (<5 m/s) with estimated mass of 2.9 kg:
+```
+Terminal velocity = sqrt(2*m*g/(ρ*Cd*A))
+5 m/s = sqrt(2*2.9*9.81/(1.225*0.8*A))
+A = 2*2.9*9.81/(1.225*0.8*5²) ≈ 1.16 m²
+```
+
+So Cd*A (cd_s) should be approximately 0.93 for the main parachute.
+
+## Final Optimized Design
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.079,  # Body radius in meters
+        "length": 0.83,  # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.003,  # Wall thickness in meters (proven structurally sound)
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.26,  # Longer nose cone for better aerodynamics
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.13,  # Fin root chord in meters
+            "tip_chord": 0.065,  # Fin tip chord in meters
+            "span": 0.10,        # Fin span in meters
+            "cant_angle": 0,     # Cant angle in degrees
+            "material": "plywood",  # Returned to plywood for structural integrity
+            "thickness": 0.004   # Increased thickness for structural integrity
+        },
+        "tail": {
+            "length": 0.15,  # Tail length in meters
+            "top_radius": 0.077,  # Top radius in meters
+            "bottom_radius": 0.079,  # Bottom radius in meters
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.93,  # Main parachute CD_s for ~5 m/s landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.16,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.2,  # Length of the launch rail in meters
+        "inclination": 85,   # Rail inclination in degrees (adjusted for wind)
+        "heading": 270,      # Launch heading in degrees (opposite to easterly wind)
+    },
+    "payload": {
+        "mass": 0.22,  # Payload mass in kg (slightly increased from attempt #4)
+        "position": 0.2  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This design carefully balances the lessons learned from all previous attempts:
+
+1. **Structural Integrity**: 
+   - Returned to the 0.003m body wall thickness that passed structural tests
+   - Used plywood instead of balsa wood for fins
+   - Increased fin thickness to 0.004m
+
+2. **Altitude Optimization**:
+   - Longer, more aerodynamic nose cone (0.26m)
+   - Slightly reduced body radius while maintaining structural integrity
+   - Optimized fin design for stability with minimal drag
+   - Adjusted launch angle to maximize vertical component
+
+3. **Cost Efficiency**:
+   - Maintained use of fiberglass instead of more expensive carbon fiber
+   - Used plywood for fins (good balance of strength and cost)
+   - Kept overall dimensions modest
+
+4. **Recovery System**:
+   - Properly sized parachute for safe landing under 5 m/s
+   - Balanced drogue size for initial descent control
+
+This design represents a careful refinement based on empirical data from previous attempts, focusing on the critical balance between structural integrity, performance, and cost efficiency to maximize the overall score.

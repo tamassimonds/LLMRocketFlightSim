@@ -1,0 +1,132 @@
+Below is a step-by-step rationale for a new design aimed at pushing the rocket closer to the target apogee of 3048 m while controlling cost and keeping the landing safe. Following that, you will find the final configuration dictionary.
+
+────────────────────────────────────────────────────────
+1) Observations from Previous Flight
+────────────────────────────────────────────────────────
+• The previous rocket used an AeroTechK700W motor (≈2249 Ns total impulse) and reached ≈2057 m.  
+• To get closer to ≈3048 m, we need more total impulse or a lighter design (ideally both).  
+
+────────────────────────────────────────────────────────
+2) Motor Selection
+────────────────────────────────────────────────────────
+• The Pro75M1670 from CTI has ~6024 Ns total impulse—nearly triple the impulse of the K700W—yet its dry mass is 1.815 kg (lighter than the Cesaroni M1670 at 3.101 kg).  
+• This extra thrust (especially with moderate rocket mass) should help reach or slightly exceed the 3048 m target.  
+
+────────────────────────────────────────────────────────
+3) Body Dimensions & Material
+────────────────────────────────────────────────────────
+• The motor radius is 0.075 m, so the rocket body must exceed that. We choose 0.08 m.  
+• Body length of 1.2 m is enough to house a parachute system and payload without becoming too large in mass/drag.  
+• Material: “fiberglass” as a balance between cost, strength, and weight (lighter than some metals, cheaper than carbon fiber).  
+• Thickness of 0.002 m (2 mm) to keep mass low yet maintain structural integrity for an M-class motor flight.
+
+────────────────────────────────────────────────────────
+4) Nose Cone
+────────────────────────────────────────────────────────
+• Length: 0.3 m for good aerodynamic shape and stable flight.  
+• Shape: “ogive,” commonly used in high-power model rocketry for a decent trade-off between drag and manufacturing complexity.  
+• Material: “fiberglass” to match the body tube.
+
+────────────────────────────────────────────────────────
+5) Fins
+────────────────────────────────────────────────────────
+• Three fins reduce mass and cost (extra fins add weight and complexity).  
+• Root chord: 0.15 m, tip chord: 0.07 m, span: 0.12 m. A moderate taper that provides stable flight without excessive surface area.  
+• Cant angle: 0° to reduce spin and keep it simpler.  
+• Material: “plywood,” which is cheaper than carbon fiber and generally robust enough for high-power flights.  
+• Thickness: 0.002 m (2 mm), reasonable for typical plywood fins at this size and thrust level.
+
+────────────────────────────────────────────────────────
+6) Tail Section
+────────────────────────────────────────────────────────
+• A short tail can improve aerodynamics around the aft end and provide a transition to the motor.  
+• Length: 0.1 m, matching the rocket’s narrower profile near the rear.  
+• Top radius: 0.08 m, bottom radius: 0.07 m to avoid having them identical (which can cause a geometry error).  
+• Material: “fiberglass.”
+
+────────────────────────────────────────────────────────
+7) Parachutes
+────────────────────────────────────────────────────────
+• Two chutes for better recovery (drogue + main).  
+• Main parachute “cd_s” = 0.8, sized to bring a roughly 4–5 kg rocket (including motor) down below ~5 m/s.  
+• Drogue parachute “cd_s” = 0.05, a small chute to stabilize descent but not slow it too much until the main deploys.  
+• Both set to trigger at apogee for simplicity.
+
+────────────────────────────────────────────────────────
+8) Launch Configuration
+────────────────────────────────────────────────────────
+• Rail length: 2.5 m to ensure a stable exit from the rail under higher thrust.  
+• Inclination: 90° (vertical) to minimize horizontal drift in moderate wind.  
+• Heading: 0°.
+
+────────────────────────────────────────────────────────
+9) Payload
+────────────────────────────────────────────────────────
+• Payload mass: 0.2 kg placed at +0.6 m from the rocket center.  
+• This helps position the CG forward for stable flight without adding too much weight.
+
+────────────────────────────────────────────────────────
+Final Configuration Dictionary
+────────────────────────────────────────────────────────
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.08,           # meters (> 0.075m motor radius)
+        "length": 1.2,            # meters
+        "material": "fiberglass",
+        "thickness": 0.002,       # 2 mm wall thickness
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.3,         # nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.15,    # meters
+            "tip_chord": 0.07,     # meters
+            "span": 0.12,          # meters
+            "cant_angle": 0,       # degrees
+            "material": "plywood",
+            "thickness": 0.002,    # 2 mm fin thickness
+        },
+        "tail": {
+            "length": 0.1,         # meters
+            "top_radius": 0.08,    # matches body radius
+            "bottom_radius": 0.07, # slightly smaller
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.8,            # Main parachute Cd * area
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.05,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.5,  # meters
+        "inclination": 90,   # vertical
+        "heading": 0,        # heading
+    },
+    "payload": {
+        "mass": 0.2,         # kg
+        "position": 0.6,     # meters from rocket center
+    }
+}
+```
+
+By switching to a more powerful (but relatively light) M-class motor and reducing overall rocket mass (slimmer body tube, thinner walls, moderate fin dimensions), this design aims to reach nearer the 3048 m target while still keeping cost and complexity in check.

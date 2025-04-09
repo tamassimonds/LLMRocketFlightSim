@@ -1,0 +1,101 @@
+Based on the previous attempt's performance (2773.64m apogee vs 3048m target), we need to make adjustments to better reach the target altitude while maintaining safety and cost efficiency. Here's the improved design rationale:
+
+### Analysis of Previous Attempt
+1. **Underperformance**: The rocket fell short by ~275m (9%), indicating we need more impulse or better efficiency
+2. **Motor Selection**: Pro75M1670 provided 6023.6 Ns - slightly insufficient
+3. **Structural Success**: No failures, so we can optimize mass further
+4. **Cost**: $743 is reasonable but could be optimized
+
+### Key Improvements
+1. **Motor Upgrade**: Switch to CesaroniO3700 (29,930 Ns impulse) - this is significantly more powerful but we'll need to adjust other parameters to control altitude
+2. **Mass Reduction**: Use lighter materials where possible
+3. **Aerodynamic Optimization**: Adjust fin size and nose shape for better efficiency
+4. **Parachute Adjustment**: Ensure safe landing with higher velocity descent
+
+### Detailed Calculations
+1. **Impulse Requirement**:
+   - Previous 6023.6 Ns → 2773m
+   - For 3048m, we need ~15% more impulse → ~7000 Ns
+   - CesaroniO3700 provides 29,930 Ns (will need to limit burn time)
+
+2. **Mass Estimation**:
+   - Dry motor mass: 14.194kg (heavier)
+   - Target total mass: ~18kg (motor + structure + payload)
+   - Thrust-to-weight: 4030N/(18kg*9.81) ≈ 23 (still acceptable)
+
+3. **Altitude Control**:
+   - Will use shorter burn time to limit total impulse
+   - Larger rocket body to increase drag and limit altitude
+
+### Final Improved Design
+
+```python
+config = {
+    "motor_choice": "CesaroniO3700",
+    "rocket_body": {
+        "radius": 0.17,  # Increased to match motor diameter (161mm)
+        "length": 2.0,    # Longer body for stability
+        "material": "fiberglass",  # Cost-effective strength
+        "thickness": 0.006,  # Slightly thicker for larger diameter
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",  # More efficient shape
+            "length": 0.5,  # Longer for better aerodynamics
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.2,
+            "tip_chord": 0.1,
+            "span": 0.25,  # Slightly smaller span for less drag
+            "cant_angle": 0.5,
+            "material": "carbon_fiber",
+            "thickness": 0.004,  # Thinner to save weight
+        },
+        "tail": {
+            "length": 0.3,
+            "top_radius": 0.16,
+            "bottom_radius": 0.17,  # Must differ
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.3,  # Larger for safer landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.15,  # Smaller to limit drift
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.5,  # Longer rail for stability
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 1.0,  # Increased payload capacity
+        "position": 1.0  # Adjusted position
+    }
+}
+```
+
+### Key Improvements Summary:
+1. **Motor**: Upgraded to CesaroniO3700 for sufficient impulse (with controlled burn)
+2. **Structure**: Larger diameter to match motor, optimized materials
+3. **Aerodynamics**: Von Karman nose for better efficiency, adjusted fin sizing
+4. **Mass**: Careful balance between strength and weight
+5. **Recovery**: Adjusted parachute sizes for optimal descent
+6. **Cost**: Maintained reasonable cost through material selection
+
+This design should better achieve the target apogee while maintaining all safety and structural requirements. The larger motor with controlled burn characteristics will provide the necessary impulse, while aerodynamic optimizations will help reach the target altitude more precisely.

@@ -1,0 +1,60 @@
+```python
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.165,  # Slightly larger than motor radius (0.161 m)
+        "length": 1.5,
+        "material": "carbon_fiber",
+        "thickness": 0.005,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",  # Optimized for low drag
+            "length": 0.5,
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.3,
+            "tip_chord": 0.15,
+            "span": 0.2,
+            "cant_angle": 0.5,  # Minimal cant for stability
+            "material": "carbon_fiber",
+            "thickness": 0.005,
+        },
+        "tail": {
+            "length": 0.3,
+            "top_radius": 0.164,  # Ensure top < bottom radius
+            "bottom_radius": 0.165,
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.5,  # Larger area for safe landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,  # Stabilize descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 5.0,  # Long rail for stability
+        "inclination": 90,  # Vertical launch
+        "heading": 0,  # No horizontal bias
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 0.75,  # Mid-body position
+    }
+}
+```

@@ -1,0 +1,113 @@
+Based on the insights and feedback from previous attempts, it's clear that achieving a balance between thrust, weight, aerodynamic efficiency, and cost is crucial in reaching the target apogee of 3,048 meters. Let's refine the design with a focus on optimizing these factors:
+
+### Design Improvements
+
+#### Motor Selection:
+- **Motor**: Based on feedback and previous performance, we need a motor with adequate thrust and impulse. The **Pro75M1670** was successful in terms of structural integrity and cost but lacked altitude. Let's give it another chance but optimize the rest of the design to better match the motor's thrust profile.
+
+#### Rocket Body:
+- **Radius**: Optimize to 0.09 m to snugly fit the Pro75M1670 motor while reducing drag.
+- **Length**: Increase to 1.9 m to improve stability and balance.
+- **Material**: Use **composite** for a better strength-to-weight ratio.
+- **Thickness**: 0.008 m to reduce weight while maintaining structural integrity.
+
+#### Aerodynamics:
+- **Nose Cone**:
+  - **Kind**: **von karman** for minimized drag at high speeds.
+  - **Length**: 0.48 m to optimize the aerodynamic profile.
+  - **Material**: **composite**.
+- **Fins**:
+  - **Number**: 4 to ensure stability.
+  - **Root Chord**: 0.2 m for better control surfaces.
+  - **Tip Chord**: 0.1 m for efficient taper.
+  - **Span**: 0.22 m for optimal aerodynamics.
+  - **Cant Angle**: 0 degrees to maintain straight flight.
+  - **Material**: **carbon_fiber** for light weight and strength.
+  - **Thickness**: 0.004 m
+- **Tail**:
+  - **Length**: 0.18 m.
+  - **Top Radius**: 0.08 m.
+  - **Bottom Radius**: 0.09 m.
+  - **Material**: **composite**.
+
+#### Parachutes:
+- **Main**:
+  - **cd_s**: 0.85 for controlled descent.
+- **Drogue**:
+  - **cd_s**: 0.3 for initial stabilization.
+
+#### Launch Rail:
+- **Rail Length**: 5.5 m to provide a stable launch path.
+- **Inclination**: 90 degrees to maximize altitude.
+- **Heading**: 0 degrees for minimal lateral drift.
+
+#### Payload:
+- **Mass**: 0.4 kg, centering to improve balance.
+- **Position**: 1.1 m to optimize the center of gravity.
+
+### New Configuration:
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.09,
+        "length": 1.9,
+        "material": "composite",
+        "thickness": 0.008,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.48,
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.2,
+            "tip_chord": 0.1,
+            "span": 0.22,
+            "cant_angle": 0,
+            "material": "carbon_fiber",
+            "thickness": 0.004,
+        },
+        "tail": {
+            "length": 0.18,
+            "top_radius": 0.08,
+            "bottom_radius": 0.09,
+            "material": "composite",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.85,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 5.5,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.4,
+        "position": 1.1,
+    }
+}
+```
+
+### Expected Outcome:
+
+This proposed configuration aims to achieve the target apogee of 3,048 meters by balancing thrust, weight, and aerodynamic efficiency. Adjustments to the rocket's body, fins, and parachutes should provide better altitude performance while maintaining structural integrity and cost efficiency.

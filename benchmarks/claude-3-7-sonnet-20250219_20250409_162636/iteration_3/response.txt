@@ -1,0 +1,135 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+I'll approach this design systematically, learning from the previous attempts. The first attempt with AeroTechK700W reached only 2221.74m (27.11% short), while the second attempt with Pro75M1670 reached 2512.16m (17.58% short) but had structural failure issues due to the balsa wood construction.
+
+## Motor Selection Analysis
+
+Looking at the previous attempts and available motors:
+
+| Motor | Total Impulse (Ns) | Avg Thrust (N) | Mass (kg) | Radius (mm) |
+|-------|-------------------|----------------|-----------|-------------|
+| Pro75M1670 | 6023.6 | 1533.9 | 1.815 | 75 |
+| AeroTechK700W | 2249 | 658.7 | 0.732 | 54 |
+| CesaroniM1670 | 6023.6 | 1533.9 | 3.101 | 75 |
+| AeroTechH128W | 176.5 | 141.2 | 0.108 | 29 |
+| CesaroniO3700 | 29930.2 | 2836.9 | 14.194 | 161 |
+| CesaroniO5800 | 30382.7 | 5040.2 | 12.418 | 150 |
+| CesaroniK160 | 1521.7 | 190.2 | 0.7 | 54 |
+
+The Pro75M1670 got us closer but still fell short. We need more impulse, but the larger motors (O-class) would likely overshoot our target significantly. The CesaroniM1670 has the same impulse as Pro75M1670 but is heavier, which would reduce our apogee. Let's try using the Pro75M1670 again but with a more optimized design.
+
+## Structural Considerations
+
+The second attempt failed structurally with balsa wood. We need stronger materials while keeping weight reasonable:
+- Fiberglass offers good strength-to-weight ratio at moderate cost
+- Carbon fiber is strongest but most expensive
+- Plywood is stronger than balsa but still relatively lightweight
+
+## Body Design Optimization
+
+- Body radius: 0.08m (slightly larger than the 75mm motor)
+- Material: Fiberglass for structural integrity
+- Length: Optimized to balance stability and weight
+
+## Aerodynamics
+
+- Nose cone: Ogive shape for good aerodynamic performance
+- Fins: 4 fins for better stability with fiberglass construction
+- Reduced fin size to minimize drag while maintaining stability
+
+## Parachute System
+
+For a safe landing (<5 m/s):
+- For a ~3kg rocket: v = sqrt(2mg/ρACd)
+- Need cd_s ≈ 1.5-2.0 m²
+
+## Launch Configuration
+
+- Inclination: 89° (nearly vertical for maximum altitude)
+- Heading: 270° (West) to counteract the 5 m/s easterly wind
+
+## Weight Reduction Strategy
+
+To reach our target altitude with the Pro75M1670 motor:
+1. Use thinner walls where possible
+2. Optimize component dimensions
+3. Reduce payload mass slightly
+
+## Final Design
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.08,  # 80mm body radius (> 75mm motor radius)
+        "length": 0.8,   # 80cm body length
+        "material": "fiberglass",
+        "thickness": 0.0025,  # 2.5mm wall thickness
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.22,  # 22cm nose cone
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.12,  # 12cm root chord
+            "tip_chord": 0.06,   # 6cm tip chord
+            "span": 0.08,        # 8cm span
+            "cant_angle": 0,     # No cant angle
+            "material": "fiberglass",
+            "thickness": 0.003   # 3mm thickness
+        },
+        "tail": {
+            "length": 0.1,       # 10cm tail length
+            "top_radius": 0.075, # Slightly less than body radius
+            "bottom_radius": 0.08, # Same as body radius
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.6,  # Sized for <5 m/s landing velocity
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,  # Small drogue for stability
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.2,  # 1.2m launch rail
+        "inclination": 89,   # Nearly vertical for maximum altitude
+        "heading": 270,      # Launch toward west to counter east wind
+    },
+    "payload": {
+        "mass": 0.2,  # 200g payload
+        "position": 0.25  # Positioned toward the nose
+    }
+}
+```
+
+This design addresses the issues from previous attempts:
+
+1. **Structural Integrity**: Using fiberglass instead of balsa wood for all components ensures the rocket won't fail structurally during flight.
+
+2. **Weight Optimization**: Reduced wall thickness, component dimensions, and payload mass to improve altitude performance with the Pro75M1670 motor.
+
+3. **Aerodynamic Efficiency**: Streamlined design with optimized fin configuration for stability with minimal drag.
+
+4. **Launch Configuration**: Nearly vertical launch (89°) to maximize altitude potential while still accounting for wind.
+
+5. **Cost Consideration**: Fiberglass offers a good balance between strength and cost compared to carbon fiber.
+
+6. **Safe Landing**: Parachute sized appropriately for a safe landing velocity under 5 m/s.
+
+The Pro75M1670 motor with this optimized, lightweight fiberglass construction should provide sufficient impulse to reach our target altitude of 3048m while maintaining structural integrity throughout the flight.

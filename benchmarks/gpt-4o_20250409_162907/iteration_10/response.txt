@@ -1,0 +1,135 @@
+To further improve the rocket design based on previous attempts, the goal is to reduce the error in reaching the target apogee of 3048 meters while maintaining low cost, ensuring structural integrity, and achieving safe landing conditions. The following adjustments will focus on optimizing mass distribution, aerodynamic properties, and overall design efficiency.
+
+### Design Strategy
+
+1. **Motor Selection:**
+   - Stick with the **AeroTech K700W** motor as it provides a good balance between performance and cost and has shown potential in previous designs.
+
+2. **Material Selection:**
+   - Continue using lightweight, robust, and cost-effective materials but optimize thickness and dimensions to further reduce weight.
+
+3. **Aerodynamics:**
+   - Fine-tune nose cone and fin designs to further reduce drag and improve stability.
+
+4. **Weight Management:**
+   - Re-assess and adjust the payload and structural masses to optimize the thrust-to-weight ratio.
+
+5. **Parachute System:**
+   - Adjust parachute parameters for optimum descent.
+
+### Improved Design
+
+#### Motor:
+- **Motor:** AeroTech K700W
+- **Specific Impulse:** 177.5 s
+
+#### Rocket Configuration:
+
+#### Rocket Body:
+- **Radius:** 0.07 m
+- **Length:** 1.6 m
+- **Material:** Fiberglass (still best choice for balancing weight and strength)
+- **Thickness:** 0.0035 m
+
+#### Nose Cone:
+- **Kind:** Von Karman (maintaining low drag profile)
+- **Length:** 0.32 m
+- **Material:** Carbon Fiber (provides low drag and excellent strength-to-weight ratio)
+
+#### Fins:
+- **Number:** 3 
+- **Root Chord:** 0.11 m 
+- **Tip Chord:** 0.055 m 
+- **Span:** 0.22 m 
+- **Cant Angle:** 0° 
+- **Material:** Balsa Wood (lightweight)
+- **Thickness:** 0.003 m
+
+#### Tail:
+- **Length:** 0.12 m 
+- **Top Radius:** 0.07 m 
+- **Bottom Radius:** 0.06 m 
+- **Material:** Fiberglass
+
+#### Parachutes:
+- **Main CD_s:** 0.9 
+- **Drogue CD_s:** 0.25 
+- **Trigger:** Apogee 
+- **Sampling Rate:** 105 
+- **Lag:** 1.5 s
+- **Noise:** (0, 8.3, 0.5)
+
+#### Launch and Payload:
+- **Rail Length:** 2.2 m 
+- **Inclination:** 90° 
+- **Heading:** 0° 
+- **Payload:** 
+  - Mass: 0.68 kg
+  - Position: 0.8 m
+
+### Final Rocket Design Proposal
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.07,
+        "length": 1.6,
+        "material": "fiberglass",
+        "thickness": 0.0035,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.32,
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.11,
+            "tip_chord": 0.055,
+            "span": 0.22,
+            "cant_angle": 0,
+            "material": "balsa_wood",
+            "thickness": 0.003,
+        },
+        "tail": {
+            "length": 0.12,
+            "top_radius": 0.07,
+            "bottom_radius": 0.06,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.9,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.25,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.2,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.68,
+        "position": 0.8,
+    }
+}
+```
+
+### Expectations
+
+By maintaining a consistent motor choice and refining the design components, this revised configuration should provide better alignment with the target apogee while managing cost efficiency and preserving structural integrity. Material choices emphasize strength-to-weight ratios, and chute designs aim for improved landing safety.

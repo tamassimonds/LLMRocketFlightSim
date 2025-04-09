@@ -1,0 +1,158 @@
+### Design Rationale
+
+To improve the rocket design and maximize the score, we'll make adjustments based on the results and feedback from the previous attempt. We aim to enhance the launch height while still considering cost efficiency and safety, especially focusing on propulsion, aerodynamics, and weight distribution.
+
+### Key Design Considerations
+
+1. **Motor Selection:**
+   - The previous motor selection (Cesaroni K160) was insufficient for reaching the target apogee. We need a more powerful motor but with a reasonable increase in cost. The **AeroTech K700W** motor provides a total impulse of 2249 Ns, which should be adequate to achieve a significant altitude boost while being lightweight.
+
+2. **Mass and Structural Adjustments:**
+   - Reduce body radius slightly and use lightweight materials where possible to reduce overall mass without compromising structural integrity. This should allow the selected motor to deliver better performance.
+
+3. **Aerodynamics:**
+   - Optimize aerodynamic efficiency through long and streamlined components to reduce drag, improving altitude potential.
+
+### Step-by-Step Design and Calculations
+
+#### Motor Choice:
+- **Motor:** AeroTech K700W
+- **Total Impulse:** 2249 Ns
+- **Specific Impulse:** 177.5 s (provides a balance of thrust and duration)
+
+Estimated apogee calculation using the selected motor and updated assumptions:
+
+Using the apogee formula:
+
+\[
+\text{Apogee height} = \frac{T_{\text{impulse}}}{m g} \times v_{\text{exit}}
+\]
+
+Assuming the total rocket mass \(m =\) motor dry mass + rocket + payload = 0.732 kg + 2 kg = 2.732 kg.
+
+\[ 
+v_{\text{exit}} = I_{\text{sp}} \times g = 177.5 \times 9.81 = 1742.1825 \text{ m/s}
+\]
+
+\[
+\text{Apogee estimate} = \frac{2249}{2.732 \times 9.81} \times 1742.1825 \approx 3297 \text{ m}
+\]
+
+This estimate suggests achieving the target apogee is feasible with this motor choice when accounting for reduced structural and aerodynamic losses.
+
+#### Body:
+
+- **Radius:** 0.06 m (narrowed for less drag)
+- **Length:** 1.6 m (ample space for all components)
+- **Material:** Fiberglass (light yet strong)
+- **Thickness:** 0.004 m (sufficient support)
+
+#### Nose Cone:
+
+- **Kind:** Von Karman (minimizes drag across subsonic to transonic speeds)
+- **Length:** 0.4 m
+- **Material:** Carbon Fiber (lightweight, reduces drag)
+
+#### Fins:
+
+- **Number:** 3 (reduced drag)
+- **Root Chord:** 0.1 m
+- **Tip Chord:** 0.05 m
+- **Span:** 0.2 m
+- **Cant Angle:** 1°
+- **Material:** Carbon Fiber (light, strong)
+- **Thickness:** 0.003 m
+
+#### Tail:
+
+- **Length:** 0.15 m
+- **Top Radius:** 0.06 m
+- **Bottom Radius:** 0.05 m
+- **Material:** Fiberglass
+
+#### Parachute System:
+
+- **Main Parachute:**
+  - CD_s: 0.8
+- **Drogue Parachute:**
+  - CD_s: 0.2
+- **Trigger:** Apogee for both
+- **Sampling Rate:** 105
+- **Lag:** 1.5
+- **Noise:** (0, 8.3, 0.5)
+
+#### Launch Configuration:
+
+- **Rail Length:** 2.0 m (stability upon launch)
+- **Inclination:** 90° (to maximize height)
+- **Heading:** 0° (straight up for minimal horizontal drift)
+
+#### Payload:
+
+- **Mass:** 0.5 kg
+- **Position:** 0.8 m (situated for balanced center of gravity)
+
+### Final Rocket Design
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.06,  # Body radius in meters
+        "length": 1.6,   # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.004,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.4,  # Nose cone length in meters
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.1,  # Fin root chord in meters
+            "tip_chord": 0.05,  # Fin tip chord in meters
+            "span": 0.2,        # Fin span in meters
+            "cant_angle": 1.0,  # Cant angle in degrees
+            "material": "carbon_fiber",
+            "thickness": 0.003,  # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.15,  # Tail length in meters
+            "top_radius": 0.06,  # Top radius in meters
+            "bottom_radius": 0.05,  # Bottom radius in meters
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.8,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,   # Length of the launch rail in meters
+        "inclination": 90,    # Rail inclination in degrees (vertical)
+        "heading": 0,         # Launch heading in degrees (straight up)
+    },
+    "payload": {
+        "mass": 0.5,  # Payload mass in kg
+        "position": 0.8,  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This revised design prioritizes aerodynamics and thrust-to-weight ratio improvements, with careful material selection to reduce weight and enhance performance while considering cost efficiency and structural integrity. With the chosen configurations and components, this design should better meet the target apogee and safely land the rocket.

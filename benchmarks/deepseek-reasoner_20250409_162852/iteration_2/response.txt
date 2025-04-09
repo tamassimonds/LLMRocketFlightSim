@@ -1,0 +1,85 @@
+```python
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.155,  # 155mm > motor radius (150mm)
+        "length": 1.5,
+        "material": "aluminum",
+        "thickness": 0.003,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.45,  # 3x body radius (0.155m) = 0.465m → optimized to 0.45m
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.25,
+            "tip_chord": 0.1,
+            "span": 0.3,
+            "cant_angle": 0.5,
+            "material": "aluminum",
+            "thickness": 0.005,
+        },
+        "tail": {
+            "length": 0.3,
+            "top_radius": 0.15,  # Must differ from bottom
+            "bottom_radius": 0.155,
+            "material": "ABS_plastic",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 19.0,  # Calculated for 5 m/s descent (29.66 kg)
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 1.2,  # Calculated for 20 m/s descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,  # Maintain stability with higher mass
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 0.75  # Optimized center of mass
+    }
+}
+``` 
+
+**Design Rationale:**
+
+1. **Motor Upgrade**: Switched to CesaroniO5800 (30,382 Ns impulse) for 4.5% more total impulse than O3700 while being 1.8 kg lighter. Burn time of 5.2s balances thrust and drag losses.
+
+2. **Mass Optimization**:
+   - Body radius reduced to 0.155m (from 0.165) to minimize drag while accommodating motor.
+   - Aluminum body (3mm thick) cuts cost while maintaining strength (T/W ratio 17.5 at liftoff).
+
+3. **Aerodynamic Refinement**:
+   - Shorter 0.45m ogive nose cone maintains low drag with reduced mass.
+   - Aluminum fins provide stability at lower cost than carbon fiber.
+
+4. **Parachute Sizing**:
+   - Main chute CdS=19 ensures <5 m/s landing (vs 25 in previous attempt) for cost reduction.
+   - Drogue CdS=1.2 limits descent to 20 m/s during initial phase.
+
+5. **Structural Safety**:
+   - Aluminum fins (5mm thick) handle 6,395N max thrust.
+   - Rail length maintained at 2.0m for stability in 5 m/s crosswind.
+
+**Expected Outcomes**:
+- Increased apogee to ~3,000m via higher impulse and reduced mass.
+- Cost reduced below $1,000 threshold via material substitutions.
+- Structural safety maintained with aluminum/fiberglass components.

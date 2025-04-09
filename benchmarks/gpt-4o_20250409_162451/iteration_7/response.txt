@@ -1,0 +1,139 @@
+In reviewing the previous attempts and scores, it is clear that some adjustments need to be made to achieve the target apogee while managing costs and ensuring structural integrity. The previous designs struggled with either overshooting or undershooting the target apogee due to an imbalance in motor choice and rocket design parameters. Here's my refined approach:
+
+### Key Considerations:
+
+1. **Motor Selection**: The motor plays a crucial role in the altitude achieved. Previous tests indicate that balancing thrust and weight is essential. The motor should provide sufficient thrust without being too costly.
+
+2. **Material Choice**: Lightweight yet durable materials should be prioritized to reduce overall weight and drag, which will help achieve a higher apogee.
+
+3. **Aerodynamic Design**: Shape and size, especially of the nose cone and fins, play a significant role in minimizing drag and optimizing flight stability.
+
+4. **Cost Management**: We need to reduce costs where possible without compromising the structural integrity or safety of the rocket.
+
+### Design Strategy:
+
+#### Motor Selection
+- **Chosen Motor**: AeroTechK700W
+    - A suitable middle ground between thrust and cost, this motor should help the rocket achieve closer to the target apogee without excessive expenses.
+
+#### Rocket Body Design
+- **Radius**: 0.12 meters 
+    - Slightly larger than previous designs to enhance stability without excessively increasing weight.
+- **Length**: 2.7 meters
+    - Efficient length to weight ratio to accommodate motor and payload.
+- **Material**: **Carbon_fiber**
+    - Provides an excellent strength-to-weight ratio, reducing weight while maintaining durability.
+- **Thickness**: 0.004 meters
+    - Retains structural integrity while reducing unnecessary weight.
+
+#### Nose Cone Design
+- **Kind**: **von karman**
+    - Known for minimizing drag, this should enhance aerodynamic performance.
+- **Length**: 0.35 meters
+    - Optimal shape for low drag.
+- **Material**: **Composite**
+    - Durable and lightweight.
+
+#### Fin Design
+- **Number**: 4
+    - Provides great stability during flight; the higher count ensures minimal roll.
+- **Root Chord**: 0.2 meters
+- **Tip Chord**: 0.1 meters
+- **Span**: 0.25 meters
+- **Cant Angle**: 1 degree
+    - Enough to improve stability with minimal induced roll.
+- **Material**: **Fiberglass**
+    - Cheap and effective in providing the necessary structural support.
+- **Thickness**: 0.003 meters
+
+#### Tail Design
+- **Length**: 0.1 meters
+- **Top Radius**: 0.06 meters
+- **Bottom Radius**: 0.07 meters
+- **Material**: **Fiberglass**
+
+#### Parachute Specifications
+- **Main cd_s**: 0.35
+    - Optimized for safe main chute deployment.
+- **Drogue cd_s**: 0.15
+    - To help stabilize during initial descent.
+
+#### Launch Rail Configuration
+- **Rail Length**: 5 meters
+    - Enough to stabilize the rocket during initial launch phase and provide directional stability.
+- **Inclination**: 88 degrees
+    - Minor inclination to account for initial launch drift.
+- **Heading**: 270 degrees
+    - Opposite to wind direction to counteract drift.
+
+### Payload Configuration
+- **Mass**: 0.35 kg
+- **Position**: 1.35 meters
+    - Centered to maintain stability.
+
+### Final Configuration:
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.12,  # Body radius in meters
+        "length": 2.7,  # Body length in meters
+        "material": "carbon_fiber",
+        "thickness": 0.004,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.35,  # Nose cone length in meters
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.2,  # Fin root chord in meters
+            "tip_chord": 0.1,  # Fin tip chord in meters
+            "span": 0.25,  # Fin span in meters
+            "cant_angle": 1,  # Cant angle in degrees
+            "material": "fiberglass",
+            "thickness": 0.003,  # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.1,  # Tail length in meters
+            "top_radius": 0.06,  # Top radius in meters
+            "bottom_radius": 0.07,  # Bottom radius in meters
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.35,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.15,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 5,  # Length of the launch rail in meters
+        "inclination": 88,  # Rail inclination in degrees
+        "heading": 270,  # Launch heading in degrees
+    },
+    "payload": {
+        "mass": 0.35,  # Payload mass in kg
+        "position": 1.35  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+### Summary
+
+This design strategy uses a more efficient combination of materials and components to achieve the target apogee while maintaining structural integrity and minimizing costs. The key focus is on weight reduction through material choices and aerodynamic efficiency to harness the motor's potential effectively. By using the AeroTechK700W motor, we aim to meet the target altitude more economically without sacrificing performance.

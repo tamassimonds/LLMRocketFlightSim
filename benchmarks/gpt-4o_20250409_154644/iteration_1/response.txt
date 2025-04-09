@@ -1,0 +1,100 @@
+To design a rocket that meets the provided requirements, we'll have to consider various aspects such as motor selection, materials, aerodynamics, and other configurations that align with the constraints while optimizing for performance and cost. The primary goal is to reach an apogee of 3048 meters, minimize horizontal drift caused by wind from the east, ensure safe landing, and reduce the overall cost of the rocket.
+
+### Motor Selection
+- **Motor Choice**: Based on thrust and impulse, the **Cesaroni O3700** motor is initially considered due to its high thrust capability. However, its total impulse seems way more than required for 3048 meters, potentially leading to overshooting. Choosing a smaller motor like the **AeroTech K700W** appears more appropriate as its total impulse of 2249 Ns should help achieve the target apogee within the desired range, considering variables like aerodynamic drag and payload mass.
+
+### Rocket Body Design
+- **Radius and Length**: Motor selection dictates the minimum body radius. The radius of the body should be greater than that of our selected motor, which is 54 mm (0.054 meters). Therefore, a body radius of 0.06 meters (or 60 mm) is chosen.
+- **Length**: To ensure stability and house the propulsion system, we choose a length of 1.5 meters for the rocket body.
+- **Material**: Using **fiberglass** as it offers a good balance between weight (essential for apogee) and cost.
+
+### Nose Cone Design
+- **Shape**: An **ogive** nose cone is selected for its aerodynamic efficiency.
+- **Length**: Picking a nose cone length of 0.3 meters aligns with standard ratios for small rockets.
+- **Material**: **Composite** is chosen for its aerodynamic advantages and resilience.
+
+### Fins Design
+- **Number of Fins**: Common configuration of four fins to ensure stability.
+- **Dimensions**: A root chord of 0.15 meters, tip chord of 0.075 meters, and a span of 0.2 meters maintain streamlined design.
+- **Cant Angle**: Small cant angle of 0.5 degrees provides stability without causing excessive roll.
+- **Material**: **Carbon fiber** for its strength-to-weight ratio.
+
+### Tail Design
+- **Dimensions**: Length of 0.3 meters, top radius of 0.045 meters, and a slightly smaller bottom radius of 0.043 meters to prevent errors.
+- **Material**: **Carbon fiber** to ensure durability.
+
+### Parachute Configuration
+- **Main Parachute**: Area of 0.25 cd_s with an activation at apogee ensures a gentle descent.
+- **Drogue Parachute**: Area of 0.15 cd_s, also triggered at apogee. This configuration aids stability and reduces landing speed.
+
+### Launch Configuration
+- **Rail Length**: A rail length of 3.0 meters is chosen to provide adequate guidance and stability upon liftoff.
+- **Inclination and Heading**: Vertical launch (90 degrees) is deemed optimal to reduce drift, while the wind direction (east) is countered through slight adjustment once more detailed simulations are available. Assuming headings considering wind isn't always achievable, we begin with 0 degrees.
+
+### Payload Consideration
+- **Mass and Position**: Payload of 0.5 kg centered at the rocket's midpoint (0.75m from the base).
+
+Here's the proposed design configuration:
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.06,  # Body radius in meter
+        "length": 1.5,   # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.005,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.3,  # Nose cone length in meters
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.15,  # Fin root chord in meters
+            "tip_chord": 0.075,  # Fin tip chord in meters
+            "span": 0.2,         # Fin span in meters
+            "cant_angle": 0.5,   # Cant angle in degrees
+            "material": "carbon_fiber",
+            "thickness": 0.005   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.3,  # Tail length in meters
+            "top_radius": 0.045,  # Top radius in meters
+            "bottom_radius": 0.043,  # Bottom radius in meters
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.25,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.15,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 3.0,  # Rail length in meters
+        "inclination": 90,   # Vertical launch
+        "heading": 0,        # Heading in degrees
+    },
+    "payload": {
+        "mass": 0.5,  # Payload mass in kg
+        "position": 0.75  # Payload position relative to rocket center
+    }
+}
+```
+
+This design is a balanced solution addressing apogee, structural stability, and safe landing while being economical. Further simulation could help tweak parameters more accurately, particularly with wind adjustments and optimizing the cost-weight dynamics.

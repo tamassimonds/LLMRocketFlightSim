@@ -1,0 +1,92 @@
+To further refine the rocket design and improve upon previous attempts, we need to address key issues related to reaching the target apogee, maintaining structural integrity, and optimizing cost efficiency. By analyzing the previous designs, it is clear that motor selection, aerodynamics, and material choices play a critical role. Let's incorporate these insights into an optimized design strategy:
+
+### Optimized Design Strategy:
+
+**1. Motor Selection:**
+   - **Motor Choice:** The **AeroTechK700W** motor should provide sufficient thrust with a reasonable impulse, and its lighter weight should contribute positively to the rocket's overall performance.
+
+**2. Rocket Body:**
+   - **Material Selection:** Use **composite** for the rocket body to maintain a lightweight structure while ensuring durability.
+   - **Design:** A slim, straight structure will help minimize drag, with a balance between length and radius for stability.
+
+**3. Aerodynamics:**
+   - **Nose Cone:** An **ogive** shape helps minimize drag, so continue with this design. A slight increase in length contributes to better aerodynamic efficiency.
+   - **Fins:** Using **carbon_fiber** for fins ensures they are lightweight yet strong, and a reduction in the number of fins will help reduce drag and cost.
+
+**4. Parachute System:**
+   - Balance parachute size and shape to ensure a safe and efficient descent, focusing on cost-effectiveness without over-reliance on size.
+
+**5. Launch Configuration:**
+   - Opt for a rail length that offers stability during launch without excessive cost, aligning with aerodynamics and thrust properties.
+
+### Proposed Rocket Configuration:
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",  # Enables sufficient thrust at optimal weight
+    "rocket_body": {
+        "radius": 0.076,  # Accommodates motor with a slight clearance buffer
+        "length": 1.8,    # Length tuned for drag reduction and stability
+        "material": "composite",  # Provides a robust and lightweight structure
+        "thickness": 0.004,  # Minimal thickness maintaining structural integrity
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.4,  # Optimized for aerodynamic flow
+            "material": "composite",  # Consistency in material for smooth transitions
+        },
+        "fins": {
+            "number": 3,  # Reducing number keeps drag minimal
+            "root_chord": 0.2,  # Ensures stability without adding excessive drag
+            "tip_chord": 0.1,
+            "span": 0.18,  # Reduced span matches lightweight structure
+            "cant_angle": 0,  # Straight for baseline performance
+            "material": "carbon_fiber",  # Strength and lightness combined
+            "thickness": 0.004,
+        },
+        "tail": {
+            "length": 0.25,
+            "top_radius": 0.076,
+            "bottom_radius": 0.06,  # Maintains design compliance with differential sizing
+            "material": "composite",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.3,  # Ensures safe descent speed
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.12,  # Provides stable initial slowing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.5,  # Optimized for thrust utilization and initial stability
+        "inclination": 90,   # Direct vertical launch for height maximization
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.1,  # Essential electronics only
+        "position": 0.85,  # Central position for weight balance
+    }
+}
+```
+
+### Rationale:
+- **Motor Selection:** The AeroTechK700W is effective for the desired combination of thrust and weight.
+- **Material Choices:** Using **composite** throughout ensures lightness without compromising strength.
+- **Aerodynamic Adjustments:** Redesigned fins and nose cone reduce drag, optimizing flight path efficiency.
+- **Parachute System:** Sized to achieve safe descent, balancing deployment cost.
+- **Launch Configuration:** Positioned to help reach peak target altitude, factoring in cost and flight stability.
+
+This comprehensive design aims to improve apogee accuracy while keeping costs and weight balanced, leveraging aerodynamic proficiency and material optimization.

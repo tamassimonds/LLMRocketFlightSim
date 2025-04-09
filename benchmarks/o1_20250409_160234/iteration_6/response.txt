@@ -1,0 +1,124 @@
+Below is a step-by-step summary of the reasoning used to create an improved design, followed by the final “config” dictionary in the required format. No extra Python code is included.
+
+────────────────────────────────────────────────────────
+1) Why Switch to an M-Class Motor?
+────────────────────────────────────────────────────────
+• Repeated attempts with the AeroTech K700W (~2249 Ns) either fell short of 3048 m or had structural issues once the rocket body was made large enough to accommodate the 54 mm motor requirement.  
+• Moving up to the Pro75 M1670 (~6023 Ns) provides more total impulse and allows designing a sturdier, larger rocket that won’t have to be excessively light or thin to reach 3048 m.  
+• Even though the M motor is more powerful and potentially more expensive, it can be balanced against an increased rocket mass to aim near 3048 m apogee while maintaining structural integrity.
+
+────────────────────────────────────────────────────────
+2) Body Diameter and Length
+────────────────────────────────────────────────────────
+• The Pro75 M1670 has a 75 mm radius requirement, so the rocket body radius must exceed 0.075 m.  
+• Chosen radius: 0.08 m (80 mm), giving a modest margin for motor fit plus space for structural thickness.  
+• Body length of 2.2 m accommodates this larger motor and payload while avoiding an overly tall airframe that adds weight and cost.
+
+────────────────────────────────────────────────────────
+3) Structural Material and Thickness
+────────────────────────────────────────────────────────
+• Fiberglass is chosen for both the airframe and fins: relatively cost-effective and durable.  
+• A 4 mm (0.004 m) wall thickness provides sufficient strength to handle the higher thrust and dynamic pressures from an M-class motor.
+
+────────────────────────────────────────────────────────
+4) Nose Cone
+────────────────────────────────────────────────────────
+• Ogive shape, length = 0.3 m, for low drag and good aerodynamic performance.  
+• Same fiberglass material and thickness for uniformity.
+
+────────────────────────────────────────────────────────
+5) Fin Design
+────────────────────────────────────────────────────────
+• Four fins for enhanced stability with higher thrust loads.  
+• Generous fin area (root chord 0.18 m, tip chord 0.08 m, span 0.15 m) helps maintain stable flight.  
+• Fiberglass at 4 mm thickness prevents flutter or structural failure.
+
+────────────────────────────────────────────────────────
+6) Tail Section
+────────────────────────────────────────────────────────
+• 0.2 m length to transition smoothly from body diameter to the motor nozzle region.  
+• Top radius = 0.08 m, bottom radius = 0.09 m (they cannot be equal).  
+• Fiberglass to match the rest of the rocket.
+
+────────────────────────────────────────────────────────
+7) Parachutes
+────────────────────────────────────────────────────────
+• Main parachute Cd·S = 3.0, sized to bring an expected ~8–9 kg rocket to < 5 m/s landing speed.  
+• Drogue parachute Cd·S = 0.2, for stable descent from apogee until main deployment.
+
+────────────────────────────────────────────────────────
+8) Launch Configuration & Wind
+────────────────────────────────────────────────────────
+• Rail length = 2.5 m for extra guide stability given the higher thrust.  
+• Inclination = 88 ° (near-vertical) and heading = 270 ° (to the west) to counter moderate easterly winds of ~5 m/s.
+
+────────────────────────────────────────────────────────
+9) Payload
+────────────────────────────────────────────────────────
+• 1.0 kg payload at 1.0 m from the rocket’s center.  
+• Helps tune overall rocket mass so the powerful M motor can loft the rocket near 3048 m without severely overshooting.
+
+────────────────────────────────────────────────────────
+FINAL DESIGN (“config” DICTIONARY)
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.08,         # > 0.075 m motor radius
+        "length": 2.2,
+        "material": "fiberglass",
+        "thickness": 0.004,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.3,
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.18,
+            "tip_chord": 0.08,
+            "span": 0.15,
+            "cant_angle": 0,
+            "material": "fiberglass",
+            "thickness": 0.004,
+        },
+        "tail": {
+            "length": 0.2,
+            "top_radius": 0.08,
+            "bottom_radius": 0.09,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 3.0,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.5,
+        "inclination": 88,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 1.0,
+        "position": 1.0
+    }
+}
+```

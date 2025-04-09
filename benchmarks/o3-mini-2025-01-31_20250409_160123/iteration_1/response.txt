@@ -1,0 +1,117 @@
+Below is my reasoning along with the final configuration.
+
+──────────────────────────────
+Design Reasoning:
+
+1. Motor Choice:
+   • We need enough impulse to roughly reach 3048 m (10,000 ft) and yet keep the mass and cost moderate. Using a moderate-performance motor is desirable. The Pro75M1670 provides about 6023.6 Ns of total impulse at a moderate mass (1.815 kg) and with a burn time of about 3.9 seconds. This makes it a good candidate for achieving our target while not overdesigning (and overcosting) the vehicle.
+   • Note that the motor’s radius is 75 mm (0.075 m), so the body must use a radius larger than that.
+
+2. Rocket Body:
+   • I choose a body radius of 0.1 m. This leaves clearance over the motor while keeping the vehicle streamlined.
+   • A length of 2.0 m is chosen to accommodate the motor, structural bulk, and recovery systems (airframe plus nose cone).
+   • The material selected is “aluminum” because it is widely available, reasonably strong, and cost‐effective.
+   • A wall thickness of 0.005 m is assumed to provide sufficient strength without excess weight.
+
+3. Aerodynamics:
+   Nose Cone:
+     • An “ogive” profile is chosen for its favorable aerodynamic properties in reducing drag during ascent.
+     • A nose cone length of 0.3 m is selected.
+     • “composite” material is chosen to keep it light and efficient.
+     
+   Fins:
+     • Four fins are chosen for multi-axis stability.
+     • Fin dimensions are selected as follows: a root chord of 0.15 m and a tip chord of 0.075 m (tapered design) to reduce drag and weight.
+     • A span (fins’ outboard length) of 0.3 m is adequate.
+     • A slight cant angle (0.5°) is used to help with roll stability.
+     • “carbon_fiber” is picked for the fins to ensure low weight and high stiffness.
+     • A thickness of 0.005 m provides sufficient rigidity.
+     
+   Tail:
+     • The tail section is used to attach and support aerodynamic surfaces. Since the design rule requires the top and bottom radii not to be equal (to avoid errors), I choose a top_radius of 0.04 m and a bottom_radius of 0.05 m.
+     • A tail “length” of 0.2 m is selected.
+     • “carbon_fiber” is used for its strength and consistency with the fins.
+   
+4. Parachute Specifications:
+   • Both main and drogue parachutes are included.
+   • The main chute is given a cd_s value (area * drag coefficient) of 0.25 to ensure a slow, safe descent.
+   • The drogue chute uses a cd_s of 0.2.
+   • Both are triggered at apogee, sampled at 105 Hz, with a lag of 1.5 s and noise parameters (0, 8.3, 0.5) as specified.
+     
+5. Launch Rail and Orientation:
+   • A rail length of 1.2 m is selected for stability during the initial powered phase.
+   • The rail is set at 90° to ensure a vertical launch.
+   • The heading is kept at 0°; although there is a 5 m/s wind from the east, aiming vertically helps mitigate lateral displacement.
+     
+6. Payload:
+   • A payload mass of 0.5 kg (a modest point mass) is assumed.
+   • Its position is set near mid‐length (0.6 m from the rocket’s center) to maintain the vehicle’s balance.
+
+──────────────────────────────
+Below is the final configuration dictionary in Python:
+
+------------------------------------------------
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",  # Selected for moderate impulse (6023.6 Ns) and mass (1.815 kg)
+    "rocket_body": {
+        "radius": 0.1,  # meters; must be greater than motor radius (0.075 m)
+        "length": 2.0,  # meters; provides sufficient volume
+        "material": "aluminum",  # Chosen for strength and cost-effectiveness
+        "thickness": 0.005,  # meters; wall thickness
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",  # Aerodynamically efficient shape
+            "length": 0.3,  # meters; nose cone length
+            "material": "composite",  # Light and strong material
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.15,  # meters; base of the fin
+            "tip_chord": 0.075,  # meters; tip of the fin (ensures taper)
+            "span": 0.3,         # meters; from the body to the fin tip
+            "cant_angle": 0.5,   # degrees; slight cant for improved roll stability
+            "material": "carbon_fiber",  # Provides high strength-to-weight ratio
+            "thickness": 0.005,  # meters; robust enough to prevent breakage
+        },
+        "tail": {
+            "length": 0.2,  # meters; short tail extension for aerodynamic stability
+            "top_radius": 0.04,  # meters; must be different from bottom_radius
+            "bottom_radius": 0.05,  # meters; ensures design check passes
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.25,  # Effective drag area for a safe descent speed
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,  # Slightly smaller than main to deploy earlier for stabilization
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.2,  # meters; provides stable powered flight initiation
+        "inclination": 90,   # degrees; vertical launch to minimize horizontal drift
+        "heading": 0,        # degrees; launching straight up despite a 5 m/s crosswind from the east
+    },
+    "payload": {
+        "mass": 0.5,  # kg; a representative, modest mass placed within the rocket
+        "position": 0.6,  # meters; relative to the rocket center for balanced mass distribution
+    },
+}
+```
+
+──────────────────────────────
+This design aims to balance the target apogee with low horizontal drift, minimized cost through material and component selection, and safe landing characteristics with parachute sizing and strong, lightweight construction.

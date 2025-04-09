@@ -1,0 +1,159 @@
+# Rocket Design Analysis
+
+## Initial Considerations
+
+To design a rocket that reaches a target apogee of 3048 meters (10,000 ft) in a 5 m/s easterly wind, I need to balance several factors:
+
+1. **Motor selection**: Must provide enough thrust to reach target apogee without excessive overshoot
+2. **Aerodynamic stability**: Proper center of pressure and center of gravity relationship
+3. **Weight optimization**: Lighter materials where possible without compromising structural integrity
+4. **Recovery system**: Ensure safe landing velocity (<5 m/s)
+5. **Cost efficiency**: Minimize total cost while meeting performance requirements
+
+## Motor Selection Analysis
+
+First, I'll analyze the available motors based on total impulse, which correlates with maximum altitude potential:
+
+| Motor | Total Impulse (Ns) | Avg Thrust (N) | Mass (kg) | Cost Factor |
+|-------|-------------------|----------------|-----------|-------------|
+| CesaroniO5800 | 30,382.7 | 5,040.2 | 12.418 | High |
+| CesaroniO3700 | 29,930.2 | 2,836.9 | 14.194 | High |
+| Pro75M1670 | 6,023.6 | 1,533.9 | 1.815 | Medium |
+| CesaroniM1670 | 6,023.6 | 1,533.9 | 3.101 | Medium |
+| AeroTechK700W | 2,249 | 658.7 | 0.732 | Medium-Low |
+| CesaroniK160 | 1,521.7 | 190.2 | 0.7 | Low |
+| AeroTechH128W | 176.5 | 141.2 | 0.108 | Very Low |
+
+For a 3048m apogee, the O-class motors are likely overkill and would increase cost significantly. The H-class motor is too small. The K and M class motors are more appropriate for our target altitude.
+
+I'll select the **AeroTechK700W** as it provides a good balance of impulse to weight ratio and should be sufficient for our target altitude with proper rocket design.
+
+## Body Design Calculations
+
+For the AeroTechK700W motor:
+- Radius: 54mm = 0.054m
+- Length: 568mm = 0.568m
+
+I'll design the body with:
+- Radius: 0.06m (slightly larger than motor radius)
+- Length: 0.8m (provides adequate space for motor and recovery system)
+- Material: fiberglass (good strength-to-weight ratio at moderate cost)
+- Thickness: 0.003m (sufficient for structural integrity)
+
+## Nose Cone Design
+
+An ogive shape provides good aerodynamic performance:
+- Length: 0.25m (approximately 4x body radius)
+- Material: ABS_plastic (lightweight, cost-effective)
+
+## Fin Design
+
+For stability, I'll use:
+- 3 fins (minimum number for stability, reduces drag and weight)
+- Root chord: 0.15m
+- Tip chord: 0.08m (tapered for reduced drag)
+- Span: 0.12m
+- Material: balsa_wood (very lightweight, adequate strength for this application)
+- Thickness: 0.006m
+
+## Tail Design
+
+The tail will help with stability and motor mounting:
+- Length: 0.15m
+- Top radius: 0.055m
+- Bottom radius: 0.06m
+- Material: ABS_plastic
+
+## Parachute Sizing
+
+For a safe landing speed (<5 m/s), I need to calculate appropriate parachute sizes.
+
+Estimated rocket mass: ~2kg (motor + structure + payload)
+
+For a 5 m/s descent rate:
+Cd_S = 2 × mass × g / (ρ × v²)
+Cd_S = 2 × 2 × 9.81 / (1.225 × 5²)
+Cd_S ≈ 0.64
+
+I'll split this between main and drogue:
+- Main: Cd_S = 0.5 (for final descent)
+- Drogue: Cd_S = 0.15 (for initial descent)
+
+## Launch Configuration
+
+To compensate for the easterly wind:
+- Inclination: 88 degrees (slight westward tilt)
+- Heading: 270 degrees (west, opposite to wind direction)
+- Rail length: 1.0m (provides adequate stability during initial acceleration)
+
+## Payload
+
+- Mass: 0.3kg
+- Position: 0.3m (forward of center to help with stability)
+
+## Final Design
+
+Based on these calculations and considerations, here's my optimized rocket design:
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.06,
+        "length": 0.8,
+        "material": "fiberglass",
+        "thickness": 0.003,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.25,
+            "material": "ABS_plastic",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.15,
+            "tip_chord": 0.08,
+            "span": 0.12,
+            "cant_angle": 0,
+            "material": "balsa_wood",
+            "thickness": 0.006,
+        },
+        "tail": {
+            "length": 0.15,
+            "top_radius": 0.055,
+            "bottom_radius": 0.06,
+            "material": "ABS_plastic",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.5,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.15,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.0,
+        "inclination": 88,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 0.3,
+        "position": 0.3,
+    }
+}
+```
+
+This design balances performance requirements with cost efficiency. The K-class motor provides adequate thrust without being excessive, lightweight materials reduce overall mass, and the parachute system ensures a safe landing speed. The slight westward launch angle helps compensate for the easterly wind to minimize horizontal drift.

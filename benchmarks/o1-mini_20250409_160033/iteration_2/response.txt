@@ -1,0 +1,231 @@
+# Rocket Design Task - Improved Design
+
+## Design Reasoning
+
+Designing a rocket to achieve a **target apogee** of **3,048 meters** requires meticulous optimization of various components to balance performance, cost, and structural integrity. Building upon the insights from the previous attempt, the following design improvements aim to enhance apogee achievement, reduce costs, ensure safe landings, and minimize horizontal displacement.
+
+### 1. **Motor Selection**
+
+**Available Motors:**
+- **Pro75M1670**: Thrust: 2200 N, Burn Time: 3.9 s, Total Impulse: 6,023.6 Ns, Dry Mass: 1.815 kg
+- **CesaroniM1670**: Thrust: 2200 N, Burn Time: 3.6 s, Total Impulse: 6,023.6 Ns, Dry Mass: 3.101 kg
+- **CesaroniO3700**: Thrust: 4,030.3 N, Burn Time: 8.2 s, Total Impulse: 29,930.2 Ns, Dry Mass: 14.194 kg
+- **CesaroniO5800**: Thrust: 6,395.5 N, Burn Time: 5.2 s, Total Impulse: 30,382.7 Ns, Dry Mass: 12.418 kg
+- **Other Motors**: Lower thrust and impulse, less suitable for target apogee.
+
+**Selection:** **Pro75M1670**
+
+**Rationale:**
+- **Adequate Thrust and Impulse:** While the CesaroniO5800 provides higher thrust, the Pro75M1670's total impulse of 6,023.6 Ns is sufficient when combined with a lightweight rocket design.
+- **Cost-Effectiveness:** The Pro75M1670 is expected to be significantly cheaper than the CesaroniO5800, reducing the overall cost.
+- **Dry Mass Consideration:** Lower dry mass contributes to a higher thrust-to-weight ratio, enhancing apogee potential.
+
+**Trade-Offs:**
+- **Multiple Motors:** To achieve the desired total impulse, using multiple Pro75M1670 motors could be considered. However, this adds complexity and potential points of failure.
+- **Single Motor Simplicity:** Opting for a single motor simplifies design and reduces potential structural issues.
+
+**Final Decision:** Using a single **Pro75M1670** motor strikes a balance between sufficient propulsion and cost-effectiveness, provided the rocket's structural design compensates for the lower total impulse.
+
+### 2. **Rocket Body Design**
+
+- **Radius:** Must exceed the motor's radius (0.075 m). **Selected Radius:** 0.09 m
+- **Length:** Optimized to balance volume and weight. **Selected Length:** 1.0 m
+- **Material:** **ABS_plastic** for its lightweight and cost advantages over fiberglass and carbon fiber.
+- **Thickness:** Reduced to **0.005 m** to minimize mass while maintaining structural integrity.
+
+**Rationale:**
+- **Minimized Mass:** A smaller radius and thinner walls reduce overall weight, enhancing thrust efficiency.
+- **Material Selection:** ABS_plastic offers sufficient strength for the rocket's structural needs at a lower cost.
+
+### 3. **Aerodynamics**
+
+#### a. **Nose Cone**
+- **Kind:** **Von Kármán** (known for superior aerodynamic properties)
+- **Length:** 0.25 m
+- **Material:** **ABS_plastic**
+
+**Rationale:**
+A Von Kármán nose cone minimizes aerodynamic drag, facilitating smoother ascent and higher apogee attainment.
+
+#### b. **Fins**
+- **Number:** **3** (reducing drag while maintaining stability)
+- **Root Chord:** **0.10 m**
+- **Tip Chord:** **0.05 m**
+- **Span:** **0.25 m**
+- **Cant Angle:** **0 degrees** (simplifies design and reduces potential drag)
+- **Material:** **Balsa_wood** (lightweight and cost-effective)
+- **Thickness:** **0.003 m**
+
+**Rationale:**
+- **Reduced Number and Size:** Fewer and smaller fins decrease aerodynamic drag without compromising stability.
+- **Material Choice:** Balsa wood offers adequate strength for fins while minimizing weight and cost.
+
+#### c. **Tail**
+- **Length:** **0.5 m**
+- **Top Radius:** **0.03 m**
+- **Bottom Radius:** **0.04 m** (ensures different radii to pass DRC)
+- **Material:** **Balsa_wood**
+
+**Rationale:**
+A compact tail with differing top and bottom radii maintains aerodynamic balance and structural integrity at a lower mass and cost.
+
+### 4. **Parachutes**
+
+- **Main Parachute:**
+  - **CD_S:** **0.20**
+  - **Trigger:** **Apogee**
+  - **Sampling Rate:** **105**
+  - **Lag:** **1.5 s**
+  - **Noise:** **(0, 8.3, 0.5)**
+  
+- **Drogue Parachute:**
+  - **CD_S:** **0.15**
+  - **Trigger:** **Apogee**
+  - **Sampling Rate:** **105**
+  - **Lag:** **1.5 s**
+  - **Noise:** **(0, 8.3, 0.5)**
+
+**Rationale:**
+Optimizing the parachute coefficients of drag (CD_S) ensures a controlled and safe descent, keeping impact velocity below the 5 m/s threshold while minimizing deployment complexity and cost.
+
+### 5. **Launch Rail Configuration**
+
+- **Rail Length:** **0.8 m** (shorter to reduce cost and ground footprint)
+- **Inclination:** **90 degrees** (vertical launch to maximize apogee)
+- **Heading:** **0 degrees** (aligned with wind direction to minimize horizontal drift)
+
+**Rationale:**
+A vertical launch maximizes altitude, and aligning the launch heading with wind direction mitigates horizontal displacement, ensuring the rocket lands closer to the launch site.
+
+### 6. **Payload**
+
+- **Mass:** **0.3 kg** (reducing payload mass to allow more thrust allocation)
+- **Position:** **0.5 m** relative to rocket center (optimized for center of mass and stability)
+
+**Rationale:**
+Lowering the payload mass reduces the overall rocket weight, enhancing thrust efficiency and apogee potential. Proper positioning ensures stability during flight.
+
+### 7. **Wind Conditions Consideration**
+
+- **Wind Speed:** **5 m/s from East**
+- **Design Mitigation:**
+  - **Fin and Tail Design:** Lightweight and strategically placed fins and tails stabilize the rocket against lateral wind forces.
+  - **Launch Heading Alignment:** Aligning the launch heading with wind direction minimizes horizontal drift.
+
+**Rationale:**
+These measures collectively enhance flight stability and reduce unwanted horizontal displacement, adhering to the scoring criteria.
+
+### 8. **Cost Optimization**
+
+**Material Choices:**
+- **ABS_plastic and Balsa_wood** are selected for their lower costs compared to fiberglass and carbon fiber without significantly compromising structural integrity.
+
+**Component Reduction:**
+- **Fewer and Smaller Fins:** Reduces material cost and aerodynamic drag.
+- **Thinner Body Walls:** Minimizes material usage and overall cost.
+
+**Motor Selection:**
+- Opting for the **Pro75M1670** reduces propulsion costs while maintaining sufficient thrust.
+
+**Rationale:**
+Strategic material and component selections significantly reduce the total cost, enhancing the cost reward in the scoring function.
+
+---
+
+## Final Rocket Configuration
+
+Based on the above reasoning and optimizations, the following Python dictionary defines the improved rocket design suitable for the simulation:
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.09,  # Body radius in meters (must be greater than motor radius of 0.075 m)
+        "length": 1.0,    # Body length in meters
+        "material": "ABS_plastic",
+        "thickness": 0.005,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.25,  # Nose cone length in meters
+            "material": "ABS_plastic",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.10,  # Fin root chord in meters
+            "tip_chord": 0.05,   # Fin tip chord in meters
+            "span": 0.25,         # Fin span in meters
+            "cant_angle": 0,      # Cant angle in degrees
+            "material": "balsa_wood",
+            "thickness": 0.003   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.5,        # Tail length in meters
+            "top_radius": 0.03,   # Top radius in meters
+            "bottom_radius": 0.04,  # Bottom radius in meters (different from top radius)
+            "material": "balsa_wood",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.20,       # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.15,       # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 0.8,    # Length of the launch rail in meters
+        "inclination": 90,     # Rail inclination in degrees (vertical launch)
+        "heading": 0,          # Launch heading in degrees (aligned with wind)
+    },
+    "payload": {
+        "mass": 0.3,           # Payload mass in kg
+        "position": 0.5        # Payload position relative to rocket center in meters
+    }
+}
+```
+
+---
+
+## Anticipated Performance and Scoring
+
+**1. Apogee Achievement:**
+- **Target Apogee:** 3,048 meters
+- **Expected Apogee:** Enhanced due to reduced rocket mass and optimized aerodynamics.
+- **Rationale:** The combination of a lighter body, efficient nose cone, and lower payload mass increases the thrust-to-weight ratio, facilitating higher ascent.
+
+**2. Cost Optimization:**
+- **Motor Selection:** Choosing the Pro75M1670 reduces propulsion costs.
+- **Material Choices:** ABS_plastic and balsa wood are more cost-effective than fiberglass and carbon fiber.
+- **Component Reduction:** Fewer and smaller fins, thinner walls decrease material usage and overall cost.
+- **Expected Outcome:** Lower total cost compared to the previous design improves the cost reward.
+
+**3. Safe Landing:**
+- **Parachute Optimization:** Properly sized main and drogue parachutes ensure impact velocity remains below 5 m/s.
+- **Materials and Design:** Lightweight materials reduce descent speed, contributing to safer landings.
+
+**4. Structural Integrity:**
+- **Material Strength:** ABS_plastic and balsa wood provide adequate structural support for the reduced rocket mass.
+- **Tail Design:** Differing top and bottom radii in the tail ensure compliance with Design Rule Checks (DRC) while maintaining aerodynamic balance.
+
+**5. Horizontal Distance Minimization:**
+- **Launch Configuration:** Vertical launch heading aligned with wind direction minimizes horizontal displacement.
+- **Aerodynamic Stability:** Optimized fin and tail design ensures the rocket maintains a straight trajectory.
+
+---
+
+## Conclusion
+
+This improved rocket design strategically balances performance, cost, and safety by optimizing motor selection, reducing rocket mass, enhancing aerodynamics, and ensuring structural integrity. By thoughtfully selecting materials and refining component dimensions, the design aims to achieve the target apogee of 3,048 meters while maximizing the scoring criteria related to cost efficiency, safe landing, structural reliability, and minimal horizontal displacement.

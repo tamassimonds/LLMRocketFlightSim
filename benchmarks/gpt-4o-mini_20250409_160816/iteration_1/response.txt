@@ -1,0 +1,143 @@
+To design a rocket that meets the target apogee of 3048 meters under the specified wind conditions and while optimizing for cost and safety, we must carefully consider motor selection, body dimensions, materials, aerodynamics, parachute specifications, and launch configuration.
+
+### Step 1: Motor Selection
+
+Given our target apogee, we need enough thrust to reach that altitude while ensuring the rocket can land safely. The **CesaroniM1670** has the highest total impulse of 6023.6 Ns and a max thrust of 2200 N. This provides ample power to reach the desired altitude. Although **CesaroniO5800** has a higher thrust and impulse, it is heavier and likely too powerful for our design constraint due to potentially surpassing the target apogee too drastically and leading to structural failure.
+
+### Step 2: Body Dimensions and Material
+
+We select a body radius greater than the motor radius for stability. 
+
+- **Motor Radius**: CesaroniM1670 has a 75 mm radius (0.075 m). 
+- **Design Body Radius**: We'll use a radius of 0.1 m (100 mm), which is greater and provides stability. 
+
+Assuming a body length of 1.5 meters is a reasonable starting point for a rocket intended to reach 3048 meters, representing a balance between size and aerodynamics.
+
+For the body material, **aluminum** is a lightweight and strong choice that balances safety and cost.
+
+**Body Config:**
+- Radius: 0.1 m
+- Length: 1.5 m
+- Material: aluminum
+- Thickness: 0.005 m
+
+### Step 3: Nose Cone Dimensions and Material
+
+An **ogive** nose cone shape is ideal for minimizing drag at subsonic speeds.
+
+- Nose Cone Length: 0.5 m (provides good aerodynamics).
+- Material: composite for its strength-to-weight ratio.
+
+**Nose Cone Config:**
+- Shape: ogive
+- Length: 0.5 m
+- Material: composite
+
+### Step 4: Fin Design and Material
+
+Stability is crucial, and using four fins enhances stability while maintaining a good flight trajectory.
+
+- Root Chord: 0.15 m
+- Tip Chord: 0.075 m
+- Span: 0.3 m
+- Cant Angle: 0 degrees for vertical stability.
+- Material: carbon fiber, known for its lightweight and strong properties.
+- Thickness: 0.005 m
+
+**Fin Config:**
+- Number of Fins: 4
+- Root Chord: 0.15 m
+- Tip Chord: 0.075 m
+- Span: 0.3 m
+- Cant Angle: 0
+- Material: carbon_fiber
+- Thickness: 0.005 m
+
+### Step 5: Parachute Specifications
+
+To ensure a safe landing under 5 m/s, we need to include parachutes.
+
+- Main parachute area: 0.25 m² for gradual descent.
+- Drogue parachute area: 0.2 m² to stabilize and slow initial descent after apogee.
+
+**Parachute Config:**
+- Main Parachute Area: 0.25 m²
+- Drogue Parachute Area: 0.2 m²
+
+### Step 6: Launch Rail Configuration
+
+- Rail Length: 2.5 meters for sufficient guide distance.
+- Inclination: 90 degrees for a vertical launch.
+- Heading: 0 degrees (straight up).
+
+**Final Rocket Configuration**:
+```python
+config = {
+    "motor_choice": "CesaroniM1670",
+    "rocket_body": {
+        "radius": 0.1,  # Body radius in meters
+        "length": 1.5,  # Body length in meters
+        "material": "aluminum",
+        "thickness": 0.005,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.5,  # Nose cone length in meters
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.15,  # Fin root chord in meters
+            "tip_chord": 0.075,  # Fin tip chord in meters
+            "span": 0.3,         # Fin span in meters
+            "cant_angle": 0,     # Cant angle in degrees
+            "material": "carbon_fiber",
+            "thickness": 0.005   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.2,  # Tail length in meters
+            "top_radius": 0.08,  # Top radius in meters
+            "bottom_radius": 0.1,  # Bottom radius in meters
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.25,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.5,  # Length of the launch rail in meters
+        "inclination": 90,   # Rail inclination in degrees (vertical)
+        "heading": 0,        # Launch heading in degrees (straight up)
+    },
+    "payload": {
+        "mass": 1.0,  # Payload mass in kg
+        "position": 1.0  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+### Summary of Choices
+- Selected the **CesaroniM1670** motor for optimal thrust and impulse.
+- Designed a robust aluminum body for strength and cost-effectiveness.
+- Chose an ogive nose cone to reduce drag and improve aerodynamics.
+- Configured fins with carbon fiber for weight efficiency and structural integrity.
+- Created a safety-oriented parachute system with a gradual descent mechanism.
+- Set rail configuration for secure vertical launch, enhancing flight stability amidst wind conditions.
+
+This design balances performance, cost, and safety while aiming to meet the target apogee accurately.

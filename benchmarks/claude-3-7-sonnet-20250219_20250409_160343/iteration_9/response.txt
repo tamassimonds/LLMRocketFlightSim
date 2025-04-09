@@ -1,0 +1,184 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Comprehensive Analysis of Previous Attempts
+
+After analyzing all eight previous attempts, I can identify clear patterns and insights:
+
+| Attempt | Apogee (m) | Error (%) | Structural | Cost ($) | Key Features |
+|---------|------------|-----------|------------|----------|--------------|
+| 1 | 2298.99 | 24.57% | FAILED | 209.18 | AeroTechK700W, thin walls |
+| 2 | 2245.03 | 26.34% | PASSED | 589.37 | Pro75M1670, all aluminum |
+| 3 | 2797.31 | 8.22% | PASSED | 623.77 | Pro75M1670, fiberglass body, plywood fins |
+| 4 | 2804.20 | 8.00% | FAILED | 561.76 | Pro75M1670, lighter materials, thinner walls |
+| 5 | 2783.61 | 8.67% | PASSED | 617.22 | Pro75M1670, fiberglass body, plywood fins |
+| 6 | 2753.91 | 9.65% | PASSED | 637.32 | CesaroniM1670, fiberglass body, plywood fins |
+| 7 | 2355.35 | 22.72% | PASSED | 293.30 | AeroTechK700W, carbon_fiber construction |
+| 8 | 2799.64 | 8.15% | PASSED | 561.47 | Pro75M1670, mixed materials |
+
+**Key Insights:**
+1. The Pro75M1670 motor consistently gets us closest to target (~8-9% error)
+2. We need to increase altitude by ~250m to reach our target
+3. Structural integrity requires appropriate material thickness
+4. Mixed materials (fiberglass body, ABS nose/tail, plywood fins) provide good balance of weight, strength, and cost
+5. Launch angle adjustments help compensate for wind
+
+## Refined Design Strategy
+
+For this final attempt, I'll:
+1. Continue with the Pro75M1670 motor which has shown the best performance
+2. Further reduce weight while maintaining structural integrity
+3. Optimize aerodynamics to reduce drag
+4. Fine-tune launch parameters for optimal trajectory
+5. Consider a slightly more aggressive design approach to reach target apogee
+
+## Motor Selection
+
+The Pro75M1670 (6,023.6 Ns total impulse) has consistently gotten us closest to our target. With proper optimization, this motor should be sufficient.
+
+## Body Design Calculations
+
+For the Pro75M1670 motor (75mm diameter):
+- Body radius: 0.077m (minimal clearance to reduce weight and drag)
+- Length: 0.77m (reduced to minimize weight)
+- Material: fiberglass (good strength-to-weight ratio)
+- Thickness: 0.003m (optimized for structural integrity)
+
+## Nose Cone Design
+
+- Shape: Von Karman (optimal aerodynamic performance)
+- Length: 0.22m (approximately 2.85x body radius)
+- Material: ABS_plastic (lighter than fiberglass with adequate strength)
+
+## Fin Design
+
+For stability with minimal drag:
+- 3 fins (reduced drag while maintaining stability)
+- Root chord: 0.13m (reduced to minimize weight)
+- Tip chord: 0.065m (tapered for reduced drag)
+- Span: 0.105m (optimized for stability with minimal weight)
+- Material: balsa_wood (very lightweight with adequate strength when properly sized)
+- Thickness: 0.009m (increased thickness to ensure structural integrity with lighter material)
+
+## Tail Design
+
+- Length: 0.14m (reduced to minimize weight)
+- Top radius: 0.075m
+- Bottom radius: 0.077m (minimal difference to maintain structural requirements)
+- Material: ABS_plastic (lighter than fiberglass)
+
+## Parachute Sizing
+
+Estimated rocket mass: ~2.6kg (reduced from previous designs)
+
+For a safe landing speed (<5 m/s):
+Cd_S = 2 × mass × g / (ρ × v²)
+Cd_S = 2 × 2.6 × 9.81 / (1.225 × 5²)
+Cd_S ≈ 0.83
+
+I'll split this between main and drogue:
+- Main: Cd_S = 0.7 (for final descent)
+- Drogue: Cd_S = 0.13 (for initial descent)
+
+## Launch Configuration
+
+To compensate for the easterly wind:
+- Inclination: 83 degrees (increased westward tilt to reduce horizontal distance)
+- Heading: 268 degrees (adjusted to account for drift)
+- Rail length: 1.0m (provides adequate stability during initial acceleration)
+
+## Payload
+
+- Mass: 0.22kg (minimized to improve altitude)
+- Position: 0.2m (forward of center to help with stability)
+
+## Final Design
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.077,
+        "length": 0.77,
+        "material": "fiberglass",
+        "thickness": 0.003,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.22,
+            "material": "ABS_plastic",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.13,
+            "tip_chord": 0.065,
+            "span": 0.105,
+            "cant_angle": 0,
+            "material": "balsa_wood",
+            "thickness": 0.009,
+        },
+        "tail": {
+            "length": 0.14,
+            "top_radius": 0.075,
+            "bottom_radius": 0.077,
+            "material": "ABS_plastic",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.7,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.13,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.0,
+        "inclination": 83,
+        "heading": 268,
+    },
+    "payload": {
+        "mass": 0.22,
+        "position": 0.2,
+    }
+}
+```
+
+This design improves upon previous attempts by:
+
+1. **Further reducing weight** through:
+   - Shorter body length (0.77m vs 0.8m)
+   - Smaller nose cone (0.22m vs 0.23m)
+   - Reduced fin dimensions
+   - Using balsa_wood for fins (lighter than plywood)
+   - Reduced payload mass (0.22kg vs 0.25kg)
+   - Shorter tail section (0.14m vs 0.15m)
+
+2. **Maintaining structural integrity** with:
+   - Fiberglass body with appropriate thickness
+   - Increased fin thickness (0.009m) to compensate for lighter balsa_wood material
+
+3. **Optimizing aerodynamics** with:
+   - Minimal body diameter
+   - Streamlined nose cone and fin design
+
+4. **Adjusting launch parameters** with:
+   - More aggressive westward tilt (83 degrees)
+   - Fine-tuned heading (268 degrees)
+
+5. **Balancing cost** by:
+   - Using ABS_plastic where appropriate
+   - Using balsa_wood for fins
+   - Optimizing dimensions to reduce material usage
+
+This design represents the culmination of lessons learned from all previous attempts, with careful optimization of every component to maximize altitude while maintaining structural integrity and minimizing cost.

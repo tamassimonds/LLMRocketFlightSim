@@ -1,0 +1,91 @@
+To improve the rocket design and achieve a better score, we need to focus on optimizing each component's cost-effectiveness, aerodynamic efficiency, and structural integrity. Let's go through the design process again, making adjustments based on the feedback received:
+
+### Analysis and Design Adjustments
+
+1. **Motor Selection:**
+   - The **AeroTechK700W** motor might be underpowered for reaching 3048 meters, despite its low mass. A more powerful motor may be necessary. 
+   - **CesaroniM1670** provides significantly more thrust and has a similar Isp to other strong options. Although heavier, it could help achieve the target apogee better within its impulse capacity. 
+
+2. **Rocket Body:**
+   - Increase the radius slightly more to accommodate a larger motor and ensure structural integrity with the increased thrust.
+   - Material remains **fiberglass** for cost-effectiveness and balance between weight and strength.
+   - Increase the thickness marginally to handle the structural loads from a heavier and more powerful motor.
+
+3. **Aerodynamics:**
+   - **Nose Cone:** An **ogive** shape is still optimal for drag reduction but revisit length for improved aerodynamics.
+   - Fins should be slightly larger for better stability with increased motor thrust.
+
+4. **Parachute Design:**
+   - Increase the drag area of the parachutes slightly for a safer landing and adjust the Cd as needed.
+
+5. **Launch Configuration:**
+   - Increase the rail length to ensure the rocket is at sufficient velocity to stabilize once it leaves the guiderail. 
+   - Keep the inclination vertical to maximize altitude as wind adjustment will be secondary here.
+
+6. **Payload:**
+   - Need to adjust the payload's mass lower to account for higher motor weight if payload is non-essential.
+
+### New Config
+
+```python
+config = {
+    "motor_choice": "CesaroniM1670",  # Higher thrust to reach target apogee
+    "rocket_body": {
+        "radius": 0.08,  # Increased to accommodate a larger motor and stability
+        "length": 1.8,   # Longer body for increased stability at higher speeds
+        "material": "fiberglass",
+        "thickness": 0.006,  # Increased thickness for structural integrity
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.4,  # Increased length for improved aerodynamic efficiency
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.2,  # Larger fins for increased stability
+            "tip_chord": 0.1,
+            "span": 0.25,
+            "cant_angle": 0,
+            "material": "carbon_fiber",
+            "thickness": 0.007,  # Increased thickness for strength
+        },
+        "tail": {
+            "length": 0.25,
+            "top_radius": 0.08,
+            "bottom_radius": 0.06,  # Different top and bottom radius for DRC compliance
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.35,  # Increased to improve landing safety
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.12,  # Slightly larger for initial speed reduction
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,  # Increased to stabilize at higher speeds
+        "inclination": 90,   # Vertical launch
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.2,  # Reduced mass for performance improvement
+        "position": 0.9,  # Centralized for balancing the load
+    }
+}
+```
+
+This revised configuration accounts for a more powerful motor, ensuring potential reach to the target altitude. Adjustments in the body, fin size, and thickness provide stability and robustness, while a slight increase in parachute drag area helps ensure a safer landing. Balancing these changes aims to improve the score by enhancing safety, effectiveness, and cost-efficiency.

@@ -1,0 +1,129 @@
+Let me analyze the previous attempts and design an improved rocket that addresses their shortcomings while optimizing for all scoring criteria.
+
+Key Learnings from Previous Attempts:
+1. Attempt 1 (Score: 80.71)
+- Underperformed apogee by 8% (2804m vs 3048m)
+- Structural integrity passed
+- Cost was $750.81
+
+2. Attempt 2 (Score: 74.03)
+- Improved apogee error to 6.86% (2839m)
+- Structural failure occurred (likely due to thinner aluminum body)
+- Lower cost ($658.89)
+
+Optimization Strategy:
+1. Motor Selection:
+- Stick with Pro75M1670 (best balance for target altitude)
+- Avoid heavier motors that would require more structural reinforcement
+
+2. Structural Integrity:
+- Return to fiberglass body (thicker than Attempt 2)
+- Keep composite nose cone
+- Use carbon fiber for critical stress points (fins)
+
+3. Weight Optimization:
+- Slightly reduce body length (1.3m vs 1.5m)
+- Optimize fin size for stability without excess weight
+- Moderate payload mass (0.4kg)
+
+4. Aerodynamics:
+- Longer ogive nose cone (0.45m)
+- Carefully sized fins for stability
+- Proper tail configuration
+
+5. Cost Control:
+- Balance material choices (fiberglass body, carbon fiber fins)
+- Avoid over-engineering
+
+Improved Design:
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.08,
+        "length": 1.3,
+        "material": "fiberglass",
+        "thickness": 0.0035,  # Slightly thicker than Attempt 1
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.45,
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.25,
+            "tip_chord": 0.125,
+            "span": 0.12,
+            "cant_angle": 0.75,
+            "material": "carbon_fiber",
+            "thickness": 0.0045,
+        },
+        "tail": {
+            "length": 0.28,
+            "top_radius": 0.072,
+            "bottom_radius": 0.078,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.45,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.18,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.2,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.4,
+        "position": 0.65,
+    },
+}
+```
+
+Design Rationale:
+
+1. Motor: Maintained Pro75M1670 as it's the most appropriate impulse class
+2. Structure:
+- Fiberglass body with 3.5mm thickness ensures strength
+- Carbon fiber fins provide necessary stability
+- Optimized dimensions reduce weight while maintaining integrity
+
+3. Aerodynamics:
+- Longer nose cone (0.45m) reduces drag
+- Carefully sized fins (smaller than Attempt 1 but larger than Attempt 2)
+- Proper tail configuration ensures smooth airflow
+
+4. Recovery:
+- Slightly reduced parachute sizes (still safe) to minimize weight
+- Maintained two-chute system for reliability
+
+5. Cost:
+- Balanced material choices to stay mid-range
+- Avoided unnecessary over-engineering
+
+Expected Improvements:
+- Should reach closer to target apogee (reduced error)
+- Maintain structural integrity
+- Keep costs reasonable
+- Ensure safe landing
+- Minimize horizontal drift
+
+This design carefully balances all scoring factors based on lessons from previous attempts.

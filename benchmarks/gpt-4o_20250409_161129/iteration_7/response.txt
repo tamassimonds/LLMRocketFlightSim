@@ -1,0 +1,123 @@
+To improve upon previous attempts and reach the target apogee of 3,048 meters effectively while maintaining cost efficiency, structural integrity, and a safe landing, we need to closely examine the interplay between motor choice, rocket dimensions, materials, and aerodynamics. Here's a revised strategy to achieve the optimal configuration:
+
+### Key Considerations:
+
+1. **Motor Selection**: The motor should provide sufficient impulse to reach the target apogee while being cost-effective. Previous errors occurred due to either insufficient thrust or misalignment with the rocket's mass and aerodynamic profile.
+
+2. **Weight and Aerodynamic Management**: A balance of weight and drag management is critical to achieving the desired altitude without incurring excessive costs.
+
+3. **Material Selection**: Implement materials that offer a high strength-to-weight ratio to ensure the rocket maintains structural integrity under varying aerodynamic stresses.
+
+4. **Fin Configuration**: Optimize fin dimensions for stability during flight and managing angular velocities.
+
+### Design Strategy:
+
+#### Motor Choice:
+- **Motor**: Opt for the **CesaroniM1670**. With a total impulse of 6023.6 Ns, it is powerful enough for reaching significant altitudes and provides a higher thrust ceiling compared to smaller motors, with a moderate cost. This more powerful motor should be used in conjunction with a larger and sturdier rocket body.
+
+#### Rocket Body:
+- **Radius**: 0.16 m to accommodate the larger motor and enhance stability.
+- **Length**: 2.2 m to provide adequate internal volume for components and minimize aerodynamic drag.
+- **Material**: **composite** for superior strength and lightweight characteristics.
+- **Thickness**: 0.01 m to ensure durability while keeping the weight low.
+
+#### Aerodynamics:
+- **Nose Cone**:
+  - **Kind**: **von karman** is optimal for minimizing drag at higher speeds.
+  - **Length**: 0.55 m to elongate the aerodynamic profile and enhance performance.
+  - **Material**: **composite** for improved efficiency at high speeds.
+- **Fins**:
+  - **Number**: 4 to provide enhanced stability at high speeds.
+  - **Root Chord**: 0.3 m
+  - **Tip Chord**: 0.15 m
+  - **Span**: 0.25 m
+  - **Cant Angle**: 0 degrees to maintain direction stability.
+  - **Material**: **carbon_fiber** for reduced weight and increased strength.
+  - **Thickness**: 0.005 m
+- **Tail**:
+  - **Length**: 0.25 m
+  - **Top Radius**: 0.1 m
+  - **Bottom Radius**: 0.15 m
+  - **Material**: **composite**
+
+#### Parachutes:
+- **Main**:
+  - **cd_s**: 1.0 for effective deceleration and safe landing speed.
+- **Drogue**:
+  - **cd_s**: 0.4 for initial stabilization during descent.
+
+#### Launch Rail:
+- **Rail Length**: 6.0 m for extended guidance and stability during initial ascent.
+- **Inclination**: 85 degrees to compensate for wind conditions, allowing vertical thrust to counteract drift.
+- **Heading**: 0 degrees to minimize lateral drift.
+
+#### Payload:
+- **Mass**: 0.6 kg for balance and stability control during ascent.
+- **Position**: 1.1 m to optimize stability and center of gravity.
+
+### Final Configuration:
+
+```python
+config = {
+    "motor_choice": "CesaroniM1670",
+    "rocket_body": {
+        "radius": 0.16,
+        "length": 2.2,
+        "material": "composite",
+        "thickness": 0.01,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.55,
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.3,
+            "tip_chord": 0.15,
+            "span": 0.25,
+            "cant_angle": 0,
+            "material": "carbon_fiber",
+            "thickness": 0.005,
+        },
+        "tail": {
+            "length": 0.25,
+            "top_radius": 0.1,
+            "bottom_radius": 0.15,
+            "material": "composite",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.0,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.4,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 6.0,
+        "inclination": 85,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.6,
+        "position": 1.1,
+    }
+}
+```
+
+### Expected Outcome:
+
+This redesign aims to achieve the target apogee of 3,048 meters by utilizing a more powerful motor and improving aerodynamic properties. The use of lightweight, durable materials should maintain structural integrity during flight while keeping costs reasonable.

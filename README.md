@@ -190,3 +190,5 @@ The package includes several pre-configured motors:
 ## License
 
 MIT License
+
+python3 benchmark.py --prompt prompt.txt --model claude-3-7-sonnet-20250219  --apogee 3048 --iterations 5 --wind-speed 5 --wind-direction E --output-dir benchmarks

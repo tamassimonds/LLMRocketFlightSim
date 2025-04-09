@@ -1,0 +1,123 @@
+To maximize the design's effectiveness and ensure it reaches the target apogee of 3,048 meters, we need to critically reassess our approach with the lessons learned from previous attempts. Let's explore each component of the rocket design to achieve an optimal configuration focusing on balancing thrust, weight, and drag, while adhering to the cost and safety constraints.
+
+### Key Considerations:
+
+1. **Motor Selection**: We need a motor that provides sufficient impulse to reach the target apogee without exceptional cost. The previous attempts used motors that were either undershooting apogee or were not efficient for the rocket's weight and drag profile.
+
+2. **Material Selection and Weight Management**: Rebalancing the rocket’s mass distribution and choosing the right materials to ensure the efficiency of the build without compromising on structural integrity.
+
+3. **Aerodynamics and Minimizing Drag**: Optimal selection of nose cone shape, fin dimensions, and angles to maintain stability and reduce drag.
+
+4. **Controlled Recovery**: Adjust parachute parameters to ensure a safe landing speed.
+
+5. **Overall Cost Management**: Stay economically efficient while meeting the target apogee.
+
+### Rocket Design Strategy:
+
+#### Motor Choice:
+- **Motor**: Choose the **AeroTechK700W**. It offers a balanced total impulse with its 2249 Ns, which aligns with altitude targets given adjustments to other parameters such as drag and rocket weight. This will also help manage cost more effectively compared to larger motors like the CesaroniO3700 or O5800.
+
+#### Rocket Body:
+- **Radius**: 0.09 m, slightly larger than the motor size to accommodate the AeroTechK700W.
+- **Length**: 1.8 m to minimize drag and maintain capacity for the motor and other components, while keeping the weight balanced.
+- **Material**: Use a **composite** for both the rocket body and nose cone for its favorable strength-to-weight ratio.
+- **Thickness**: 0.01 m, ensuring structural integrity.
+
+#### Aerodynamics:
+- **Nose Cone**: 
+  - **Kind**: **von karman**, optimal for higher altitudes by minimizing drag.
+  - **Length**: 0.45 m to further reduce aerodynamic drag.
+- **Fins**: 
+  - **Number**: 3 for reduced weight, still providing sufficient stability.
+  - **Root Chord**: 0.17 m
+  - **Tip Chord**: 0.07 m
+  - **Span**: 0.2 m for optimal control.
+  - **Cant Angle**: 0 degree, no spin required, focus on stability.
+  - **Material**: **carbon_fiber** for high strength and minimal weight.
+  - **Thickness**: 0.005 m
+- **Tail**:
+  - **Length**: 0.15 m
+  - **Top Radius and Bottom Radius**: 0.08 m and 0.09 m, respectively, maintaining difference for redundancy in stability.
+  - **Material**: **composite**
+
+#### Parachutes:
+- **Main**: 
+  - **cd_s**: 0.9 for efficient deceleration, ensuring a safe landing speed.
+- **Drogue**: 
+  - **cd_s**: 0.3 for initial stabilization during descent.
+
+#### Launch Rail:
+- **Rail Length**: 5.0 m providing longer guidance for initial rocket stability.
+- **Inclination**: 90 degrees (vertical) to maximize altitude.
+- **Heading**: 0 degrees, no deviation to ensure straight ascent.
+
+#### Payload:
+- **Mass**: 0.3 kg, providing necessary weight for balancing the rocket.
+- **Position**: 0.9 m, centralized to manage stability during flight.
+
+### Revised Configuration:
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.09,
+        "length": 1.8,
+        "material": "composite",
+        "thickness": 0.01,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.45,
+            "material": "composite",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.17,
+            "tip_chord": 0.07,
+            "span": 0.2,
+            "cant_angle": 0,
+            "material": "carbon_fiber",
+            "thickness": 0.005,
+        },
+        "tail": {
+            "length": 0.15,
+            "top_radius": 0.08,
+            "bottom_radius": 0.09,
+            "material": "composite",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.9,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 5.0,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.3,
+        "position": 0.9,
+    }
+}
+```
+
+### Expected Outcome:
+
+This configuration is strategically designed to ideally reach the target apogee of 3,048 meters. By rebalancing the thrust, weight, dimensions, and aerodynamic characteristics, this should provide the necessary platform for success. We maintain costs within a reasonable range by focusing on a suitable balance of materials and components. Additionally, safe landing and structural integrity should be achieved with these considered adjustments.

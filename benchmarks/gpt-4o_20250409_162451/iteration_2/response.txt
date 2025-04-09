@@ -1,0 +1,104 @@
+To improve upon the previous rocket design, we need to address the significant shortfall in reaching the target apogee while maintaining a cost-effective and structurally sound configuration. Let's re-evaluate the previous design decisions and make necessary adjustments:
+
+### Key Areas for Improvement:
+
+1. **Motor Selection**: The previous attempt used the CesaroniM1670 motor, which did not provide enough impulse to reach the desired apogee. We need to opt for a motor with a higher total impulse.
+
+2. **Weight Reduction**: Consider using lighter materials where possible, such as the nose cone and fins.
+
+3. **Efficiency in Design**: Optimizing dimensions and material selection for both aerodynamic efficiency and weight reduction can contribute to achieving the desired apogee.
+
+### Design Adjustments:
+
+#### Step 1: Motor Selection
+- **New Motor**: Opt for a motor with a significantly higher impulse, like the **CesaroniO3700**, which provides a total impulse of 29930.2 Ns and a max thrust of 4030.3 N. This should help reach the target apogee comfortably.
+
+#### Step 2: Rocket Body Design
+- **Radius**: Slightly increase the radius to accommodate the larger motor.
+- **Length**: Adjust length to provide enough space for the motor and additional payload.
+- **Material**: Retain fiberglass for its balance of strength and cost.
+- **Thickness**: Keep at 0.005 meters to ensure enough structural integrity while minimizing weight.
+
+#### Step 3: Nose Cone Design
+- **Kind**: Switch to a **von Karman** shape, as it offers optimal aerodynamic properties.
+- **Length and Material**: Increase the length to 0.4 meters and switch to **balsa wood** to reduce weight.
+
+#### Step 4: Fin Design
+- **Material**: Switch fins to **balsa wood** to significantly cut down weight.
+- **Dimensions**: Adjust fin dimensions to improve stability while keeping the weight down.
+
+#### Step 5: Tail Design
+- **Material**: Use **carbon_fiber** for its durability and weight benefits.
+
+#### Step 6: Parachute Design
+- Adjust parachute sizes to ensure a safe descent speed, considering the increase in rocket mass.
+
+#### Step 7: Launch Rail Configuration
+- Adjust rail length and inclination to suit the new motor characteristics.
+
+Here's the revised configuration:
+
+```python
+config = {
+    "motor_choice": "CesaroniO3700",
+    "rocket_body": {
+        "radius": 0.16,  # Body radius in meters
+        "length": 3.0,   # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.005,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.4,  # Nose cone length in meters
+            "material": "balsa_wood",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.25,  # Fin root chord in meters
+            "tip_chord": 0.125,  # Fin tip chord in meters
+            "span": 0.3,         # Fin span in meters
+            "cant_angle": 0,   # Cant angle in degrees
+            "material": "balsa_wood",
+            "thickness": 0.003,   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.2,  # Tail length in meters
+            "top_radius": 0.08,  # Top radius in meters
+            "bottom_radius": 0.09,  # Bottom radius in meters
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.5,  # Main parachute CD_s for slower descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,  # Drogue parachute CD_s for initial stabilization
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 7,  # Length of the launch rail in meters
+        "inclination": 85,   # Inclined slightly to counter wind
+        "heading": 270,      # Opposite of wind to counteract drift
+    },
+    "payload": {
+        "mass": 0.6,  # Payload mass in kg to account for new equipment
+        "position": 1.5  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+### Summary
+
+The new design focuses on maximizing impulse and optimizing the rocket's structural weight for an increased chance of meeting the target apogee while keeping costs reasonable. It includes changes to motor selection, aerodynamic shaping, materials, and overall weight distribution as needed to improve vertical reach and recovery safety.

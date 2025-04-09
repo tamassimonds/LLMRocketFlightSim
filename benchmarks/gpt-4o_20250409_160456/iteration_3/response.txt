@@ -1,0 +1,90 @@
+To optimize the rocket design and better achieve the target apogee of 3048 meters, further refinements are needed, especially focusing on optimizing thrust and reducing unnecessary weight while balancing cost and ensuring structural integrity. Let's break down each component to understand the improvements we can make:
+
+### Revised Design Approach
+1. **Motor Selection:**
+   - The previous attempt using CesaroniM1670 reached only 1747.12 meters, which is significantly below the target. Considering the total impulse, a more powerful motor like the **CesaroniO3700** might help achieve closer to the desired performance, despite its higher weight and cost. This motor offers a high total impulse which is vital for reaching higher altitudes.
+
+2. **Rocket Body:**
+   - To handle the higher thrust of CesaroniO3700, a robust body is needed, slightly increasing the thickness while keeping the material as **fiberglass** to manage costs effectively.
+   - Ensure the body is slightly bigger than the motor (radius of 161 mm so set the body radius to 0.162 m).
+
+3. **Aerodynamics:**
+   - **Nose Cone:** An **ogive** shape with adequate length to minimize drag. Increase the length for better aerodynamic performance.
+   - **Fins:** Larger fins provide stability with more powerful motors. Using materials like **carbon_fiber** for stiffness without adding too much weight, but further testing should ensure that the larger size stabilizes without significantly increasing drag.
+
+4. **Parachute System:**
+   - Enhancing the parachute system to slow down effectively with the heavier motor. Increasing parachute size will ensure a safe descent.
+
+5. **Launch Configuration:**
+   - Utilize a long rail to ensure that the rocket is stable and reaches sufficient speed when it leaves the rail.
+
+### Revised Configuration Proposal:
+
+```python
+config = {
+    "motor_choice": "CesaroniO3700",  # Powerful motor to achieve the target apogee
+    "rocket_body": {
+        "radius": 0.162,  # Accommodates larger motor, ensuring clearance
+        "length": 2.1,    # Adequate length to support stability
+        "material": "fiberglass",
+        "thickness": 0.007,  # Slight increase for structural support
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.5,  # Longer for better aerodynamics
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.25,  # Larger fins for stability
+            "tip_chord": 0.125,
+            "span": 0.3,
+            "cant_angle": 0,  # Neutral angle for minimal complexity
+            "material": "carbon_fiber",
+            "thickness": 0.007,
+        },
+        "tail": {
+            "length": 0.3,
+            "top_radius": 0.162,
+            "bottom_radius": 0.14,  # Different measures for design validity
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.4,  # Increased for safety during descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.15,  # Larger drogue for initial deceleration
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 3.0,  # Ensures sufficient speed for stabilization
+        "inclination": 90,   # Vertical launch for maximum altitude
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.1,  # Minimal to reduce weight
+        "position": 1.0,  # Adjusted for balanced weight distribution
+    }
+}
+```
+
+### Rationale and Calculations:
+- **CesaroniO3700** has a significantly higher impulse suitable for reaching closer to the 3048 meter target.
+- The rocket body is slightly adjusted to safely accommodate the larger and more powerful motor while maintaining structural integrity. Increasing rail length helps in stabilizing the launch trajectory.
+- The parachutes are larger and more optimized for safe recovery, accounting for the added weight of a more powerful motor.
+- **Cost vs. Performance**: While this increases the motor cost, it should balance against reduced construction costs with **fiberglass** and keep within the structural limits even at increased thrust.
+
+These considerations aim to improve the rocket's performance and achieve closer to the required apogee, balancing cost, and safety effectively.

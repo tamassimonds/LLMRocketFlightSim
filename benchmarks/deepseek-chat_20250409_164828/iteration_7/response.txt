@@ -1,0 +1,110 @@
+After carefully analyzing all previous attempts, I'll design an optimized rocket that combines the best-performing elements while addressing the remaining performance gap. Here's my improved approach:
+
+### Key Learnings:
+1. **Best Performance**: Attempt 3 scored 80.92 with 8.52% apogee error
+2. **Structural Success**: Fiberglass body at 0.0035m thickness worked reliably
+3. **Aerodynamics**: Ogive nose at 0.45m length performed best
+4. **Cost Efficiency**: $720-$730 range is optimal
+5. **Remaining Gap**: Need to reduce the ~8% altitude deficit
+
+### Optimized Strategy:
+1. **Motor**: Keep Pro75M1670 (best available option)
+2. **Weight Reduction**:
+   - Slightly shorter body (1.28m)
+   - Optimized fin dimensions
+   - Reduced payload (0.3kg)
+3. **Aerodynamics**:
+   - Maintain ogive nose but extend to 0.49m
+   - 4 fins with reduced area but increased cant (1°)
+4. **Structure**:
+   - Fiberglass body (0.0035m)
+   - Carbon fiber fins (0.004m)
+5. **Recovery**:
+   - Slightly smaller parachutes (still safe)
+6. **Cost**:
+   - Maintain ~$725 cost
+
+### Final Optimized Design:
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.081,
+        "length": 1.28,
+        "material": "fiberglass",
+        "thickness": 0.0035,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.49,
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.22,
+            "tip_chord": 0.11,
+            "span": 0.12,
+            "cant_angle": 1.0,
+            "material": "carbon_fiber",
+            "thickness": 0.004,
+        },
+        "tail": {
+            "length": 0.26,
+            "top_radius": 0.071,
+            "bottom_radius": 0.077,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.44,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.18,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.2,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.3,
+        "position": 0.67,
+    },
+}
+```
+
+### Key Improvements:
+1. **Aerodynamics**:
+   - Longer nose cone (0.49m) for better drag reduction
+   - Increased fin cant angle (1°) for improved stability in crosswinds
+   - Optimized fin area to balance drag and stability
+
+2. **Weight Reduction**:
+   - Shorter body (1.28m) reduces mass
+   - Smaller payload (0.3kg)
+   - Maintained structural integrity
+
+3. **Performance**:
+   - Expected to reduce apogee error to ~7-8%
+   - Maintains structural safety
+   - Conservative recovery parameters
+
+4. **Cost**:
+   - Maintains cost around $725
+   - Uses carbon fiber only where most effective
+
+This design represents the optimal balance based on all empirical data from previous attempts, making carefully calculated improvements to the best-performing configuration while maintaining all safety and structural requirements.

@@ -25,6 +25,7 @@ def analyze_flight(flight):
     max_speed = flight.max_speed
     max_acceleration = flight.max_acceleration
     impact_velocity = flight.impact_velocity
+
     
     analysis = {
         "flight_time": flight_time,
@@ -33,6 +34,9 @@ def analyze_flight(flight):
         "max_speed": max_speed,
         "max_acceleration": max_acceleration,
         "max_dynamic_pressure": flight.max_dynamic_pressure,
+        "x_final": x_final,
+        "y_final": y_final,
+        "t_final": t_final,
         "impact_velocity": impact_velocity
     }
     

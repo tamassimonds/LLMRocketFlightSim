@@ -1,0 +1,60 @@
+```python
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.151,  # Minimized to reduce material cost while exceeding motor radius (0.15m)
+        "length": 1.2,  # Shorter body reduces mass and cost
+        "material": "fiberglass",  # Cheaper than carbon fiber
+        "thickness": 0.005,  # Maintain structural integrity
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",  # Optimal for subsonic drag
+            "length": 0.4,  # Reduced length for lower mass
+            "material": "fiberglass",  # Cost-effective
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.25,  # Reduced size for lower drag/material
+            "tip_chord": 0.1,
+            "span": 0.15,  # Smaller span for stability balance
+            "cant_angle": 0.5,  # Minimal cant for straight flight
+            "material": "ABS_plastic",  # Low-cost material
+            "thickness": 0.004,  # Reduced thickness for weight savings
+        },
+        "tail": {
+            "length": 0.3,
+            "top_radius": 0.150,  # Gradual transition for stability
+            "bottom_radius": 0.151,
+            "material": "fiberglass",  # Cost reduction
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.7,  # Increased drag area for <5 m/s landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,  # Balanced stabilization vs drift
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 4.0,  # Sufficient for stable launch
+        "inclination": 90,  # Vertical flight minimizes wind drift
+        "heading": 0,  # Directly upwind compensation
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 0.6  # Centered for stability
+    }
+}
+```

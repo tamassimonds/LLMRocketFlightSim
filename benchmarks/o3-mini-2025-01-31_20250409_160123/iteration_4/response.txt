@@ -1,0 +1,112 @@
+Below is my reasoning followed by the final configuration.
+
+──────────────────────────────
+Design Reasoning:
+
+1. Motor Selection:
+  • To reach a 3048‐m apogee we must choose a motor with very high total impulse. The moderate Pro75M1670 (≈6024 Ns) in our previous attempts was simply not providing enough energy; hence, we select the “CesaroniO5800” motor which offers roughly 30383 Ns of impulse. Although it is heavier (dry mass ≈12.418 kg) and has a larger radius (0.15 m), its performance is essential for nearly reaching the target altitude.
+  
+2. Rocket Body:
+  • Because the motor’s radius is 0.15 m we set our body “radius” only slightly larger (0.17 m) to limit drag while meeting the feasibility check.
+  • We lengthen the body to 3.5 m, creating a long slender (high fineness ratio) airframe that minimizes drag losses and helps concentrate the motor’s impulse into altitude.
+  • “aluminum” is chosen for the body because it is strong and (assumed) cost–effective, and we use a thin wall (0.005 m) to keep added mass and cost low.
+  
+3. Aerodynamics:
+  Nose Cone:
+   • An “ogive” nose cone is chosen for its proven low–drag characteristics and smooth pressure gradients at high speed.
+   • A nose cone length of 0.6 m provides a gentle taper to match the slender body while avoiding excessive length that would add cost.
+   • “composite” is used here for its light weight and acceptable strength.
+   
+  Fins:
+   • We retain four fins (a common choice for static stability) but now optimize their dimensions for our slender design.
+   • A “root_chord” of 0.15 m and “tip_chord” of 0.08 m (a clear taper) keeps fins effective yet not oversized.
+   • A fin “span” of 0.2 m is enough to provide the aerodynamic leverage needed for stability.
+   • A cant angle of 1° is introduced to promote roll stabilization during flight.
+   • To help lower the overall cost (and weight) while still giving reasonable rigidity at simulation loads, the fins are made from “plywood” with a thickness of 0.004 m.
+   
+  Tail:
+   • The tail serves as a mounting and aerodynamic stabilizer. To satisfy the design check (top and bottom radii must differ), we choose a “top_radius” of 0.03 m and a “bottom_radius” of 0.04 m.
+   • A tail length of 0.3 m is selected.
+   • We also use “plywood” here to keep costs low.
+   
+4. Parachutes:
+  • With a heavy, high‐impulse flight the recovery phase is critical. A larger main parachute (cd_s = 0.4) is chosen to slow the descent and keep impact velocity well below the 5 m/s safety limit.
+  • The drogue parachute is sized a bit smaller (cd_s = 0.25) to deploy promptly at apogee and help stabilize the rocket.
+  • Both parachutes use the standard settings (trigger “apogee”, a sampling_rate of 105, a lag of 1.5, and noise parameters (0, 8.3, 0.5)).
+  
+5. Launch Rail:
+  • Because a high–impulse, heavy rocket can be disturbed by crosswinds (in our case, 5 m/s from the east), a longer launch rail (3.0 m) is used to guide the initial acceleration phase and minimize horizontal drift.
+  • The rail “inclination” is set to 90° (vertical launch) and “heading” is 0° (considered “straight up” in the simulation) so that any wind-induced lateral force is minimized.
+  
+6. Payload:
+  • A modest payload of 0.5 kg is assumed.
+  • In a 3.5-m long vehicle a payload placement near the midpoint (1.75 m from the nose) helps achieve proper balance.
+
+──────────────────────────────
+With this configuration the heavy‐impulse “CesaroniO5800” is expected to deliver nearly the desired apogee while the slender, well‐shaped body and optimized recovery system work together to reduce drag, mitigate horizontal drift in 5 m/s easterly wind, keep the landing impact velocity low, and control cost by using efficient materials.
+
+──────────────────────────────
+Final Configuration Dictionary:
+
+------------------------------------------------
+config = {
+    "motor_choice": "CesaroniO5800",  # High–impulse motor to meet the 3048 m target
+    "rocket_body": {
+        "radius": 0.17,         # in meters; must exceed motor radius (0.15 m) while minimizing drag
+        "length": 3.5,          # in meters; a long, slender profile reduces drag losses
+        "material": "aluminum", # strong and cost–effective for the main airframe
+        "thickness": 0.005,     # wall thickness in meters, balancing strength and weight
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",         # low–drag aerodynamic shape
+            "length": 0.6,           # in meters; provides a smooth taper to the slender body
+            "material": "composite", # lightweight and strong
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.15,      # in meters; effective base chord for control surfaces
+            "tip_chord": 0.08,       # in meters; tapering the chord reduces drag
+            "span": 0.2,             # in meters; sufficient span for aerodynamic stability
+            "cant_angle": 1.0,       # in degrees; slight cant enhances roll stability
+            "material": "plywood",   # chosen for cost–effectiveness while providing adequate strength
+            "thickness": 0.004,      # in meters; thin enough to reduce weight without compromising rigidity
+        },
+        "tail": {
+            "length": 0.3,         # in meters; tail length for additional stability
+            "top_radius": 0.03,      # in meters; different from bottom_radius to satisfy design requirements
+            "bottom_radius": 0.04,   # in meters; ensures the DRC check passes
+            "material": "plywood",   # cost–effective and suitable for the tail structure
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.4,          # larger effective drag area to ensure a gentle descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.25,         # effective size for early stabilization during descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 3.0,   # in meters; a long rail supports proper guidance against crosswind
+        "inclination": 90,    # degrees; vertical launch minimizes horizontal drift
+        "heading": 0,         # degrees; launching straight up to counter the easterly wind
+    },
+    "payload": {
+        "mass": 0.5,          # in kg; modest point mass to keep overall weight low
+        "position": 1.75,     # in meters; near the airframe’s midpoint for optimal balance
+    },
+}
+------------------------------------------------
+
+This design optimizes high–altitude performance while controlling cost, minimizing horizontal deviation, and ensuring a safe, low–velocity landing.

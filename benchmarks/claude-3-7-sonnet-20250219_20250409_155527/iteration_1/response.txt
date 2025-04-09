@@ -1,0 +1,134 @@
+# Rocket Design Analysis
+
+I'll design a rocket to reach the target apogee of 3048 meters (10,000 ft) while optimizing for the scoring criteria. Let me work through this systematically.
+
+## Initial Considerations
+
+1. **Target Apogee**: 3048 meters
+2. **Wind Conditions**: 5 m/s from East
+3. **Scoring Factors**:
+   - Distance to target apogee (primary)
+   - Cost (cheaper is better)
+   - Landing velocity (< 5 m/s for safety)
+   - Structural integrity
+   - Horizontal distance from launch site
+
+## Motor Selection Analysis
+
+First, I need to select an appropriate motor. The motor should provide enough thrust to reach our target altitude without excessive overshoot.
+
+Let's analyze the available motors:
+
+| Motor | Avg Thrust (N) | Burn Time (s) | Total Impulse (Ns) | Mass (kg) | Cost Factor |
+|-------|----------------|---------------|-------------------|-----------|------------|
+| Pro75M1670 | 1533.9 | 3.9 | 6023.6 | 1.815 | Medium |
+| AeroTechK700W | 658.7 | 3.5 | 2249 | 0.732 | Lower |
+| CesaroniM1670 | 1533.9 | 3.6 | 6023.6 | 3.101 | Medium |
+| AeroTechH128W | 141.2 | 1.29 | 176.5 | 0.108 | Low |
+| CesaroniO3700 | 2836.9 | 8.2 | 29930.2 | 14.194 | High |
+| CesaroniO5800 | 5040.2 | 5.2 | 30382.7 | 12.418 | High |
+| CesaroniK160 | 190.2 | 9.7 | 1521.7 | 0.7 | Low |
+
+For a 3048m apogee, we need a motor with sufficient impulse but not excessive. The CesaroniO motors are likely too powerful and expensive. The AeroTechH128W is too small. 
+
+The Pro75M1670, CesaroniM1670, and AeroTechK700W seem most appropriate. Between these, the AeroTechK700W has a good balance of impulse and lower mass/cost.
+
+## Rocket Mass Estimation
+
+For a target apogee of 3048m, I'll aim for a total rocket mass (including motor) of approximately 2-3 kg. This should allow sufficient altitude with the AeroTechK700W motor.
+
+## Body Design
+
+I'll use a lightweight but strong material like fiberglass for the body. The radius needs to be greater than the motor radius (54mm = 0.054m for AeroTechK700W).
+
+## Nose Cone Design
+
+An ogive nose cone provides good aerodynamic performance. I'll use a lightweight material like fiberglass.
+
+## Fin Design
+
+Four fins provide good stability. I'll use a trapezoidal design with a moderate root chord and span, made from lightweight balsa wood.
+
+## Parachute Design
+
+For a safe landing (<5 m/s), I need appropriate parachute sizing:
+- Terminal velocity = sqrt(2*m*g/(ρ*Cd*A))
+- For a 2.5 kg rocket and 5 m/s landing speed: Cd*A ≈ 0.2 m²
+
+## Launch Configuration
+
+Given the 5 m/s easterly wind, I'll angle the launch rail slightly into the wind (westward) to minimize horizontal drift.
+
+## Final Design Configuration
+
+Based on these calculations and considerations, here's my optimized rocket design:
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.06,  # Body radius in meters (greater than motor radius of 0.054m)
+        "length": 0.8,   # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.003,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.25,  # Nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.12,  # Fin root chord in meters
+            "tip_chord": 0.06,   # Fin tip chord in meters
+            "span": 0.08,        # Fin span in meters
+            "cant_angle": 0,     # Cant angle in degrees
+            "material": "balsa_wood",
+            "thickness": 0.006   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.1,  # Tail length in meters
+            "top_radius": 0.055,  # Top radius in meters
+            "bottom_radius": 0.06,  # Bottom radius in meters
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.22,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.05,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.0,  # Length of the launch rail in meters
+        "inclination": 88,   # Rail inclination in degrees (slightly angled into wind)
+        "heading": 270,      # Launch heading in degrees (westward to counter easterly wind)
+    },
+    "payload": {
+        "mass": 0.3,  # Payload mass in kg
+        "position": 0.3  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This design balances all the scoring criteria:
+1. Uses a moderately powered motor to reach target apogee
+2. Uses lightweight materials to reduce cost
+3. Has appropriately sized parachutes for safe landing
+4. Has a structurally sound design with appropriate materials
+5. Accounts for wind with a slight launch angle adjustment
+
+The total mass should be around 2-2.5 kg, which with the AeroTechK700W motor's 2249 Ns impulse should reach close to our target apogee of 3048m.

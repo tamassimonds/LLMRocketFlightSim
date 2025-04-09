@@ -1,0 +1,132 @@
+To improve the rocket design further and meet the required apogee while optimizing the score, we need to carefully analyze the previous designs and adjust our approach. Given the constraints and feedback from the last attempts, I'll make strategic changes focusing on motor choice, structural weight distribution, and cost-effectiveness.
+
+### Key Observations from Previous Attempts:
+
+1. **Motor Selection:** 
+   - Attempt 3 used the CesaroniO3700 motor, leading to an overshoot of the target apogee due to excessive power.
+   - Attempt 2: The AeroTechK700W motor was closer to the target, showing limited power relative to the design constraints.
+
+2. **Structural Integrity:**
+   - We need to ensure that the rocket can handle the thrust without failure, possibly by improving material choices and thickness.
+
+3. **Cost:**
+   - Attempt 3 was too costly. We should aim to decrease the cost significantly by optimizing material choices and minimizing the use of expensive components where possible.
+
+### Design Adjustments:
+
+1. **Motor Choice:**
+   - **Motor:** CesaroniK160 
+   - This motor offers a balance between power and cost and should be adjusted with other design considerations to safely reach the target apogee.
+
+2. **Rocket Body and Material:**
+   - **Radius:** 0.08 m (providing enough clearance for the motor).
+   - **Length:** 1.8 m (adequate to house all components comfortably).
+   - **Material:** Fiberglass (chosen for cost-effectiveness while maintaining structural integrity).
+   - **Thickness:** 0.006 m - Slightly increased thickness to ensure structural integrity.
+
+3. **Nose Cone Design:**
+   - **Kind:** Ogive (optimal for reducing drag).
+   - **Length:** 0.4 m.
+   - **Material:** ABS Plastic (lighter and cost-effective for nose cones).
+
+4. **Fin Configuration:**
+   - **Number:** 4 (offering stability with reasonable drag).
+   - **Root Chord:** 0.12 m.
+   - **Tip Chord:** 0.06 m.
+   - **Span:** 0.25 m.
+   - **Cant Angle:** 0° (to minimize roll and manufacturing complexity).
+   - **Material:** Balsa Wood (lightweight and cheap but increased thickness for strength).
+   - **Thickness:** 0.005 m.
+
+5. **Tail Design:**
+   - **Length:** 0.18 m.
+   - **Top Radius:** 0.08 m.
+   - **Bottom Radius:** 0.07 m.
+   - **Material:** Fiberglass.
+
+6. **Parachutes Configuration:**
+   - **Main Parachute CD_s:** 0.9 (optimizing for a softer landing).
+   - **Drogue Parachute CD_s:** 0.3.
+   - **Trigger:** Apogee.
+   - **Sampling Rate:** 105.
+   - **Lag:** 1.5 s.
+   - **Noise:** (0, 8.3, 0.5).
+
+7. **Launch Rail and Configuration:**
+   - **Rail Length:** 1.5 m (offers balance between supporting length and costs).
+   - **Inclination:** 90° (vertical to maximize height).
+   - **Heading:** 0°.
+
+8. **Payload:**
+   - **Mass:** 0.7 kg.
+   - **Position:** 1.0 m.
+
+### Revised Rocket Design:
+
+```python
+config = {
+    "motor_choice": "CesaroniK160",
+    "rocket_body": {
+        "radius": 0.08,
+        "length": 1.8,
+        "material": "fiberglass",
+        "thickness": 0.006,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.4,
+            "material": "ABS_plastic",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.12,
+            "tip_chord": 0.06,
+            "span": 0.25,
+            "cant_angle": 0.0,
+            "material": "balsa_wood",
+            "thickness": 0.005,
+        },
+        "tail": {
+            "length": 0.18,
+            "top_radius": 0.08,
+            "bottom_radius": 0.07,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.9,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.5,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.7,
+        "position": 1.0,
+    }
+}
+```
+
+### Explanation:
+This design is refined to hit closer to the target apogee using a cost-effective motor. The structural materials aim to balance weight distribution, cost efficiency, and strength. By reducing costs on the motor and balancing the material choices, this design should improve on previous score metrics focusing primarily on achieving the desired apogee while maintaining necessary safety and integrity standards. 
+
+---
+
+In case the actual apogee significantly deviates still, consider iterating on payload mass distribution or further refining fin and nose cone design parameters to achieve the optimal flight path and drag configuration.

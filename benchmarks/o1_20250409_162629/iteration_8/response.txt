@@ -1,0 +1,104 @@
+Below is a step-by-step thought process leading to an improved design that keeps us near the target 3048 m apogee, maintains structural integrity, and shaves cost by carefully trimming material usage and slightly adjusting recovery hardware. Then you will find the final Python dictionary configuration.
+
+────────────────────────────────────────────────────────
+1) Starting Point and Lessons Learned
+────────────────────────────────────────────────────────
+• Attempts using the CTI Pro75M1670 motor demonstrated enough total impulse (~6024 Ns) to reach around 3048 m, provided the rocket body and fins are thick/strong enough.  
+• A body radius of about 0.076 m and length ~1.3 m gave near-perfect altitude performance when wall/fins were ~2.8 mm thick.  
+• Thinning below 2.8 mm risked structural failure. Slightly bigger or heavier components inflated cost unnecessarily.
+
+────────────────────────────────────────────────────────
+2) Materials and Dimensions
+────────────────────────────────────────────────────────
+• Use “fiberglass” for the body, nose cone, and tail for good strength and moderate cost.  
+• Keep a 2.8 mm thickness (0.0028 m) to avoid structural failure.  
+• “Plywood” fins (3 of them) also at 2.8 mm thickness for a good balance of cost, weight, and rigidity.  
+• Body radius: 0.076 m (just above the 0.075 m motor radius) to minimize frontal area without motor interference.  
+• Body length: 1.3 m, which earlier attempts showed was enough space for parachutes and payload while keeping mass and drag moderate.
+
+────────────────────────────────────────────────────────
+3) Refinements for Lower Cost
+────────────────────────────────────────────────────────
+• Slightly reduce the tail section length from 0.08 m to 0.07 m to trim some material and cost.  
+• Decrease the main parachute’s cd_s from 0.70 to 0.68 to lessen canopy size and packing cost, still keeping landing speeds under ~5 m/s.  
+• Shorten the launch rail from 2.3 m to 2.2 m, which saves a small amount of material/cost without compromising liftoff stability under the Pro75M1670’s high thrust.
+
+────────────────────────────────────────────────────────
+4) Two-Parachute Recovery
+────────────────────────────────────────────────────────
+• Use a small drogue (cd_s = 0.05) at apogee to stabilize descent until main deployment.  
+• A main parachute (cd_s = 0.68) still ensures soft landings below ~5 m/s for a 4–5 kg rocket.
+
+────────────────────────────────────────────────────────
+5) Expected Outcome
+────────────────────────────────────────────────────────
+• By keeping the 2.8 mm thickness, the rocket should remain structurally sound.  
+• A narrower tail, slightly smaller main chute, and shorter rail reduce costs enough to incrementally improve the overall score.  
+• The target apogee (3048 m) should still be closely matched, given how little we altered the overall aerodynamic profile and mass from previous successful attempts.
+
+────────────────────────────────────────────────────────
+Final Configuration Dictionary
+────────────────────────────────────────────────────────
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.076,         # meters (> 0.075 m motor radius)
+        "length": 1.3,           # meters
+        "material": "fiberglass",
+        "thickness": 0.0028,     # 2.8 mm wall thickness
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.3,        # nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.14,   # meters
+            "tip_chord": 0.06,    # meters
+            "span": 0.1,          # meters
+            "cant_angle": 0,      # degrees
+            "material": "plywood",
+            "thickness": 0.0028,  # 2.8 mm fin thickness
+        },
+        "tail": {
+            "length": 0.07,       # meters (slightly shorter to reduce cost)
+            "top_radius": 0.076,
+            "bottom_radius": 0.065,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.68,          # slightly reduced from 0.70
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.05,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.2,  # meters (slightly less than 2.3 m)
+        "inclination": 90,   # degrees (vertical)
+        "heading": 0,        # degrees
+    },
+    "payload": {
+        "mass": 0.2,         # kg
+        "position": 0.65,    # meters from rocket center
+    }
+}
+```
+
+Explanation Summary:  
+By keeping critical structural elements at 2.8 mm, the rocket should pass structural integrity checks under the Pro75M1670’s high thrust. Meanwhile, minor reductions in tail length, main parachute size, and launch rail length help further trim cost and mass. This balanced design should still put the rocket near the 3048 m apogee target and safely recover under 5 m/s landing speed.

@@ -1,0 +1,118 @@
+Below is a step-by-step outline of the reasoning used to arrive at a new rocket design that addresses the lessons learned from previous attempts (particularly relating to structural integrity and properly matching the motor radius). After these considerations, you will find the “config” dictionary in the requested format, containing no extraneous Python code.
+
+────────────────────────────────────────────────────────
+1) Understanding Previous Attempts
+────────────────────────────────────────────────────────
+• Attempts 2 and 3 came very close to the target apogee (3080 m and 3055 m respectively) but failed structurally.  
+• A key detail: the AeroTechK700W motor has a 54 mm case radius (0.054 m). Several earlier designs had a rocket body radius less than 0.054 m, which violates the requirement that the body radius must be greater than the motor radius. This can cause design-rule check (DRC) failures and structural issues in the simulation.
+
+────────────────────────────────────────────────────────
+2) New Approach to Ensure Structural Integrity
+────────────────────────────────────────────────────────
+• Increase rocket body radius to 0.06 m (60 mm), comfortably above the 54 mm motor radius requirement and providing extra internal space/strength margin.  
+• Keep overall rocket length moderate (1.3 m), retaining enough volume while limiting weight.  
+• Use a material stronger than balsa or thin fiberglass (such as “composite”) for both body and fins, and keep a reasonable thickness (3 mm) to handle higher dynamic pressures.  
+• Keep the motor choice as AeroTechK700W, as it provides enough total impulse (~2249 Ns) to get us near 3048 m apogee without the excessive cost or drift of an M- or O-class motor.
+
+────────────────────────────────────────────────────────
+3) Nose Cone
+────────────────────────────────────────────────────────
+• Use an ogive shape for low drag.  
+• Length of 0.25 m for aerodynamic efficiency without adding unnecessary mass.  
+• Same composite material for simplicity and strength consistency.
+
+────────────────────────────────────────────────────────
+4) Fin Design
+────────────────────────────────────────────────────────
+• Three fins for balanced stability and lower drag/cost than four.  
+• Composite material at 3 mm thickness for improved structural margin.  
+• The same approximate planform (root chord ~0.14 m, tip chord ~0.06 m, span ~0.11 m) aligns with stable flight from earlier attempts.
+
+────────────────────────────────────────────────────────
+5) Tail Section
+────────────────────────────────────────────────────────
+• Length of 0.1 m, matching the body’s 0.06 m top radius and tapering slightly to 0.065 m. Ensures top and bottom radii are not equal (meets DRC rules).  
+• Composite material, same thickness, to avoid a structural weak point.
+
+────────────────────────────────────────────────────────
+6) Parachutes
+────────────────────────────────────────────────────────
+• Main parachute Cd·S of 2.4 for ≤ 5 m/s landing on a ~4 kg rocket.  
+• Small drogue parachute (Cd·S = 0.2) ensures a stable descent from apogee until main deployment.
+
+────────────────────────────────────────────────────────
+7) Launch Configuration & Wind
+────────────────────────────────────────────────────────
+• Launch rail length of 2.2 m to allow the rocket more time to reach a stable velocity before leaving the rail.  
+• 88 ° inclination (near-vertical) and a heading of 270 ° west to counter moderate easterly winds.
+
+────────────────────────────────────────────────────────
+8) Payload
+────────────────────────────────────────────────────────
+• 0.65 kg mass at 0.6 m from the rocket center.  
+• This minor mass helps shift the CG forward but still keeps overall mass manageable for the K700.
+
+────────────────────────────────────────────────────────
+FINAL DESIGN (“config” DICTIONARY)
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.06,         # Must exceed motor radius of 0.054 m
+        "length": 1.3,
+        "material": "composite",
+        "thickness": 0.003,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.25,
+            "material": "composite",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.14,
+            "tip_chord": 0.06,
+            "span": 0.11,
+            "cant_angle": 0,
+            "material": "composite",
+            "thickness": 0.003,
+        },
+        "tail": {
+            "length": 0.1,
+            "top_radius": 0.06,
+            "bottom_radius": 0.065,
+            "material": "composite",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 2.4,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.2,
+        "inclination": 88,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 0.65,
+        "position": 0.6
+    }
+}
+```

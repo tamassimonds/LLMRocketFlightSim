@@ -1,0 +1,129 @@
+To design a rocket that meets the specified requirements, we need to carefully consider all components of the rocket including the motor, body, aerodynamics, parachutes, launch configuration, and payload. Here's how we can approach this task:
+
+### 1. Motor Selection
+The motor is a critical part of achieving the target apogee of 3048 meters. We want a motor that provides enough thrust but is not overly powerful, which could increase costs and complexity unnecessarily.
+
+#### Motor Analysis:
+- **Pro75M1670**: High thrust but has a significant dry mass.
+- **AeroTechK700W**: Moderate thrust and much lighter.
+- **CesaroniM1670**: Similar to Pro75M1670 with more mass.
+- **AeroTechH128W**: Low thrust, best for small rockets.
+- **CesaroniO3700**: Very high thrust, not suitable for this target apogee.
+- **CesaroniO5800**: Extremely high thrust, unnecessary.
+- **CesaroniK160**: Low to moderate thrust with long burn time.
+
+The **AeroTechK700W** seems to balance decent thrust, lower mass, and reasonable burn time, making it an ideal candidate for our target apogee.
+
+### 2. Rocket Body
+The body must house the motor comfortably and be lightweight while providing structural integrity.
+
+- **Radius**: Slightly larger than the motor's 54 mm diameter, say 0.06 m.
+- **Length**: Assuming a slender body to minimize drag, around 1.5 m.
+- **Material**: **Fiberglass** is a good choice for its compromise between strength and weight.
+- **Thickness**: Depends on load but generally 0.005 m for a balance between weight and structural integrity.
+
+### 3. Aerodynamics
+The aerodynamic components include the nose cone and fins.
+
+#### Nose Cone:
+- **Shape**: An **ogive** shape is efficient for minimizing drag.
+- **Length**: To streamline, around 0.3 m.
+- **Material**: **Fiberglass** for consistency.
+
+#### Fins:
+- **Number**: Four fins for stability.
+- **Root Chord**: Keeping proportional with body length, around 0.15 m.
+- **Tip Chord**: To reduce drag, around 0.075 m.
+- **Span**: Aiming for stability, around 0.2 m.
+- **Cant Angle**: 0 degrees for simplicity.
+- **Material**: **Carbon_fiber** for lightweight strength.
+- **Thickness**: Around 0.005 m.
+
+#### Tail:
+- **Length**: 0.2 m – enough to nest the fins securely.
+- **Top/Bottom Radius**: 0.06 m and 0.05 m respectively, to allow for easier transitions aerodynamically.
+- **Material**: **Carbon_fiber** as well.
+
+### 4. Parachute Design
+Parachute deployment is crucial to ensure a safe landing speed.
+
+- **Main Parachute**: Aim for slow descent rate, target a cd_s of 0.3.
+- **Drogue Parachute**: Smaller parachute to gently slow down, target a cd_s of 0.1.
+
+### 5. Launch Configuration
+Given the wind from the east, inclined launching could help counteract drift.
+
+- **Rail Length**: 1.5 m to ensure full motor thrust utilization.
+- **Inclination**: Possibly slightly more than 90 degrees to offset wind, say 92 degrees.
+- **Heading**: Launch straight up.
+
+### 6. Payload
+Including a small payload for any essential electronics.
+
+- **Mass**: 0.3 kg for simplicity.
+- **Position**: 0.7 m, central for balance.
+
+Based on these reasoning steps, here's the design config:
+
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",  # Chosen for balanced thrust and weight
+    "rocket_body": {
+        "radius": 0.06,  # Body radius larger than motor
+        "length": 1.5,    # Streamlined length for drag reduction
+        "material": "fiberglass",
+        "thickness": 0.005,  # Balance between weight and structural needs
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.3,  # Sleek design for drag reduction
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.15,
+            "tip_chord": 0.075,
+            "span": 0.2,
+            "cant_angle": 0,
+            "material": "carbon_fiber",
+            "thickness": 0.005,
+        },
+        "tail": {
+            "length": 0.2,
+            "top_radius": 0.06,
+            "bottom_radius": 0.05,
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.3,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.1,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.5,
+        "inclination": 92,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.3,
+        "position": 0.7
+    }
+}
+```
+This config is designed to optimize the chances of reaching the target apogee while minimizing costs and ensuring safety. Different angles and materials provide higher flexibility under varying environmental conditions, offsetting the wind’s effect, and ensuring the structural integrity and cost-effectiveness of the design.

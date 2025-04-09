@@ -1,0 +1,131 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Analysis of Previous Attempts
+
+Looking at the three previous attempts:
+
+1. **Attempt 1**: AeroTechK700W motor - Reached 1669m (45% below target), failed structurally, cost $224.82
+2. **Attempt 2**: Pro75M1670 motor - Reached 2661m (13% below target), passed structural integrity, cost $673.31
+3. **Attempt 3**: CesaroniM1670 motor - Reached 2447m (20% below target), passed structural integrity, cost $690.82
+
+The key insights:
+- We need more impulse than provided by the K-class motors
+- The M-class motors are getting closer but still undershooting
+- Structural integrity is achievable with proper materials and thicknesses
+- We need to optimize the weight-to-impulse ratio
+
+## Motor Selection Reconsideration
+
+The Pro75M1670 got us closest to our target. Since we're still undershooting, we need either:
+1. More impulse from a more powerful motor
+2. Significantly reduced weight and drag
+
+Let's try the AeroTechK700W again but with a much more optimized design to reduce weight while maintaining structural integrity. This motor is significantly cheaper than the M-class motors, which will improve our cost score.
+
+## Weight and Drag Optimization Strategy
+
+To reach a higher apogee with the K-class motor:
+- Use minimum viable body dimensions
+- Select lightweight but strong materials
+- Optimize fin design for minimal drag
+- Reduce payload mass to minimum
+- Ensure aerodynamic efficiency
+
+## Structural Integrity Considerations
+
+To maintain structural integrity while reducing weight:
+- Use composite materials where possible (strong but lightweight)
+- Maintain adequate wall thickness
+- Design fins for both aerodynamic efficiency and strength
+
+## Detailed Design Calculations
+
+### Estimated Mass Budget
+- Motor (AeroTechK700W): 0.732 kg
+- Body structure: ~0.5 kg (lightweight composite)
+- Nose cone: ~0.1 kg
+- Fins and tail: ~0.2 kg
+- Payload: 0.2 kg
+- Total estimated mass: ~1.7 kg (significantly lighter than previous attempts)
+
+### Parachute Sizing for Safe Landing
+For terminal velocity v = 5 m/s with estimated mass of 1.7 kg:
+CD_S = 2mg/(ρv²) = 2 × 1.7 × 9.81/(1.225 × 5²) ≈ 0.54
+
+Split between main and drogue:
+- Main: CD_S = 0.44
+- Drogue: CD_S = 0.1
+
+## Final Design Configuration
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.06,  # Minimized body radius while still larger than motor radius (54mm)
+        "length": 0.8,    # Reduced body length for weight savings
+        "material": "composite",  # Lightweight but strong material
+        "thickness": 0.004,  # Adequate wall thickness for structural integrity
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",  # More aerodynamically efficient shape
+            "length": 0.2,  # Optimized nose cone length
+            "material": "composite",  # Lightweight but strong material
+        },
+        "fins": {
+            "number": 3,  # Reduced from 4 to 3 for weight savings
+            "root_chord": 0.12,  # Optimized fin dimensions
+            "tip_chord": 0.06,  # Optimized fin dimensions
+            "span": 0.1,  # Optimized fin dimensions
+            "cant_angle": 0.0,  # No cant angle for simplicity
+            "material": "carbon_fiber",  # Very strong and lightweight
+            "thickness": 0.004  # Reduced thickness while maintaining strength
+        },
+        "tail": {
+            "length": 0.15,  # Minimized tail length
+            "top_radius": 0.055,  # Top radius in meters
+            "bottom_radius": 0.06,  # Bottom radius in meters
+            "material": "composite",  # Lightweight but strong material
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.44,  # Sized for safe landing with lighter rocket
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.1,  # Minimal drogue for initial stabilization
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.0,  # Adequate rail length for stability
+        "inclination": 87,   # Nearly vertical, slight compensation for wind
+        "heading": 270,      # West, opposite to easterly wind
+    },
+    "payload": {
+        "mass": 0.2,  # Minimized payload mass
+        "position": 0.3  # Optimized position for stability
+    }
+}
+```
+
+This design represents a significant optimization over previous attempts:
+
+1. **Weight Reduction**: Using lightweight but strong materials (composite, carbon fiber) and minimizing dimensions to reduce overall weight
+2. **Aerodynamic Efficiency**: Using a von Karman nose cone for better aerodynamic performance and optimized fin design
+3. **Structural Integrity**: Maintaining adequate thickness and using strong materials to ensure the rocket doesn't fail structurally
+4. **Cost Efficiency**: Using the AeroTechK700W motor which is significantly cheaper than M-class motors
+5. **Recovery System**: Properly sized parachutes for the lighter rocket to ensure safe landing
+6. **Launch Configuration**: Optimized for the wind conditions to minimize horizontal drift
+
+By significantly reducing weight and drag while maintaining structural integrity, this design aims to achieve the target apogee of 3048m with the more cost-effective K-class motor. The lightweight materials and optimized dimensions should allow the rocket to reach a higher altitude than previous attempts with the same motor.

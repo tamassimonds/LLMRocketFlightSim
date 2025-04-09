@@ -1,0 +1,133 @@
+Based on the outcomes and feedback from previous attempts, we need to refine our design strategy to better align with the target apogee while minimizing costs and ensuring structural integrity. Let's reassess and apply targeted improvements to optimize the configuration:
+
+### Lessons Learned:
+1. **Motor Selection:** The AeroTech K700W motor has consistently shown potential. However, adjustments in other areas are needed to maximize its effectiveness.
+2. **Structural Integrity:** The design must balance lightweight materials with robustness to pass structural checks.
+3. **Aerodynamics:** Enhancements to the nose cone and fin design could offer significant improvements in altitude reaching capabilities.
+4. **Cost Management:** Careful material choice and minimalistic design principles can help keep costs low.
+
+### Revised Strategy:
+- Focus on reducing the structural weight slightly while ensuring robustness.
+- Optimize fin and nose cone design for improved aerodynamic efficiency.
+- Re-evaluate payload positioning for better balance and apogee performance.
+- Adjust the parachute system for a safer descent.
+
+### Detailed Design:
+
+#### Motor:
+- **Motor Choice:** AeroTech K700W
+- **Characteristics:** Maintains previous total impulse and specific impulse but is better supported by surrounding design improvements.
+
+#### Calculated Apogee:
+Estimated mass remains consistent:
+\[ m = \text{motor dry mass} + \text{rocket structure + payload} \approx 0.732 \, \text{kg} + 4.0 \, \text{kg} = 4.732 \, \text{kg} \]
+
+### Rocket Configuration:
+
+#### Rocket Body:
+- **Radius:** 0.07 m
+- **Length:** 1.5 m (potentially reduces drag and weight)
+- **Material:** Fiberglass (pragmatic for weight and cost)
+- **Thickness:** 0.0035 m (enough for integrity at lower weight)
+
+#### Nose Cone:
+- **Kind:** Ogive (well-rounded choice for low drag and stability)
+- **Length:** 0.33 m
+- **Material:** ABS Plastic (lightweight, cost-effective)
+
+#### Fins:
+- **Number:** 3 (sufficient for stabilizing without extra drag)
+- **Root Chord:** 0.1 m
+- **Tip Chord:** 0.05 m
+- **Span:** 0.2 m
+- **Cant Angle:** 0° 
+- **Material:** Carbon Fiber (sturdier for additional accuracy)
+- **Thickness:** 0.003 m
+
+#### Tail:
+- **Length:** 0.13 m
+- **Top Radius:** 0.07 m
+- **Bottom Radius:** 0.06 m
+- **Material:** Fiberglass
+
+#### Parachutes:
+- **Main CD_s:** 0.8 (reduction for slower descent)
+- **Drogue CD_s:** 0.2
+- **Trigger:** Apogee
+- **Sampling Rate:** 105
+- **Lag:** 1.5 s
+- **Noise:** (0, 8.3, 0.5)
+
+#### Launch and Payload:
+- **Rail Length:** 2.0 m 
+- **Inclination:** 90° 
+- **Heading:** 0° 
+- **Payload:** 
+  - Mass: 0.65 kg
+  - Position: 0.75 m
+
+### Improved Rocket Design Configuration:
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.07,
+        "length": 1.5,
+        "material": "fiberglass",
+        "thickness": 0.0035,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.33,
+            "material": "ABS_plastic",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.1,
+            "tip_chord": 0.05,
+            "span": 0.2,
+            "cant_angle": 0,
+            "material": "carbon_fiber",
+            "thickness": 0.003,
+        },
+        "tail": {
+            "length": 0.13,
+            "top_radius": 0.07,
+            "bottom_radius": 0.06,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.8,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.65,
+        "position": 0.75,
+    }
+}
+```
+
+### Conclusion:
+The proposed design optimizes weight, aerodynamics, and cost to better approximate the target apogee. Using this configuration with the existing motor should increase the possibility of success while maintaining the desired structural integrity round after round.

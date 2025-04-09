@@ -1,0 +1,89 @@
+To improve upon the previous design and achieve a higher apogee closer to the target of 3,048 meters, it is important to make some adjustments, particularly in the motor choice and potentially the aerodynamic design. Let’s carefully consider each component again:
+
+### Key Improvements Needed:
+
+1. **Motor Selection**: The previous design's motor, **Pro75M1670**, did not provide enough thrust to achieve the target apogee. I will use a more powerful motor that fits within the rocket body: **CesaroniO3700**. This motor has a significantly higher total impulse and average thrust, which can better meet the altitude requirement.
+
+2. **Body Radius**: The motor radius for **CesaroniO3700** is 161 mm (0.161 m). Therefore, the body radius should be slightly larger, let's choose 0.18 m, which will help accommodate the motor and provide structural integrity.
+
+3. **Stability and Fin Design**: Larger fins might help with stability due to the high thrust of the selected motor. 
+
+4. **Material Adjustment**: Given the increase in weight and thrust, consider using composite material for enhanced strength and reduced weight.
+
+### Revised Rocket Design:
+
+Using the insights above, here’s a revised configuration:
+
+```python
+config = {
+    "motor_choice": "CesaroniO3700",
+    "rocket_body": {
+        "radius": 0.18,  # Increased to fit the larger motor
+        "length": 2.5,   # Larger body to accommodate motor and payload
+        "material": "composite",  # Stronger material for higher thrust and weight
+        "thickness": 0.01,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",  # Efficient at reducing drag for sub-to-supersonic transition
+            "length": 0.5,    # Increased length for better aerodynamics
+            "material": "composite",  # To match the body material
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.3,   # Larger for better stability
+            "tip_chord": 0.15,   # Adjusted for efficient taper
+            "span": 0.4,         # Increased span for stability
+            "cant_angle": 1,     # Small angle for minimal induced rotation
+            "material": "carbon_fiber",  # Strong, lightweight material
+            "thickness": 0.005,
+        },
+        "tail": {
+            "length": 0.2,  
+            "top_radius": 0.15,  # Adjusted larger top radius
+            "bottom_radius": 0.18,  # Wider for stable rocket trail adjustment
+            "material": "composite",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.0,  # Larger surface area for stability during descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.5,  # Increased drogue size for initial deceleration
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 5.5,  # Longer rail for enhanced initial stability and guidance
+        "inclination": 85,   # Slightly angled to counteract the wind and account for optimal path
+        "heading": 90,       # Launch towards the east to reduce drift
+    },
+    "payload": {
+        "mass": 0.8,  # Increased mass for stability with larger motor power
+        "position": 1.25,  # Centers the mass position based on new body length
+    }
+}
+```
+
+### Expected Outcome:
+
+- **Improved Apogee**: With the **CesaroniO3700** motor, the rocket should achieve a much higher apogee closer to the target.
+- **Stability**: Larger fins and a slightly angled launch should manage drift and ensure structural integrity.
+- **Safety**: Increased parachute sizes and proper rail length and inclination maintain landing safety and horizontal distance management.
+
+### Additional Considerations:
+
+- Ensure the cost remains within the target budget, though some increase might be justified if it ensures meeting the apogee goal.
+- Reassess after simulation to see if further fin or parachute adjustments are necessary based on behavior (oscillation, stability).
+
+This redesign should offer a better chance of reaching the target specification while maintaining safety and performance efficiency.

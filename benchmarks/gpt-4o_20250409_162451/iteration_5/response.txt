@@ -1,0 +1,130 @@
+To address the previous issues encountered in earlier designs, we need to focus on balancing motor performance with cost and structural integrity, while ensuring that the rocket can achieve and reach close proximity to the target apogee of 3048 meters. Here’s a strategic approach to optimize the overall design:
+
+### Analysis of Previous Attempts
+
+1. **Motor Choice:** The CesaroniO3700 motor managed to get closer to the target apogee but proved expensive and still overshot slightly. The use of CesaroniM1670 resulted in underperformance. We need a motor within these ranges but optimized for our specific design.
+
+2. **Material and Structure:** Previous designs attempted various materials for weight and cost considerations. We need a strong, lightweight, and cost-efficient combination.
+
+3. **Aerodynamics:** The previous designs used a mix of nose cone and fin materials to optimize performance, which requires optimization for reduced drag.
+
+### Design Strategy
+
+#### Motor Selection
+- **Motor:** AeroTechK700W
+  - This motor presents a lower total impulse compared to the CesaroniO3700, allowing for better cost efficiency while providing enough power for the rocket to reach the target apogee with the redesigned structure.
+
+#### Rocket Body Design
+- **Radius:** 0.1 meters
+  - Fits the motor selection comfortably and allows design compactness.
+- **Length:** 2.8 meters
+  - Provides the required space for motor and payload.
+- **Material:** **fiberglass**
+  - Chosen for its balance of weight and cost.
+
+#### Nose Cone Design
+- **Kind:** **ogive**
+  - Provides excellent aerodynamic efficiency with reduced drag.
+- **Length:** 0.4 meters
+  - Ensures aerodynamic performance with light material.
+- **Material:** **composite**
+  - Lightweight and durable.
+
+#### Fin Design
+- **Number:** 4
+  - Provides symmetry and stability.
+- **Root Chord:** 0.22 meters
+- **Tip Chord:** 0.09 meters
+- **Span:** 0.3 meters
+- **Cant Angle:** 0 degrees
+  - Minimize roll and maximize stability.
+- **Material:** **balsa_wood**
+  - Lightweight and inexpensive.
+- **Thickness:** 0.003 meters
+
+#### Tail Design
+- **Length:** 0.15 meters
+- **Top Radius:** 0.06 meters
+- **Bottom Radius:** 0.07 meters
+- **Material:** **fiberglass**
+
+#### Parachute Specifications
+- **Main cd_s:** 0.4
+- **Drogue cd_s:** 0.2
+- Optimize for safe descent while counteracting drift.
+
+#### Launch Rail Configuration
+- **Rail Length:** 6 meters
+- **Inclination:** 88 degrees
+- **Heading:** 270 degrees
+- Proper heading to balance wind considerations and drift.
+
+#### Payload
+- **Mass:** 0.5 kg
+- **Position:** 1.4 meters
+
+Here's the refined configuration:
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.1,  # Body radius in meters
+        "length": 2.8,  # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.005,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.4,  # Nose cone length in meters
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.22,  # Fin root chord in meters
+            "tip_chord": 0.09,  # Fin tip chord in meters
+            "span": 0.3,  # Fin span in meters
+            "cant_angle": 0,  # Cant angle in degrees
+            "material": "balsa_wood",
+            "thickness": 0.003,  # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.15,  # Tail length in meters
+            "top_radius": 0.06,  # Top radius in meters
+            "bottom_radius": 0.07,  # Bottom radius in meters
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.4,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 6,  # Length of the launch rail in meters
+        "inclination": 88,  # Rail inclination in degrees
+        "heading": 270,  # Launch heading in degrees
+    },
+    "payload": {
+        "mass": 0.5,  # Payload mass in kg
+        "position": 1.4  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+### Summary
+This configuration embraces a balance between achieving the desired apogee via motor power and optimizing material choices to minimize cost and weight while ensuring structural and aerodynamic integrity.

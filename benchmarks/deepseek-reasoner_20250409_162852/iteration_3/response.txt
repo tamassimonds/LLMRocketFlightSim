@@ -1,0 +1,60 @@
+```python
+config = {
+    "motor_choice": "CesaroniO3700",
+    "rocket_body": {
+        "radius": 0.166,  # 166mm > motor radius (161mm), minimal drag increase
+        "length": 1.5,
+        "material": "fiberglass",  # Cost-effective + lightweight
+        "thickness": 0.003,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",  # Optimal aerodynamic efficiency
+            "length": 0.5,  # 3x body radius for drag reduction
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.2,  # Reduced from 0.25m to lower drag
+            "tip_chord": 0.1,
+            "span": 0.25,  # Smaller span balances stability/drag
+            "cant_angle": 0.5,
+            "material": "aluminum",  # Cheaper than carbon fiber
+            "thickness": 0.005,
+        },
+        "tail": {
+            "length": 0.3,
+            "top_radius": 0.165,  # Conical transition for stability
+            "bottom_radius": 0.166,
+            "material": "ABS_plastic",  # Lightweight + cost-effective
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 25.0,  # Matched to 27kg mass for <5 m/s landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 2.2,  # Stabilizes descent at ~14 m/s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,  # Ensures stable wind counteraction
+        "inclination": 90,    # Vertical launch minimizes drift
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 0.75  # Maintains favorable CG location
+    }
+}
+```

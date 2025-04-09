@@ -1,0 +1,122 @@
+To address the shortcomings from the first attempt and improve the rocket design for better scores, we need to re-evaluate the decisions made on components and materials with a particular focus on lowering the cost, ensuring the structural integrity, minimizing the landing impact velocity, and achieving the target apogee more precisely. Let's go through each aspect to refine the design.
+
+### Key Considerations
+
+1. **Target Apogee**: We need a motor that can reliably reach close to 3048 meters. The previous choice with AeroTechK700W fell short because of its lower total impulse. Selecting a motor with a higher impulse can ensure reaching the target apogee.
+   
+2. **Cost**: We must be cautious about selecting the materials and motor to stay within a reasonable budget. We can reduce costs by opting for cheaper materials but need to ensure that structural integrity is maintained.
+
+3. **Structural Integrity**: The rocket must withstand the aerodynamic forces, particularly due to wind. Using stronger materials where necessary is crucial.
+
+4. **Landing Safety**: Ensuring a safe landing is paramount. This might require reconsidering parachute sizes and materials.
+
+5. **Wind Drift**: Adjust orientation to minimize wind drift, as the wind will push the rocket westward.
+
+### Revised Design Decisions
+
+**Motor Choice:**
+- **Motor Selected**: Pro75M1670 (higher impulse than AeroTechK700W).
+
+**Rocket Body:**
+- **Radius**: Needs to accommodate the new motor (75mm = 0.075m), so it's set to 0.08m.
+- **Material**: Aluminum, which is slightly heavier but cheaper and still strong.
+- **Length**: Extended to 1.5m for better aerodynamics.
+- **Thickness**: 0.002m to strike a balance between weight and structural stability.
+
+**Nose Cone:**
+- **Type**: Von Karman – provides excellent aerodynamic properties with minimal drag.
+- **Length**: 0.4m, longer to reduce drag.
+- **Material**: Fiberglass for reduced cost and weight.
+
+**Fins:**
+- **Number of Fins**: 4 for stability.
+- **Root Chord**: 0.2m.
+- **Tip Chord**: 0.1m.
+- **Span**: 0.25m for better control.
+- **Cant Angle**: 0.5° to aid with stability.
+- **Material**: Carbon Fiber for lightweight and stiffness.
+- **Thickness**: 0.004m.
+
+**Tail:**
+- **Length**: 0.15m.
+- **Top Radius**: 0.08m.
+- **Bottom Radius**: 0.075m.
+- **Material**: Plywood, inexpensive yet functional.
+
+**Parachutes:**
+- **Main CD_s**: 1.0 for effective slow descent.
+- **Drogue CD_s**: 0.5 for stabilization before main chute deployment.
+
+**Launch Configuration:**
+- **Rail Length**: 2.0m to ensure a stable launch trajectory.
+- **Inclination**: 88° to slightly counteract wind effects.
+- **Heading**: 270°, directly against the wind.
+
+**Payload:**
+- **Mass**: 0.3 kg to reduce weight for better altitude.
+- **Position**: 0.8m to ensure stable CG location.
+
+Here is the revised configuration:
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.08,  # Body radius in meters
+        "length": 1.5,   # Body length in meters
+        "material": "aluminum",
+        "thickness": 0.002,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.4,  # Nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.2,  # Fin root chord in meters
+            "tip_chord": 0.1,   # Fin tip chord in meters
+            "span": 0.25,       # Fin span in meters
+            "cant_angle": 0.5,  # Cant angle in degrees
+            "material": "carbon_fiber",
+            "thickness": 0.004  # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.15,  # Tail length in meters
+            "top_radius": 0.08,  # Top radius in meters
+            "bottom_radius": 0.075,  # Bottom radius in meters
+            "material": "plywood",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.0,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.5,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,  # Length of the launch rail in meters
+        "inclination": 88,   # Rail inclination in degrees
+        "heading": 270,      # Launch heading in degrees
+    },
+    "payload": {
+        "mass": 0.3,  # Payload mass in kg
+        "position": 0.8  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This new configuration aims to achieve the desired apogee while considering cost reduction and maintaining structural integrity for a safe landing with minimal horizontal drift.

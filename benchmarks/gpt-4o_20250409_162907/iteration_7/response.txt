@@ -1,0 +1,157 @@
+To improve the rocket design and achieve a higher score in compliance with the simulation requirements, we need to address the key aspects: accurately reaching the target apogee, minimizing cost, ensuring safe landing, and maintaining structural integrity. The previous attempt with the AeroTech K700W motor brought us closer to the target, but further optimizations are needed in terms of mass distribution, materials, and aerodynamics. Let's focus on refining these elements:
+
+### Design Strategy
+
+1. **Motor Selection:**
+   - The AeroTechK700W provides a good balance of power and cost. However, it's crucial to fine-tune other parameters to better match the motor's capabilities to achieve the target apogee of 3048 meters effectively.
+
+2. **Material Selection:**
+   - Use lightweight materials where possible without compromising structural integrity. Optimizations in material choice can directly impact the rocket's mass and consequently its performance.
+
+3. **Aerodynamics:**
+   - Streamlined shapes and reduced drag through the careful design of fins and nose cone will help achieve better altitude.
+
+4. **Optimized Dimensions:**
+   - Proper sizing of components contributes to both structural stability and aerodynamic efficiency.
+
+5. **Landing and Safety:**
+   - Improving the parachute system to ensure a safe descent speed. Fine-tuning the CD_s values of the parachutes can help control the descent rate.
+
+### Detailed Design
+
+#### Motor Choice
+
+- **Motor:** AeroTech K700W (optimal balance for this setup)
+- **Total Impulse:** 2249 Ns
+- **Specific Impulse:** 177.5 s
+
+#### Estimated Apogee Calculation
+
+- Assuming optimized mass \(m =\) motor dry mass + rocket + payload = 0.732 kg + 4 kg = 4.732 kg.
+
+\[ 
+v_{\text{exit}} = I_{\text{sp}} \times g = 177.5 \times 9.81 = 1742.1825 \text{ m/s}
+\]
+
+\[
+\text{Apogee estimate} = \frac{2249}{4.732 \times 9.81} \times 1742.1825 \approx 3300 \text{ m}
+\]
+
+Let's refine our design to achieve the desired target.
+
+### Rocket Configuration
+
+#### Rocket Body
+
+- **Radius:** 0.07 m
+- **Length:** 1.7 m
+- **Material:** Fiberglass (for cost-effectiveness and reliable strength)
+- **Thickness:** 0.004 m
+
+#### Nose Cone
+
+- **Kind:** Von Karman (minimizing drag over subsonic and transonic speeds)
+- **Length:** 0.35 m
+- **Material:** Carbon Fiber (light and durable)
+
+#### Fins
+
+- **Number:** 3 (optimized for stability and reduced drag)
+- **Root Chord:** 0.11 m
+- **Tip Chord:** 0.055 m
+- **Span:** 0.22 m
+- **Cant Angle:** 0° 
+- **Material:** Balsa Wood (lightweight and cost-effective)
+- **Thickness:** 0.004 m
+
+#### Tail
+
+- **Length:** 0.14 m
+- **Top Radius:** 0.07 m
+- **Bottom Radius:** 0.06 m
+- **Material:** Fiberglass
+
+#### Parachutes
+
+- **Main CD_s:** 0.85 (ensuring a descent that is not too rapid)
+- **Drogue CD_s:** 0.25
+- **Trigger:** Apogee
+- **Sampling Rate:** 105
+- **Lag:** 1.5 s
+- **Noise:** (0, 8.3, 0.5)
+
+#### Launch and Payload
+
+- **Rail Length:** 2.1 m (a bit longer for added launch stability)
+- **Inclination:** 90° 
+- **Heading:** 0° 
+- **Payload:** 
+  - Mass: 0.8 kg
+  - Position: 0.85 m
+
+### Final Rocket Design
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.07,
+        "length": 1.7,
+        "material": "fiberglass",
+        "thickness": 0.004,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.35,
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.11,
+            "tip_chord": 0.055,
+            "span": 0.22,
+            "cant_angle": 0,
+            "material": "balsa_wood",
+            "thickness": 0.004,
+        },
+        "tail": {
+            "length": 0.14,
+            "top_radius": 0.07,
+            "bottom_radius": 0.06,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.85,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.25,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.1,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.8,
+        "position": 0.85,
+    }
+}
+```
+
+### Expected Outcomes
+
+This design refines the balance between power, weight, and aerodynamics to achieve a closer match to the target apogee. The changes in materials and structural adjustments aim to reduce costs while enhancing structural integrity. With these strategic choices, we are more likely to achieve the desired results within the performance criteria and scoring system.

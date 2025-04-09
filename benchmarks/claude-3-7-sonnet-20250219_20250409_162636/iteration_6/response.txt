@@ -1,0 +1,124 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+Looking at the progression of previous attempts, I can see we're getting closer to our target apogee with each iteration. Let me analyze the data and make further optimizations to reach exactly 3048m.
+
+## Analysis of Previous Attempts
+
+| Attempt | Motor | Actual Apogee | Error | Structure | Cost |
+|---------|-------|---------------|-------|-----------|------|
+| 1 | AeroTechK700W | 2221.74m | 27.11% | PASSED | $236.79 |
+| 2 | Pro75M1670 with balsa | 2512.16m | 17.58% | FAILED | $521.35 |
+| 3 | Pro75M1670 with fiberglass | 2809.61m | 7.82% | PASSED | $594.10 |
+| 4 | Pro75M1670 optimized | 2869.81m | 5.85% | PASSED | $587.92 |
+| 5 | Pro75M1670 further optimized | 2932.45m | 3.79% | PASSED | $589.88 |
+
+We're now within 3.79% of our target apogee. The Pro75M1670 motor has consistently improved our performance with each design iteration. We need approximately 4% more altitude to reach our target.
+
+## Thrust-to-Weight Ratio and Impulse Analysis
+
+The Pro75M1670 motor has been getting us closer to our target with each optimization. Let's analyze the CesaroniM1670 as an alternative:
+- Both have the same total impulse (6023.6 Ns)
+- CesaroniM1670 is heavier (3.101kg vs 1.815kg for Pro75M1670)
+- Pro75M1670 has slightly longer burn time (3.9s vs 3.6s)
+
+The Pro75M1670 remains the better choice due to its lower weight.
+
+## Final Design Optimization Strategy
+
+To increase our apogee by the remaining ~4%:
+1. Further reduce weight through material optimization
+2. Refine aerodynamics for minimal drag
+3. Optimize launch parameters for maximum altitude
+4. Consider slightly reducing parachute size while maintaining safe landing
+
+## Final Optimized Design
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.076,  # 76mm body radius (just over motor radius)
+        "length": 0.68,   # 68cm body length (further reduced)
+        "material": "carbon_fiber",  # Upgraded to carbon fiber for weight reduction
+        "thickness": 0.0018,  # 1.8mm wall thickness (reduced)
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",  # Optimal shape for transonic flight
+            "length": 0.3,  # 30cm nose cone (increased for better aerodynamics)
+            "material": "carbon_fiber",  # Upgraded to carbon fiber
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.09,  # 9cm root chord (reduced)
+            "tip_chord": 0.035,  # 3.5cm tip chord (reduced)
+            "span": 0.065,       # 6.5cm span (reduced)
+            "cant_angle": 0,     # No cant angle
+            "material": "carbon_fiber",  # Stronger but lighter material
+            "thickness": 0.0018  # 1.8mm thickness (reduced)
+        },
+        "tail": {
+            "length": 0.06,      # 6cm tail length (reduced)
+            "top_radius": 0.072, # Slightly less than body radius
+            "bottom_radius": 0.076, # Same as body radius
+            "material": "ABS_plastic",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.3,  # Sized for <5 m/s landing velocity
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.18,  # Smaller drogue to reduce weight
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.5,  # 1.5m launch rail for better initial stability
+        "inclination": 90,   # Perfectly vertical for maximum altitude
+        "heading": 270,      # Launch toward west to counter east wind
+    },
+    "payload": {
+        "mass": 0.1,  # 100g payload (further reduced)
+        "position": 0.15  # Positioned toward the nose
+    }
+}
+```
+
+## Design Rationale
+
+1. **Material Upgrade**:
+   - Switched body and nose cone from fiberglass to carbon fiber for significant weight reduction while maintaining strength
+   - This is the most significant change from previous designs and should provide the needed performance boost
+
+2. **Weight Reduction**:
+   - Further reduced body length from 0.72m to 0.68m
+   - Decreased wall thickness from 2.0mm to 1.8mm
+   - Further optimized fin dimensions
+   - Reduced tail length from 7cm to 6cm
+   - Reduced payload mass from 120g to 100g
+
+3. **Drag Reduction**:
+   - Increased nose cone length from 28cm to 30cm for better aerodynamic performance
+   - Further reduced fin size while maintaining stability
+   - Reduced body radius slightly from 77mm to 76mm
+
+4. **Launch Configuration**:
+   - Increased rail length from 1.4m to 1.5m for better initial stability
+   - Set inclination to exactly 90° (vertical) to maximize altitude
+
+5. **Parachute System**:
+   - Slightly reduced parachute sizes while ensuring safe landing velocity
+
+The use of carbon fiber for the main components (body, nose cone, fins) represents a significant upgrade from previous designs. While this adds some cost, the substantial weight reduction should provide the additional 4% altitude needed to reach our target of 3048m. Carbon fiber offers approximately 30-40% weight savings compared to fiberglass with equal or better strength, which is exactly what we need for this final optimization.
+
+The combination of these refinements—particularly the material upgrade to carbon fiber—should allow us to reach our target apogee of 3048m while maintaining structural integrity and ensuring a safe landing.

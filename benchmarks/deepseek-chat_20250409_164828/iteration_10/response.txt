@@ -1,0 +1,116 @@
+After carefully analyzing all previous attempts, I'll design an optimized rocket that combines the best-performing elements while addressing the key challenges. Here's my improved approach:
+
+### Key Insights:
+1. **Best Performance**: Attempt 3 (80.92 score) with:
+   - Pro75M1670 motor
+   - 1.3m fiberglass body (0.0035m thickness)
+   - 0.45m ogive nose cone
+   - Achieved 8.52% apogee error
+
+2. **Structural Lessons**: Fiberglass at 0.0035m thickness consistently passed structural checks
+3. **Aerodynamics**: Ogive nose outperformed von Karman by ~15%
+4. **Cost Efficiency**: $720-$730 range is optimal for scoring
+5. **Improvement Areas**: Need to reduce the 8-11% apogee gap while maintaining other metrics
+
+### Optimized Strategy:
+1. **Motor**: Keep Pro75M1670 (best impulse/weight ratio)
+2. **Weight Reduction**:
+   - Slightly shorter body (1.25m)
+   - Optimized fin dimensions
+   - Reduced payload (0.28kg)
+3. **Aerodynamics**:
+   - Extended ogive nose (0.53m)
+   - 4 fins with increased span (0.135m)
+   - Increased cant angle (1.8°) for better wind stability
+4. **Structure**:
+   - Fiberglass body (0.0035m)
+   - Carbon fiber fins (0.004m)
+5. **Recovery**:
+   - Slightly smaller parachutes (still safe)
+6. **Cost**:
+   - Strategic material selection
+
+### Final Optimized Design:
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.081,
+        "length": 1.25,
+        "material": "fiberglass",
+        "thickness": 0.0035,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.53,
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.21,
+            "tip_chord": 0.105,
+            "span": 0.135,
+            "cant_angle": 1.8,
+            "material": "carbon_fiber",
+            "thickness": 0.004,
+        },
+        "tail": {
+            "length": 0.255,
+            "top_radius": 0.071,
+            "bottom_radius": 0.077,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.43,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.175,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.15,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.28,
+        "position": 0.64,
+    },
+}
+```
+
+### Key Improvements:
+1. **Aerodynamics**:
+   - Longest ogive nose yet (0.53m) for maximum drag reduction
+   - Increased fin span (0.135m) and cant angle (1.8°) for better wind stability
+   - Optimized fin chord lengths for balance
+
+2. **Weight Reduction**:
+   - Shortest body yet (1.25m) while maintaining structure
+   - Lightest payload (0.28kg)
+   - Conservative parachute sizing
+
+3. **Performance**:
+   - Expected to reduce apogee error to ~7-8%
+   - Maintains structural safety
+   - Better wind resistance
+
+4. **Cost**:
+   - Estimated cost ~$715
+   - Carbon fiber only where most effective
+
+This design represents the culmination of all empirical data from previous attempts, making carefully calculated improvements to maximize the score while maintaining all safety and structural requirements. The extended nose cone and optimized fins should provide the best altitude performance possible with the given motor.

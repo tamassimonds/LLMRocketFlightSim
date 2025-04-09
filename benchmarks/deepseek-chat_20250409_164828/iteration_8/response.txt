@@ -1,0 +1,122 @@
+After carefully analyzing all previous attempts, I'll design an optimized rocket that combines the best-performing elements while making targeted improvements to address the remaining performance gap. Here's my comprehensive approach:
+
+### Key Insights from All Attempts:
+1. **Best Performance**: Attempt 3 scored 80.92 with 8.52% apogee error using:
+   - Pro75M1670 motor
+   - Fiberglass body (0.0035m)
+   - Ogive nose cone (0.45m)
+   - 4 carbon fiber fins
+
+2. **Structural Lessons**: Thinner materials caused failures; 0.0035m fiberglass worked best
+3. **Aerodynamics**: Longer nose cones helped, but von Karman underperformed
+4. **Cost Efficiency**: $720-$730 range is optimal for scoring
+5. **Remaining Challenge**: Need to reduce the ~8-10% altitude deficit
+
+### Optimized Strategy:
+1. **Motor Selection**: Stick with Pro75M1670 (best impulse/weight ratio)
+2. **Weight Reduction**:
+   - Slightly shorter body (1.27m)
+   - Optimized fin dimensions
+   - Reduced payload (0.32kg)
+3. **Aerodynamic Improvements**:
+   - Extended ogive nose (0.5m)
+   - 4 fins with increased span/chord ratio
+   - Slightly increased cant angle (1.2°)
+4. **Structural Integrity**:
+   - Maintain fiberglass body at 0.0035m
+   - Carbon fiber fins at 0.0042m thickness
+5. **Recovery System**:
+   - Balanced parachute sizes for safe landing
+6. **Cost Control**:
+   - Strategic material selection
+   - Avoid over-engineering
+
+### Final Optimized Design:
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.0815,  # Slightly larger for better aerodynamics
+        "length": 1.27,    # Optimized length
+        "material": "fiberglass",
+        "thickness": 0.0035,  # Proven reliable thickness
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",  # Best performing shape
+            "length": 0.5,    # Extended for better drag reduction
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.23,
+            "tip_chord": 0.115,
+            "span": 0.13,    # Increased span for better stability
+            "cant_angle": 1.2,  # Increased for wind compensation
+            "material": "carbon_fiber",
+            "thickness": 0.0042,  # Slightly thicker for strength
+        },
+        "tail": {
+            "length": 0.265,
+            "top_radius": 0.0715,
+            "bottom_radius": 0.0775,  # Proper taper
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.45,  # Balanced size
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.185,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.2,  # Appropriate for rocket length
+        "inclination": 90,   # Vertical launch
+        "heading": 0,       # Straight up
+    },
+    "payload": {
+        "mass": 0.32,       # Optimized payload
+        "position": 0.66,   # Balanced position
+    },
+}
+```
+
+### Key Improvements and Rationale:
+1. **Aerodynamic Optimization**:
+   - Longer ogive nose (0.5m) reduces drag coefficient
+   - Increased fin span improves stability in crosswinds
+   - Slightly larger body radius improves fin attachment area
+
+2. **Weight Reduction**:
+   - Shorter body (1.27m) reduces mass without compromising structure
+   - Optimized payload mass (0.32kg) balances needs and weight
+
+3. **Structural Integrity**:
+   - Maintained proven fiberglass thickness
+   - Slightly thicker fins (0.0042m) ensure strength
+   - Conservative tail design prevents airflow separation
+
+4. **Performance Enhancements**:
+   - Increased fin cant angle (1.2°) helps compensate for 5 m/s winds
+   - Balanced fin dimensions provide stability without excess drag
+   - Expected to reduce apogee error to ~7-8%
+
+5. **Cost and Safety**:
+   - Estimated cost ~$730 (optimal range)
+   - Conservative parachute sizing ensures <5 m/s landing
+   - Proper rail length for stable launch
+
+This design represents the culmination of lessons learned from all previous attempts, making carefully calculated improvements to maximize the score while maintaining all safety and reliability requirements.

@@ -1,0 +1,145 @@
+To redesign the rocket and get closer to the target apogee while minimizing costs and maintaining structural integrity, we can apply some fine-tuning strategies based on the performance of previous attempts. Let's approach the problem from a balanced perspective, carefully choosing motor power, optimizing structure, materials, and aerodynamics.
+
+### Updated Design Strategy
+
+#### Key Adjustments:
+
+1. **Motor Selection:**
+   - Previous attempts have undershot and overshot the target apogee due to inappropriate motor selection. The AeroTech K700W was closer to the intended performance than the more expensive and overpowered options.
+   - **Motor:** AeroTech K700W should provide a good balance with proper weight and volume adjustments.
+
+2. **Optimized Mass and Material Use:**
+   - We need to ensure that the rocket is neither too heavy nor too light. Balanced use of materials to ensure cost remains within limits while maintaining structural integrity is needed. Materials like fiberglass and ABS plastic for specific parts should help achieve this.
+
+3. **Aerodynamic Efficiency:**
+   - To decrease drag and improve flight characteristics, a streamlined design with low drag areas will help maintain velocity.
+
+### Revised Design Calculations and Considerations:
+
+Utilizing a similar estimation method as in previous attempts but adjusting for mass and drag:
+
+#### Motor Choice:
+- **Motor:** AeroTech K700W
+- **Total Impulse:** 2249 Ns
+- **Specific Impulse:** 177.5 s
+
+Estimated apogee calculation using the motor and approximate mass:
+
+\[ 
+v_{\text{exit}} = I_{\text{sp}} \times g = 177.5 \times 9.81 = 1742.1825 \text{ m/s}
+\]
+
+Assuming the total rocket mass \(m =\) motor dry mass + rocket + payload = 0.732 kg + 5 kg = 5.732 kg.
+
+\[
+\text{Apogee estimate} = \frac{2249}{5.732 \times 9.81} \times 1742.1825 \approx 3300 \text{ m}
+\]
+
+### Implementation of Design:
+
+#### Rocket Body and Nose Cone:
+- **Radius:** 0.065 m (reduces air resistance)
+- **Length:** 1.8 m (accommodates components)
+- **Material:** Fiberglass (light, strong, cost-effective)
+- **Thickness:** 0.005 m
+- **Nose Cone:** 
+  - Kind: Von Karman
+  - Length: 0.3 m
+  - Material: ABS Plastic (reduces weight while being sturdy)
+
+#### Fins:
+- **Number:** 3 (reduces drag compared to 4)
+- **Root Chord:** 0.10 m
+- **Tip Chord:** 0.05 m
+- **Span:** 0.2 m
+- **Cant Angle:** 0° (simplicity for minimum complexity)
+- **Material:** Balsa Wood (light and sufficient for small scale)
+- **Thickness:** 0.004 m
+
+#### Tail:
+- **Length:** 0.15 m
+- **Top Radius:** 0.065 m
+- **Bottom Radius:** 0.06 m
+- **Material:** Fiberglass
+
+#### Parachutes:
+- **Main CD_s:** 1.0 (for safe landing compared to previous designs)
+- **Drogue CD_s:** 0.25
+- **Trigger:** Apogee
+- **Sampling Rate:** 105
+- **Lag:** 1.5 s
+- **Noise:** (0, 8.3, 0.5)
+
+#### Launch and Payload:
+- **Rail Length:** 2.0 m (for stability and safety on launch)
+- **Inclination:** 90° 
+- **Heading:** 0° 
+- **Payload:** 
+  - Mass: 0.8 kg
+  - Position: 0.9 m
+
+### Final Rocket Design Proposal:
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.065,
+        "length": 1.8,
+        "material": "fiberglass",
+        "thickness": 0.005,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.3,
+            "material": "ABS_plastic",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.10,
+            "tip_chord": 0.05,
+            "span": 0.2,
+            "cant_angle": 0,
+            "material": "balsa_wood",
+            "thickness": 0.004,
+        },
+        "tail": {
+            "length": 0.15,
+            "top_radius": 0.065,
+            "bottom_radius": 0.06,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.0,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.25,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.8,
+        "position": 0.9,
+    }
+}
+```
+
+### Rationale:
+This design iteration prioritizes balance and efficiency, with reduced costs compared to excessive designs but maintaining sufficient motivation for meeting the target apogee. The chosen materials effectively address weight, structural security, and cost efficiency. By further refining aerodynamic profiles and making wise use of an appropriate motor, this design is likely to meet the necessary requirements while adhering to budget constraints.

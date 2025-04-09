@@ -1,0 +1,116 @@
+Below is a step-by-step rationale for a slightly revised design based on the best-performing previous attempts (particularly Attempt 6). The goal is to preserve its excellent apogee accuracy and structural success while trimming a bit of cost by shortening the tail section. All other critical parameters—such as wall/fins thickness, body diameter, and main parachute size—remain the same to maintain the rocket’s near-perfect altitude performance and safe landing speed.
+
+────────────────────────────────────────────────────────
+1) Motor Choice  
+────────────────────────────────────────────────────────
+• The CTI Pro75M1670 motor provides about 6024 Ns of impulse with a dry mass of 1.815 kg.  
+• This motor has repeatedly demonstrated the capability to loft a 1.3 m long, ~0.076 m radius rocket to around 3048 m.
+
+────────────────────────────────────────────────────────
+2) Body & Materials  
+────────────────────────────────────────────────────────
+• A radius of 0.076 m (slightly larger than the 75 mm motor) minimizes frontal area while ensuring sufficient clearance for the motor.  
+• A body length of 1.3 m provides enough internal volume for parachutes and payload, as proven in earlier attempts that reached near 3048 m.  
+• Using fiberglass with a 2.8 mm wall thickness provides enough strength to avoid structural failures under M-level thrust but still keeps mass moderate.
+
+────────────────────────────────────────────────────────
+3) Tail Section  
+────────────────────────────────────────────────────────
+• Shortening the tail from 0.08 m to 0.07 m slightly reduces material use, which helps trim cost.  
+• The top radius matches the main body (0.076 m), and the bottom radius is 0.065 m, preventing geometry errors while creating a modest boat tail to reduce base drag.
+
+────────────────────────────────────────────────────────
+4) Fins  
+────────────────────────────────────────────────────────
+• Three fins cut weight and cost compared to four, while still providing good stability for high-power rockets.  
+• Plywood at 2.8 mm thickness offers suitably strong fins that resist flutter and damage at the motor’s thrust levels.  
+• Root chord 0.14 m, tip chord 0.06 m, and span 0.1 m maintain the stable aerodynamic properties that gave near-target altitudes in previous attempts.
+
+────────────────────────────────────────────────────────
+5) Parachutes  
+────────────────────────────────────────────────────────
+• A drogue parachute (cd_s = 0.05) deploys at apogee to stabilize descent without slowing it excessively before main deployment.  
+• A main parachute (cd_s = 0.70) keeps landing speed below ~5 m/s for a ~4–5 kg rocket, ensuring a soft, safe touchdown.  
+• Both are triggered at apogee, simplifying the recovery sequence.
+
+────────────────────────────────────────────────────────
+6) Launch Configuration & Payload  
+────────────────────────────────────────────────────────
+• A 2.3 m rail at 90° inclination. This provides a stable launch and minimal horizontal drift.  
+• Heading 0°, representing straight-up orientation.  
+• A 0.2 kg payload placed at 0.65 m from the rocket’s center helps keep the CG forward for stable flight.
+
+────────────────────────────────────────────────────────
+7) Expected Outcome  
+────────────────────────────────────────────────────────
+• Retaining the same body/fin thickness (2.8 mm) and main parachute size (cd_s = 0.70) should preserve the near-perfect apogee (~3046–3048 m) observed in Attempt 6.  
+• Shortening the tail by 0.01 m cuts cost slightly while leaving aerodynamic and structural characteristics largely unchanged.  
+• Overall, this design takes the success of Attempt 6 and makes a small material-saving adjustment that should maintain a high score.
+
+────────────────────────────────────────────────────────
+Final Proposed Configuration Dictionary  
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.076,        # meters (> 0.075 m motor radius)
+        "length": 1.3,          # meters
+        "material": "fiberglass",
+        "thickness": 0.0028,    # 2.8 mm wall thickness
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.3,       # nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.14,  # meters
+            "tip_chord": 0.06,   # meters
+            "span": 0.1,         # meters
+            "cant_angle": 0,     # degrees
+            "material": "plywood",
+            "thickness": 0.0028, # 2.8 mm fin thickness
+        },
+        "tail": {
+            "length": 0.07,      # meters
+            "top_radius": 0.076,
+            "bottom_radius": 0.065,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.70,         # ensures ~5 m/s landing speed
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.05,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.3,  # meters
+        "inclination": 90,   # degrees (vertical)
+        "heading": 0,        # degrees
+    },
+    "payload": {
+        "mass": 0.2,         # kg
+        "position": 0.65,    # meters from rocket center
+    }
+}
+```
+
+Explanation Recap:  
+• By retaining the proven motor, radius, fin geometry, and thickness from Attempt 6—and only shortening the tail section by 0.01 m—we expect to keep the rocket’s apogee accuracy within ~0.05% of 3048 m, pass structural integrity, and achieve a modest cost reduction. This should yield a very strong overall score while meeting all design requirements.

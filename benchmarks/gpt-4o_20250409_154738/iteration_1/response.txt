@@ -1,0 +1,132 @@
+To design a rocket that meets the requirements specified, we need to carefully choose the motor and other components, ensuring they work together to achieve a target apogee of 3048 meters while also considering safety, cost-effectiveness, and structural integrity. Let's analyze each component of the rocket step by step:
+
+### Motor Selection
+
+We need a motor that can provide sufficient thrust to reach the target apogee. From the available options:
+
+- **Cesaroni K160**: With 190.2 N average thrust and a total impulse of 1521.7 Ns. This is on the lower end but suitable for smaller rockets.
+- **AeroTech K700W**: Provides 658.7 N average thrust and a total impulse of 2249 Ns with a higher power, making it a good candidate.
+- **Cesaroni O5800**: Provides very high thrust but will likely exceed the required apogee and increase costs and structural requirements.
+
+Given that we have a moderate apogee target, the **AeroTech K700W** seems a good balance for our apogee goal and cost.
+
+### Rocket Body
+
+The rocket body must safely house the selected motor while maintaining structural integrity:
+
+- **Radius**: The AeroTech K700W motor has a 54 mm (0.054 m) diameter, so the rocket body should have a radius greater than that. We'll choose 0.06 m for some leeway.
+- **Length**: A length of about 1.5 meters should suffice to accommodate the motor and allow aerodynamic fin placement.
+- **Material**: Composite offers a good balance between weight and strength, essential for cost-effectiveness.
+- **Thickness**: A reasonable thickness for the material would be 0.005 m, providing structural support without excessive weight.
+
+### Aerodynamics
+
+#### Nose Cone
+
+- **Shape**: An ogive shape is aerodynamic and simple to manufacture, providing low drag for better altitude performance.
+- **Length**: Selecting approximately 0.3 meters to give a smooth aerodynamic profile.
+- **Material**: Composite for the same reasons as the rocket body.
+
+#### Fins
+
+We aim for stability and minimal air drag:
+
+- **Number**: 3 fins are generally sufficient for stability.
+- **Root Chord**: 0.2 meters to provide enough surface for stability.
+- **Tip Chord**: 0.1 meters, smaller for reduced drag.
+- **Span**: 0.3 meters, enough to stabilize without excessive weight.
+- **Cant Angle**: 0 degrees, as any angle would induce roll unnecessarily for this design.
+- **Material**: Carbon fiber for stiffness and durability.
+- **Thickness**: 0.005 meters to withstand forces without excess weight.
+
+#### Tail
+
+Allows for minimal drag:
+
+- **Length**: 0.1 meters.
+- **Top Radius**: 0.03 meters.
+- **Bottom Radius**: 0.06 meters.
+- **Material**: Carbon fiber for rigidity.
+
+### Parachute Design
+
+- **Main Parachute**:
+  - **cd_s**: 0.3, sufficient to slow the descent.
+- **Drogue Parachute**:
+  - **cd_s**: 0.2, deployed at apogee for initial stabilization.
+
+### Launch Rail Configuration
+
+- **Rail Length**: 2 meters, enough to stabilize before lift-off.
+- **Inclination**: 90 degrees, vertical for maximum altitude.
+- **Heading**: 0 degrees for straight ascent.
+
+### Payload
+
+- **Mass**: 0.5 kg, simulating a simple science payload.
+- **Position**: 0.75 meters from the center, ensuring stability in flight dynamics.
+
+Now, compiling these choices:
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.06,
+        "length": 1.5,
+        "material": "composite",
+        "thickness": 0.005,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.3,
+            "material": "composite",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.2,
+            "tip_chord": 0.1,
+            "span": 0.3,
+            "cant_angle": 0,
+            "material": "carbon_fiber",
+            "thickness": 0.005,
+        },
+        "tail": {
+            "length": 0.1,
+            "top_radius": 0.03,
+            "bottom_radius": 0.06,
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.3,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 0.75,
+    }
+}
+```
+
+This design keeps within reasonable limits for cost and ensures a safe recovery velocity while targeting the desired apogee.

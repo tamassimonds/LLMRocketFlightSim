@@ -1,0 +1,133 @@
+Given the results from previous attempts, let's refine the design by carefully selecting components that enhance performance while adhering to the constraints. We will focus on achieving a balance between thrust and weight, ensuring safe landing conditions, and optimizing costs.
+
+### Design Strategy
+
+1. **Motor Selection**:
+   - We need a motor that provides enough thrust and impulse for responsible ascent. I will aim for a motor that allows for controlled ascents to achieve the target apogee without excessive overshooting.
+
+2. **Rocket Body**:
+   - The choice of radius, length, material, and thickness will impact the rocket's weight, structural integrity, and overall aerodynamic performance.
+
+3. **Nose Cone**:
+   - An efficient shape (like ogive) will minimize aerodynamic drag during flight.
+
+4. **Fin Design**:
+   - Properly designed fins will enhance stability while minimizing weight.
+
+5. **Parachute Specifications**:
+   - Ensure the parachutes provide a safe landing at less than 5 m/s.
+
+6. **Launch Configuration**:
+   - Configured for a stable launch trajectory to maximize altitude gain.
+
+### Optimized Design
+
+#### 1. Motor Selection:
+   - **Motor**: **CesaroniO5800**
+   - **Thrust**: 6395.5 N
+   - **Total Impulse**: 30382.7 Ns
+   - **Burn Time**: 5.2 s
+   - **Rationale**: This motor delivers a high level of thrust and total impulse, which helps achieve the target apogee effectively while still maintaining control.
+
+#### 2. Rocket Body:
+   - **Radius**: 0.16 m (greater than the motor's radius of 0.15 m).
+   - **Length**: 1.5 m for stability during ascent.
+   - **Material**: **Composite**, which provides an optimal balance of strength and weight.
+   - **Thickness**: 0.005 m for structural integrity.
+
+#### 3. Nose Cone:
+   - **Shape**: **Ogive** to ensure minimal drag.
+   - **Length**: 0.5 m for a good aerodynamic profile.
+   - **Material**: **Composite**, consistent with the body for uniformity.
+
+#### 4. Fin Design:
+   - **Number of Fins**: 4 fins for stability.
+   - **Dimensions**:
+     - Root Chord: 0.12 m
+     - Tip Chord: 0.06 m
+     - Span: 0.25 m
+   - **Cant Angle**: 0 degrees for vertical stability.
+   - **Material**: **Carbon fiber** for its lightweight and high strength.
+
+#### 5. Parachute Specifications:
+   - **Main Parachute**: Diameter of **2.0 m**.
+     - \( cd_s \) area = \( \pi \cdot (1.0^2) \approx 3.14 \, m^2\).
+   - **Drogue Parachute**: Diameter of **0.5 m**.
+     - \( cd_s \) area = \( \pi \cdot (0.25^2) \approx 0.196 \, m^2\).
+   - **Trigger**: Both parachutes will deploy at apogee.
+
+#### 6. Launch Configuration:
+   - **Rail Length**: 3.0 m for stability during launch.
+   - **Inclination**: 90 degrees (for direct vertical launch).
+   - **Heading**: 0 degrees (to launch straight upwards).
+
+#### 7. Payload:
+   - **Mass**: 0.5 kg located at 0.75 m from the base to ensure stability.
+
+### Final Configuration
+
+Here’s the complete design presented in the specified Python dictionary format for the simulation:
+
+```python
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.16,  # Body radius in meters
+        "length": 1.5,   # Body length in meters
+        "material": "composite",
+        "thickness": 0.005,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.5,  # Nose cone length in meters
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.12,  # Fin root chord in meters
+            "tip_chord": 0.06,    # Fin tip chord in meters
+            "span": 0.25,         # Fin span in meters
+            "cant_angle": 0,      # Cant angle in degrees
+            "material": "carbon_fiber",
+            "thickness": 0.005,   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.2,        # Tail length in meters
+            "top_radius": 0.08,   # Top radius in meters
+            "bottom_radius": 0.1,  # Bottom radius in meters
+            "material": "composite",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 3.14,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.196,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 3.0,  # Length of the launch rail in meters
+        "inclination": 90,    # Rail inclination in degrees (vertical)
+        "heading": 0,         # Launch heading in degrees (straight up)
+    },
+    "payload": {
+        "mass": 0.5,          # Payload mass in kg
+        "position": 0.75      # Payload position relative to rocket center in meters
+    }
+}
+```
+
+### Summary
+This design uses a high-thrust motor that balances weight and control, ensuring a high potential for reaching the target apogee while minimizing the risk of structural failure or excessive overshooting. The design optimally integrates lightweight materials ensuring both performance and cost-effectiveness. The parachute system is designed to execute safe landings, promoting confidence in the overall mission success. This configuration should yield a favorable score, addressing previous pitfalls observed in earlier attempts.

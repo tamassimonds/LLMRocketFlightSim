@@ -1,0 +1,169 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Comprehensive Analysis of Previous Attempts
+
+After analyzing the six previous attempts, I can identify clear patterns:
+
+| Attempt | Apogee (m) | Error (%) | Structural | Cost ($) | Key Features |
+|---------|------------|-----------|------------|----------|--------------|
+| 1 | 2298.99 | 24.57% | FAILED | 209.18 | AeroTechK700W, thin walls |
+| 2 | 2245.03 | 26.34% | PASSED | 589.37 | Pro75M1670, all aluminum |
+| 3 | 2797.31 | 8.22% | PASSED | 623.77 | Pro75M1670, fiberglass body, plywood fins |
+| 4 | 2804.20 | 8.00% | FAILED | 561.76 | Pro75M1670, lighter materials, thinner walls |
+| 5 | 2783.61 | 8.67% | PASSED | 617.22 | Pro75M1670, fiberglass body, plywood fins |
+| 6 | 2753.91 | 9.65% | PASSED | 637.32 | CesaroniM1670, fiberglass body, plywood fins |
+
+**Critical Insights:**
+1. We're consistently undershooting the target apogee by ~8-10% with M-class motors
+2. The Pro75M1670 has performed better than the CesaroniM1670 despite identical impulse
+3. We need a more powerful motor to reach our target altitude
+4. Structural integrity requires appropriate material thickness
+5. Cost optimization is needed while maintaining performance
+
+## New Design Strategy
+
+For this attempt, I'll:
+1. Use the AeroTechK700W motor with a significantly lighter structure
+2. Optimize aerodynamics for maximum altitude
+3. Use lightweight but strong materials
+4. Adjust launch parameters for optimal trajectory
+
+## Motor Selection Reconsideration
+
+The M-class motors are getting us to ~90% of our target. The K700W has about 37% of the impulse of the M1670, but if we can reduce the rocket weight by more than 60%, we might achieve better performance with the lighter motor.
+
+## Body Design Calculations
+
+For the AeroTechK700W motor (54mm diameter):
+- Body radius: 0.058m (minimal clearance to reduce weight and drag)
+- Length: 0.65m (minimized for weight reduction)
+- Material: carbon_fiber (highest strength-to-weight ratio)
+- Thickness: 0.0025m (optimized for structural integrity with strong material)
+
+## Nose Cone Design
+
+- Shape: Von Karman (optimal aerodynamic performance)
+- Length: 0.2m (approximately 3.5x body radius)
+- Material: carbon_fiber (consistent with body)
+
+## Fin Design
+
+For stability with minimal weight:
+- 3 fins (reduced drag while maintaining stability)
+- Root chord: 0.12m
+- Tip chord: 0.06m (tapered for reduced drag)
+- Span: 0.09m (optimized for stability with minimal weight)
+- Material: carbon_fiber (highest strength-to-weight ratio)
+- Thickness: 0.003m (minimized with strong material)
+
+## Tail Design
+
+- Length: 0.12m
+- Top radius: 0.056m
+- Bottom radius: 0.058m (minimal difference to maintain structural requirements)
+- Material: carbon_fiber (consistent with body)
+
+## Parachute Sizing
+
+Estimated rocket mass: ~1.5kg (significantly reduced from previous designs)
+
+For a safe landing speed (<5 m/s):
+Cd_S = 2 × mass × g / (ρ × v²)
+Cd_S = 2 × 1.5 × 9.81 / (1.225 × 5²)
+Cd_S ≈ 0.48
+
+I'll split this between main and drogue:
+- Main: Cd_S = 0.4 (for final descent)
+- Drogue: Cd_S = 0.08 (for initial descent)
+
+## Launch Configuration
+
+To compensate for the easterly wind:
+- Inclination: 88 degrees (slight westward tilt)
+- Heading: 270 degrees (west, opposite to wind direction)
+- Rail length: 1.0m (provides adequate stability during initial acceleration)
+
+## Payload
+
+- Mass: 0.2kg (minimized to improve altitude)
+- Position: 0.2m (forward of center to help with stability)
+
+## Final Design
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.058,
+        "length": 0.65,
+        "material": "carbon_fiber",
+        "thickness": 0.0025,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.2,
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.12,
+            "tip_chord": 0.06,
+            "span": 0.09,
+            "cant_angle": 0,
+            "material": "carbon_fiber",
+            "thickness": 0.003,
+        },
+        "tail": {
+            "length": 0.12,
+            "top_radius": 0.056,
+            "bottom_radius": 0.058,
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.4,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.08,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.0,
+        "inclination": 88,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 0.2,
+        "position": 0.2,
+    }
+}
+```
+
+This design represents a significant departure from previous attempts by:
+
+1. **Using a smaller, lighter motor** (AeroTechK700W) to reduce weight
+2. **Minimizing overall weight** through:
+   - Carbon fiber construction throughout (highest strength-to-weight ratio)
+   - Reduced dimensions for all components
+   - Minimized payload mass
+3. **Optimizing aerodynamics** with:
+   - Minimal body diameter
+   - Optimized nose cone and fin design
+4. **Ensuring structural integrity** with:
+   - Carbon fiber's superior strength properties
+   - Appropriate wall thickness for the material
+5. **Adjusting launch parameters** for optimal trajectory
+
+By dramatically reducing weight while maintaining structural integrity, this design aims to achieve our target apogee with a smaller motor, which should also reduce overall cost compared to previous designs.

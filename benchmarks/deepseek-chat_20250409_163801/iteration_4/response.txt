@@ -1,0 +1,119 @@
+### Analysis of Previous Attempts:
+1. **Attempt 1 (Pro75M1670, fiberglass body)**:
+   - Undershot by 10% (2741m)
+   - Good cost ($738)
+   - Conservative design
+
+2. **Attempt 2 (CesaroniM1670, carbon fiber)**:
+   - Worse performance (2628m)
+   - Overpriced ($896)
+
+3. **Attempt 3 (Pro75M1670, optimized)**:
+   - Best score (82.44)
+   - Still undershot by 11.95%
+   - Need more aggressive impulse
+
+### Key Improvements:
+1. **Motor Selection**:
+   - Use **CesaroniO3700** (higher impulse: 29930 Ns)
+   - Despite higher dry mass (14.2kg), the massive impulse should overcome drag
+   - Requires larger body (161mm motor diameter)
+
+2. **Structural Optimization**:
+   - Body radius: 0.17m (accommodates motor)
+   - Shorter length (1.2m) to reduce mass
+   - Fiberglass body (cost-effective)
+
+3. **Aerodynamics**:
+   - Von Karman nose cone (best supersonic performance)
+   - Smaller fins (reduced drag at high velocity)
+   - 1° cant angle for stability
+
+4. **Recovery**:
+   - Larger main chute (Cd_s=0.7) for safe landing
+   - Smaller drogue (Cd_s=0.15) for less drift
+
+5. **Launch**:
+   - 2° inclination into wind (88°)
+   - Longer rail (2m) for stability
+
+### Calculations:
+- Estimated total mass: ~18kg
+- Thrust-to-weight: 4030N/(18kg*9.81) ≈ 22 (excellent)
+- Impulse should guarantee >3048m even with drag
+- Cost controlled by avoiding carbon fiber
+
+### Final Design:
+```python
+config = {
+    "motor_choice": "CesaroniO3700",
+    "rocket_body": {
+        "radius": 0.17,
+        "length": 1.2,
+        "material": "fiberglass",
+        "thickness": 0.006,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.4,
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.2,
+            "tip_chord": 0.1,
+            "span": 0.1,
+            "cant_angle": 1.0,
+            "material": "plywood",
+            "thickness": 0.008,
+        },
+        "tail": {
+            "length": 0.25,
+            "top_radius": 0.16,
+            "bottom_radius": 0.17,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.7,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.15,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,
+        "inclination": 88,
+        "heading": 90,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 0.6,
+    },
+}
+```
+
+### Expected Performance:
+- **Apogee**: 3100-3200m (slight overshoot for reliability)
+- **Cost**: ~$950 (under $1000 threshold)
+- **Landing**: ~4m/s (safe)
+- **Drift**: <300m (better wind compensation)
+- **Structural**: No failures
+
+This design should maximize the score by:
+1. Guaranteeing apogee target
+2. Keeping cost reasonable
+3. Optimal recovery and stability
+4. Wind compensation through launch angle

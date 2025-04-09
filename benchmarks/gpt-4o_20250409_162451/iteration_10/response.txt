@@ -1,0 +1,127 @@
+To develop an optimized rocket design, we must address the key shortcomings from the previous attempts, notably the targeting of apogee and cost-effectiveness without compromising structural integrity. Below is a comprehensive strategy that considers motor performance, material selection, aerodynamic efficiency, and cost management:
+
+### Analysis from Previous Attempts:
+
+1. **Motor Selection**: 
+   - Finding the right motor that balances thrust and cost is crucial. The CesaroniM1670 has shown potential but underperformed in reaching the apogee. The CesaroniO3700 reached the target but was too costly.
+   
+2. **Material Choices**:
+   - Utilizing lightweight and strong materials such as fiberglass for the body and carbon fiber for critical parts like the nose cone can provide structural integrity while reducing weight.
+   
+3. **Aerodynamics**:
+   - A von Karman nose cone design effectively reduces drag. However, optimizing fin parameters is essential to enhance stability without adding excessive weight.
+
+4. **Cost Management**:
+   - Strategically using plywood or balsa wood for secondary components like fins can reduce costs while maintaining adequate strength.
+
+### Design Strategy:
+
+1. **Motor Choice**: 
+   - **Motor**: AeroTechH128W
+     - Although this motor provides less thrust, it will allow us to optimize the rest of the design to make full use of the given impulse while drastically reducing costs.
+
+2. **Rocket Body Design**:
+   - **Radius**: 0.09 meters
+   - **Length**: 2.0 meters
+   - **Material**: **fiberglass**
+   - **Thickness**: 0.003 meters 
+
+3. **Nose Cone Design**:
+   - **Kind**: **ogive**
+   - **Length**: 0.3 meters
+   - **Material**: **carbon_fiber**
+
+4. **Fins Design**:
+   - **Number**: 3
+   - **Root Chord**: 0.2 meters
+   - **Tip Chord**: 0.1 meters
+   - **Span**: 0.2 meters
+   - **Cant Angle**: 1 degree
+   - **Material**: **plywood**
+   - **Thickness**: 0.003 meters
+
+5. **Tail Design**:
+   - **Length**: 0.1 meters
+   - **Top Radius**: 0.07 meters
+   - **Bottom Radius**: 0.08 meters
+   - **Material**: **fiberglass**
+
+6. **Parachute Specifications**:
+   - **Main cd_s**: 0.5
+   - **Drogue cd_s**: 0.2
+
+7. **Launch Rail Configuration**:
+   - **Rail Length**: 4 meters
+   - **Inclination**: 85 degrees
+   - **Heading**: 270 degrees
+
+8. **Payload**:
+   - **Mass**: 0.3 kg
+   - **Position**: 1.0 meters
+
+### Proposed Configuration:
+
+```python
+config = {
+    "motor_choice": "AeroTechH128W",
+    "rocket_body": {
+        "radius": 0.09,  # Body radius in meters
+        "length": 2.0,  # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.003,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.3,  # Nose cone length in meters
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.2,  # Fin root chord in meters
+            "tip_chord": 0.1,  # Fin tip chord in meters
+            "span": 0.2,  # Fin span in meters
+            "cant_angle": 1,  # Cant angle in degrees
+            "material": "plywood",
+            "thickness": 0.003,  # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.1,  # Tail length in meters
+            "top_radius": 0.07,  # Top radius in meters
+            "bottom_radius": 0.08,  # Bottom radius in meters
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.5,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 4,  # Length of the launch rail in meters
+        "inclination": 85,  # Rail inclination in degrees
+        "heading": 270,  # Launch heading in degrees
+    },
+    "payload": {
+        "mass": 0.3,  # Payload mass in kg
+        "position": 1.0  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+### Summary:
+
+This design leverages a balanced approach by utilizing a cost-effective motor, lightweight materials for major structural components, and aerodynamic efficiency. This configuration should allow the rocket to achieve a reasonable apogee, keeping the budget manageable while ensuring flight stability and structural integrity.

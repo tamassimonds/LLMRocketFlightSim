@@ -1,0 +1,99 @@
+Below is a step-by-step discussion of how this new iteration aims to balance better structural integrity (to avoid failures) while still pushing the apogee closer to the 3048 m target, followed by the final Python configuration.
+
+────────────────────────────────────────────────────────────────
+1) Observations from Previous Attempts
+────────────────────────────────────────────────────────────────
+• Attempt 2 used the Pro75M1670 motor, reached ~2683 m (≈12% below target), but crashed due to structural failure.  
+• Attempt 3 thickened the fiberglass tube and made the fins/tail carbon fiber, which fixed structural problems but dropped apogee to ~2210 m (~27% short). The added mass from thicker fiberglass diminished altitude.  
+
+────────────────────────────────────────────────────────────────
+2) Improving Strength While Reducing Mass
+────────────────────────────────────────────────────────────────
+• To avoid structural failure with a high-thrust motor, we still need strong materials.  
+• Rather than using heavier fiberglass for the body, we can switch the entire airframe to carbon fiber at moderate thickness. Carbon fiber has a higher strength-to-weight ratio, allowing a thinner wall while still resisting thrust and aero loads.  
+• This should keep us well below the cost ceiling of 1000, but lighter than a thick fiberglass tube, thus improving altitude.
+
+────────────────────────────────────────────────────────────────
+3) Adjusting Dimensions to Reduce Drag and Mass
+────────────────────────────────────────────────────────────────
+• Overall body length is shortened slightly from 2.0 m to 1.8 m to cut mass and reduce drag.  
+• Fins are also slightly reduced in chord/span compared to Attempt 3, which lowers fin drag. Because they are carbon fiber, we can keep them thin.  
+• Nose cone remains an ogive shape but is 0.35 m long—long enough for aerodynamic efficiency without excessive mass.
+
+────────────────────────────────────────────────────────────────
+4) Expected Performance and Recovery
+────────────────────────────────────────────────────────────────
+• The same Pro75M1670 motor provides about 6024 Ns of total impulse and should push this somewhat lighter rocket closer to the 3048 m goal.  
+• We keep the same large main parachute (cd_s = 1.0) to ensure a low landing speed for safety, along with a small drogue (cd_s = 0.1) deployed at apogee for initial stabilization.  
+• Rail length of 2.0 m and vertical launch (90° inclination) minimize horizontal travel in the 5 m/s crosswind.  
+• A 0.5 kg payload sits near the rocket’s center (0.4 m from center) to keep a stable center of gravity.
+
+────────────────────────────────────────────────────────────────
+5) Conclusion
+────────────────────────────────────────────────────────────────
+This design uses lighter but higher-strength carbon fiber for all major structural areas (body, fins, tail) at moderate thickness to resolve the structural failures while minimizing additional mass. The geometry is slightly more compact to help push the altitude back up toward 3048 m, all while remaining under the cost threshold.
+
+────────────────────────────────────────────────────────────────
+Final Rocket Configuration (Python Dictionary)
+────────────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",  # ~6023.6 Ns total impulse
+    "rocket_body": {
+        "radius": 0.08,         # > 0.075 m motor radius
+        "length": 1.8,          # Slightly shorter than Attempt 3
+        "material": "carbon_fiber",
+        "thickness": 0.003,     # Thinner wall but stronger material
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.35,      # Nose cone length in meters
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.18,  # Reduced fin chord for lower drag
+            "tip_chord": 0.07,
+            "span": 0.22,        
+            "cant_angle": 1.0,   # Slight cant for spin-stability
+            "material": "carbon_fiber",
+            "thickness": 0.003   # Thin but strong fin material
+        },
+        "tail": {
+            "length": 0.2,       # Tail length in meters
+            "top_radius": 0.08,  # Matches body radius
+            "bottom_radius": 0.07,  # Slight taper
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.0,         # Large canopy for safe landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.1,         # Small drogue for initial descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,     # Length of launch rail in meters
+        "inclination": 90,      # Vertical launch to minimize drift
+        "heading": 0,           # Heading in degrees
+    },
+    "payload": {
+        "mass": 0.5,            # Payload mass in kg
+        "position": 0.4,        # Position from rocket center
+    }
+}
+```

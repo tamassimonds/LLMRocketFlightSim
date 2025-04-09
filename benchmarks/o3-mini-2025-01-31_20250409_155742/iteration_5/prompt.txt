@@ -1,0 +1,666 @@
+# Rocket Design Task
+
+## Design Requirements
+
+- **Target Apogee**: 3048.0 meters
+- **Wind Conditions**: 5 m/s from E direction
+
+## You are scored off the following
+Distance to max apogee
+Cost: Cheaper the rocket the better the score
+Does it land safely (less than 5 m/s)
+Does it not break
+Horz distance: How far is it from the intial launch site
+
+#Score func code shown below:
+structural_failure = None  # Whether the rocket structure failed during flight
+structural_failure_reward = 0
+
+if structural_failure is not None:
+    if structural_failure:
+        structural_failure_reward = 0
+    else:
+        # Structural failure did not occur
+        structural_failure_reward = 1
+
+# Calculate horizontal distance reward
+# Lower horizontal distance from launch site is better
+horz_distance = abs(horizontal_distance)  # Distance in meters from launch site
+max_horz_distance = target_apogee * 0.3  # Maximum acceptable horizontal distance
+horz_distance_reward = max(0, 1 - horz_distance / max_horz_distance)
+
+# Calculate cost reward
+# Lower cost designs receive higher rewards
+cost = total_cost  # Total cost of rocket components
+max_cost = 1000  # Maximum cost threshold
+cost_reward = max(0, 1 - cost / max_cost)
+
+# Calculate landing impact velocity reward
+# Lower impact velocity (safer landing) is better
+impact_velocity = abs(impact_velocity)  # Landing speed in m/s
+max_impact_velocity = 50  # Maximum acceptable impact velocity
+impact_reward = max(0, 1 - impact_velocity / max_impact_velocity)
+
+percent_difference = abs(apogee - target_apogee) / target_apogee
+distance_reward = 1.0 - percent_difference
+distance_reward = max(0, distance_reward)
+
+
+# Calculate total reward with component weights
+reward = distance_reward + horz_distance_reward * 0.2 + cost_reward * 0.3 + impact_reward * 0.3 + structural_failure_reward * 0.2
+
+
+
+
+## Available Materials
+
+The following materials are available for the rocket components:
+aluminum, composite, fiberglass, carbon_fiber, balsa_wood, plywood, ABS_plastic
+
+## Available Motors
+
+Name,Manufacturer,Radius (mm),Length (mm),Dry Mass (kg),Max Thrust (N),Avg Thrust (N),Burn Time (s),Total Impulse (Ns),Isp (s)
+Pro75M1670,CTI,75,757,1.815,2200,1533.9,3.9,6023.6,198
+AeroTechK700W,AT,54,568,0.732,1029.3,658.7,3.5,2249,177.5
+CesaroniM1670,CTI,75,757,3.101,2200,1533.9,3.6,6023.6,198
+AeroTechH128W,AT,29,194,0.108,190.5,141.2,1.29,176.5,191.3
+CesaroniO3700,CTI,161,957,14.194,4030.3,2836.9,8.2,29930.2,177.8
+CesaroniO5800,CTI,150,754,12.418,6395.5,5040.2,5.2,30382.7,222
+CesaroniK160,CTI,54,404,0.7,272.2,190.2,9.7,1521.7,182.9
+
+## Design Task
+
+Based on the requirements and available components, design a rocket that will reach the target apogee. Your design should include:
+
+1. Motor selection (choose from the available motors list)
+2. Body dimensions and material
+3. Nose cone dimensions and material
+4. Fin design and material
+5. Parachute specifications
+6. Launch rail configuration
+
+
+### Notes
+DRC are run on the design so you need to make sure the design is feasible.
+Here are some of the checks:
+Notes for the tail the top and bottom radius cannot be the same (causes error)
+The material must be specified exactly as listed above
+The body radius must be greater than the motor radius
+Nose cone but by exactly one of the listed 
+Don't include any additional python code (other than config. Putting calculation in there is ok like 32/4 but not whole functions
+
+## Response Format
+
+Please provide your design as a Python dictionary that can be directly used in our simulation software. Use the following format:
+
+```python
+config = {
+    "motor_choice": "MOTOR_NAME",  # Choose from available motors
+    "rocket_body": {
+        "radius": RADIUS_IN_METERS,  # Body radius in meters (must be greater than motor Radius)
+        "length": LENGTH_IN_METERS,  # Body length in meters
+        "material": "MATERIAL",  # Choose from available materials
+        "thickness": THICKNESS_IN_METERS,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "SHAPE",  # "conical", "ogive", "elliptical", "tangent", "von karman", "parabolic", "powerseries" or "lvhaack".
+            "length": LENGTH_IN_METERS,
+            "material": "MATERIAL",
+        },
+        "fins": {
+            "number": NUMBER_OF_FINS,
+            "root_chord": LENGTH_IN_METERS,
+            "tip_chord": LENGTH_IN_METERS,
+            "span": LENGTH_IN_METERS,
+            "cant_angle": ANGLE_IN_DEGREES,
+            "material": "MATERIAL",
+            "thickness": THICKNESS_IN_METERS,
+        },
+        "tail": {
+            "length": LENGTH_IN_METERS,
+            "top_radius": RADIUS_IN_METERS,
+            "bottom_radius": RADIUS_IN_METERS,
+            "material": "MATERIAL",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": AREA,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": AREA,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": LENGTH_IN_METERS, 
+        "inclination": ANGLE_IN_DEGREES, #90 is vertical launch
+        "heading": ANGLE_IN_DEGREES, # Heading in degrees 0 is up
+    },
+    "payload": { #point mass as position specified 
+        "mass": MASS_IN_KG,
+        "position": POSITION_IN_METERS,  # relative to rocket center
+    },
+}
+```
+
+
+Here's an example valid design. This is not at all indicative of what you should do just an example:
+
+```python
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.1,  # Body radius in meters
+        "length": 1.2,    # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.01,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.3,  # Nose cone length in meters
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.15,  # Fin root chord in meters
+            "tip_chord": 0.075,  # Fin tip chord in meters
+            "span": 0.3,         # Fin span in meters
+            "cant_angle": 0.5,   # Cant angle in degrees
+            "material": "carbon_fiber",
+            "thickness": 0.005   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 1.2,  # Tail length in meters
+            "top_radius": 0.04,  # Top radius in meters
+            "bottom_radius": 0.05,  # Bottom radius in meters
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.25,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.2,  # Length of the launch rail in meters
+        "inclination": 90,   # Rail inclination in degrees (vertical)
+        "heading": 0,        # Launch heading in degrees (straight up)
+    },
+    "payload": {
+        "mass": 0.5,  # Payload mass in kg
+        "position": 0.6  # Payload position relative to rocket center in meters
+    }
+}
+```
+Before answering you should provide your full reasoning for the design choices you made thinking like a rocket scientist. Run sample calulations, make approximations etc to find best design
+
+
+
+=== PREVIOUS ATTEMPTS ===
+
+--- ATTEMPT 1 ---
+Design:
+Below is my reasoning followed by the design configuration.
+
+──────────────────────────────
+Reasoning:
+
+1. Motor Selection:
+   • We need a motor that can produce enough impulse to push our rocket to roughly 3048 m (10,000 ft). Looking at the available motors, the “CesaroniO5800” provides a total impulse of roughly 30,382 Ns with an average thrust around 5040 N and a burn time of 5.2 s. This gives us a good thrust‐to‐weight ratio while keeping the mass moderate.
+   • Its motor radius is given as 150 mm. Therefore, the rocket body must have a radius greater than 0.15 m.
+
+2. Body Design:
+   • Chose a body radius slightly larger than the motor radius (0.18 m) for ample internal room and structural margin.
+   • A body length of about 2.5 m was chosen to accommodate the propulsion, recovery, and aerodynamic components yet remain as lightweight as possible.
+   • A strong yet cost‐efficient material is “composite” which offers high strength-to-weight and is available.
+   • A wall thickness of 0.008 m is chosen to minimize cost and mass while keeping structural integrity.
+
+3. Aerodynamics – Nose Cone, Fins, and Tail:
+   • Nose Cone: A classic “ogive” shape is chosen with a length of 0.5 m. “Fiberglass” is used for its good strength, smooth finish, and light weight.
+   • Fins: With 4 fins, dimensions were selected for stability. The root chord (0.2 m) and tip chord (0.1 m) and a span of 0.25 m provide enough area for aerodynamic control. A small cant angle (2°) is included for improved stability. “Carbon_fiber” is selected for its light weight and stiffness with 0.005 m thickness.
+   • Tail: A fin-like tail structure is included to ensure control. The tail length is set to 0.3 m. Keeping the design within the simulation checks, the top radius is set at 0.04 m and the bottom radius at 0.06 m (note these are not equal as required). “Carbon_fiber” is again chosen for consistency and strength.
+
+4. Parachute Recovery System:
+   • Both a main and a drogue chute are specified. For a safe landing (impact speed < 5 m/s) the main parachute area is picked slightly larger (cd_s = 0.3) compared to the drogue (cd_s = 0.2) so that after apogee the rocket decelerates sufficiently.
+   • Both parachutes are triggered at apogee (as per the simulation requirements), with a sampling rate of 105 Hz, a lag time of 1.5 s and a noise tuple representative of the deployment dynamics.
+
+5. Launch Rail:
+   • A rail length of 3.0 m is chosen. Longer rails give the rocket time to align and help counteract a 5 m/s crosswind by providing a stable initial ascent.
+   • The inclination is set at 90° (for a vertical launch) and the heading remains 0° (since wind from the east will shift the trajectory slightly, but the recovery system and guidance will handle the offset).
+
+6. Payload:
+   • A modest payload of 0.5 kg is assumed and it is placed half a meter from the rocket’s center so that its mass is contained within the stability envelope.
+
+All design choices have been checked against the simulation constraints:
+   • The motor and body dimensions agree (body radius > motor radius).
+   • The aerodynamic tail satisfies the condition that top and bottom radii differ.
+   • The choice of materials uses only those available.
+   • The parachutes and rail settings are chosen to help safe recovery even in moderate cross-winds.
+
+──────────────────────────────
+Final configuration in Python dictionary format:
+
+------------------------------------------------
+
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.18,               # in meters (greater than motor radius 0.15 m)
+        "length": 2.5,                # in meters overall body length
+        "material": "composite",      # selected for strength with low mass
+        "thickness": 0.008,           # wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",        # smooth aerodynamic shape
+            "length": 0.5,          # length of nose cone in meters
+            "material": "fiberglass",  # chosen for smooth finish and light weight
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.2,      # in meters for adequate lift at the root
+            "tip_chord": 0.1,       # in meters for proper tapering
+            "span": 0.25,           # fin span in meters
+            "cant_angle": 2,        # cant angle in degrees
+            "material": "carbon_fiber", 
+            "thickness": 0.005,     # in meters
+        },
+        "tail": {
+            "length": 0.3,          # tail length in meters
+            "top_radius": 0.04,       # top radius in meters
+            "bottom_radius": 0.06,    # bottom radius in meters (different from top)
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.3,            # increased area for safe deceleration
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,            # smaller drogue chute for early slowdown
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 3.0,         # longer rail for improved stability against wind
+        "inclination": 90,          # vertical launch (90°)
+        "heading": 0,               # heading in degrees (north/up)
+    },
+    "payload": { 
+        "mass": 0.5,              # payload mass in kg
+        "position": 0.5,          # position relative to rocket center in meters
+    },
+}
+
+──────────────────────────────
+This configuration is designed to reach the 3048 m target apogee while keeping cost down, ensuring safe recovery (impact speed less than 5 m/s), and meeting all simulation constraints.
+Score: 0.00/100
+
+--- ATTEMPT 2 ---
+Design:
+Below is the full reasoning behind our improved design followed by the final configuration dictionary.
+
+──────────────────────────────
+Reasoning:
+
+1. Motor Selection:
+   • To reach an apogee of 3048 m, we need a motor with high total impulse. The “CesaroniO5800” offers roughly 30,382.7 Ns of impulse with an average thrust of 5040.2 N, which is well suited for our target.
+   • Its stated radius is 150 mm (0.15 m). That means our rocket’s body radius must exceed 0.15 m.
+
+2. Rocket Body:
+   • We choose a body radius of 0.17 m—large enough to clear the motor and allow internal components without excessive mass.
+   • A slightly longer body (3.0 m overall length) gives more internal volume while helping with aerodynamic stability and reducing cost through simpler construction.
+   • The material selected is “composite” because it provides a good strength‐to‐weight ratio at a reasonable cost.
+   • A wall thickness of 0.008 m is chosen to keep the structure both strong and cost effective.
+
+3. Nose Cone:
+   • The “ogive” shape is chosen for its low drag characteristics.
+   • A nose cone length of 0.6 m offers a smooth transition, reducing aerodynamic disturbances.
+   • “fiberglass” is used as it is light, strong, and available in our materials list.
+
+4. Fin and Tail Design:
+   • For stability, we use 4 fins.
+   • The fins have a root chord of 0.25 m and a tip chord of 0.125 m. The span is set to 0.3 m, enough to provide the desired aerodynamic control.
+   • A cant angle of 3° is added to optimize airflow and improve yaw stability.
+   • “carbon_fiber” is selected for the fins to ensure rigidity without an excessive mass penalty. The fin thickness is 0.005 m.
+   • For the tail, we use a short, fin-like structure with a length of 0.4 m.
+   • To satisfy the design check that the tail’s top and bottom radii differ, we set the top radius to 0.05 m and bottom radius to 0.07 m.
+   • The tail material is also “carbon_fiber” to maintain strength and consistency with the fins.
+
+5. Parachute Recovery System:
+   • For the main chute, a slightly larger effective area is chosen (cd_s = 0.35) to ensure that the rocket decelerates sufficiently for a safe landing (target landing speed < 5 m/s).
+   • The drogue parachute uses a cd_s value of 0.25, giving an early drag boost as it comes out upon reaching apogee.
+   • Both are triggered at apogee with a sampling rate set to 105 Hz, a lag of 1.5 s, and the same noise tuple (0, 8.3, 0.5).
+
+6. Launch Rail Configuration:
+   • A rail length of 3.5 m provides a good balance: long enough to stabilize the rocket against a 5 m/s crosswind from the east but not so long as to add unnecessary cost.
+   • An inclination of 90° is used to ensure a vertical launch and counteract lateral drift.
+   • The heading is set to 0° (i.e. straight upward) to keep the initial ascent as vertical as possible.
+
+7. Payload:
+   • A payload mass of 0.3 kg is assumed. Its position is set 0.6 m from the rocket’s center to keep the mass near the middle for optimal stability.
+
+──────────────────────────────
+Final configuration in Python dictionary format:
+
+------------------------------------------------
+
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.17,               # in meters, ensuring > motor radius (0.15 m)
+        "length": 3.0,                # overall body length in meters
+        "material": "composite",      # cost-effective with high strength-to-weight ratio
+        "thickness": 0.008,           # wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",          # low-drag aerodynamic shape
+            "length": 0.6,            # nose cone length in meters
+            "material": "fiberglass", # smooth finish, light weight
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.25,       # in meters, providing sufficient lift at the base
+            "tip_chord": 0.125,       # in meters, tapering for reduced drag
+            "span": 0.3,              # fin span in meters for control
+            "cant_angle": 3,          # slight cant to improve directional stability
+            "material": "carbon_fiber", 
+            "thickness": 0.005,       # fin thickness in meters
+        },
+        "tail": {
+            "length": 0.4,            # tail length in meters for aerodynamic correction
+            "top_radius": 0.05,         # top radius in meters (different from bottom)
+            "bottom_radius": 0.07,      # bottom radius in meters
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.35,             # larger area for safe deceleration
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.25,             # smaller chute for initial drag
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 3.5,           # longer rail for improved stability against wind
+        "inclination": 90,            # vertical launch (90°)
+        "heading": 0,                 # heading in degrees (straight up)
+    },
+    "payload": { 
+        "mass": 0.3,                # payload mass in kg
+        "position": 0.6,            # payload’s position relative to rocket center in meters
+    },
+}
+
+──────────────────────────────
+This design makes a balanced compromise between cost, safety, and performance. It uses a high-impulse motor to reach the desired apogee while the aerodynamic and stability components have been sized and configured to overcome moderate wind conditions, maintain stability, and ensure a survivable landing speed.
+Score: 0.00/100
+
+--- ATTEMPT 3 ---
+Design:
+Below is my detailed reasoning followed by the final Python‐formatted configuration.
+
+──────────────────────────────
+Reasoning:
+
+1. Motor Selection:
+   • To reach a 3048‑meter apogee, we need ample total impulse. Although there are several motor options, the “CesaroniO5800” (impulse ≈ 30382.7 Ns, avg thrust ≈5040 N over 5.2 s, and a dry mass of 12.418 kg) gives us the power necessary for the high altitude.
+   • Its motor radius is 150 mm (0.15 m), so our rocket body must have a radius larger than that.
+
+2. Rocket Body:
+   • To minimize cost (and mass) while keeping structural integrity, I’ve chosen a body radius of 0.17 m – just enough clearance above the motor.
+   • The body length is set to 2.8 m. This is long enough to house the motor, recovery system and provide aerodynamic stability without unnecessarily adding mass.
+   • Material “composite” is used because it offers a good strength‐to‐weight ratio. (Although sometimes more expensive, safety is paramount to avoid structural failure.)
+   • I’ve increased the wall thickness slightly to 0.009 m compared to previous attempts to ensure the structure can comfortably handle the heavy motor and high thrust loads.
+
+3. Aerodynamics:
+   a. Nose Cone:
+      • An “ogive” shape is known for low drag. I’ve lengthened the nose cone to 0.7 m for a smooth transition and to improve aerodynamic performance.
+      • “fiberglass” is used for the nose cone because of its smooth finish and light weight.
+   
+   b. Fins:
+      • Four fins are included for enhanced stability. Their dimensions are chosen to provide sufficient control while keeping them light.
+      • I use a root chord of 0.20 m and tip chord of 0.10 m with a span of 0.30 m. A very slight cant angle of 1° is added so that any small yaw perturbations are damped while not producing excessive side forces.
+      • “carbon_fiber” is selected for the fins due to its high stiffness and light weight; the thickness is 0.005 m.
+   
+   c. Tail:
+      • The tail (separate from the fins) is designed with a length of 0.5 m.
+      • To satisfy the simulation check that the top and bottom radii differ, I’ve chosen a top radius of 0.04 m and a bottom radius of 0.06 m.
+      • “carbon_fiber” is again used for the tail for consistency and strength.
+
+4. Parachute Recovery System:
+   • For a safe landing (impact speed under 5 m/s) and to minimize horizontal drift, the main parachute is given a larger effective drag (cd_s = 0.4). The drogue chute is sized slightly smaller (cd_s = 0.3) so that it provides early drag while the main chute ensures a gentle touchdown.
+   • Both chutes deploy at apogee (trigger set to “apogee”), with a sampling rate of 105 Hz, a deployment lag of 1.5 s, and a noise tuple of (0, 8.3, 0.5).
+
+5. Launch Rail Configuration:
+   • To help counter the 5 m/s crosswind coming from the east, a longer launch rail (4.0 m) is chosen. This provides the rocket with a longer period to transition from rail-guided to free flight and minimizes initial horizontal deviation.
+   • The rail’s inclination is kept at 90° for a vertical launch.
+   • Since the wind is coming from the east, I set the launch heading to 90° (eastward). In effect, blowing from east tends to push the rocket west; a launch heading east can help counter this drift, aiming to reduce the net horizontal offset at landing.
+
+6. Payload:
+   • Keeping the payload modest (0.3 kg) helps to keep the overall cost low and mass centered. I set its position at 0.5 m from the rocket’s center which should help maintain balance without compromising the stability envelope.
+
+──────────────────────────────
+Final configuration in Python dictionary format:
+
+------------------------------------------------
+
+```python
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.17,               # in meters; must be > motor radius (0.15 m)
+        "length": 2.8,                # overall body length in meters
+        "material": "composite",      # chosen for a good strength-to-weight ratio
+        "thickness": 0.009,           # wall thickness in meters for extra structural integrity
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",          # low-drag aerodynamic shape
+            "length": 0.7,            # nose cone length in meters for smooth transition
+            "material": "fiberglass", # light and smooth finish for reduced drag
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.20,       # in meters for adequate lift at fin base
+            "tip_chord": 0.10,        # in meters for proper tapering
+            "span": 0.30,             # fin span in meters for control authority
+            "cant_angle": 1,          # slight cant (in degrees) to help damp yaw oscillations
+            "material": "carbon_fiber", 
+            "thickness": 0.005,       # fin thickness in meters
+        },
+        "tail": {
+            "length": 0.5,            # tail length in meters for stability
+            "top_radius": 0.04,         # top radius in meters (different from bottom)
+            "bottom_radius": 0.06,      # bottom radius in meters to satisfy design check
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.4,            # increased area for strong deceleration
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,            # secondary chute for early drag before main deployment
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 4.0,         # longer rail length to help mitigate crosswind effects
+        "inclination": 90,          # vertical launch (90°)
+        "heading": 90,              # launch heading set to east (90°) to counteract wind from east
+    },
+    "payload": { 
+        "mass": 0.3,              # payload mass in kg (kept low for cost efficiency)
+        "position": 0.5,          # payload position relative to rocket center in meters
+    },
+}
+```
+
+──────────────────────────────
+This improved design uses the high-impulse CesaroniO5800 motor while refining the fuselage dimensions and aerodynamic surfaces for a stable and cost‐efficient flight. The extended rail and adjusted heading are intended to counteract a 5 m/s east wind, helping the rocket land as close as possible to the launch site and ensuring a safe landing speed.
+Score: 19.50/100
+Target Apogee: 3048.0m, Actual: 1923.96m, Error: 36.88%
+Structural integrity: PASSED
+Cost: $2695.88
+
+--- ATTEMPT 4 ---
+Design:
+Below is the full reasoning for the design improvements we made and the resulting configuration.
+
+──────────────────────────────
+Reasoning:
+
+1. Objective – Reaching an apogee of 3048 m  
+  Our previous flights with the high‐impulse “CesaroniO5800” motor were falling short (≈1920 m) when extra mass and drag lowered the net altitude. To push the design closer to the 3048 m target we must both maximize the effective impulse and minimize unnecessary mass and drag. We accomplish this by trimming overall dimensions, reducing wall thickness and payload mass while still keeping the structure robust.
+
+2. Motor Selection  
+  We continue to use the “CesaroniO5800” motor because of its high total impulse (≈30382.7 Ns) and relatively low mass (≈12.4 kg). Its stated radius is 150 mm (0.15 m), so every other component must have dimensions slightly larger than that (and we will choose 0.17 m for the body radius).
+
+3. Rocket Body  
+  • We choose a body radius of 0.17 m—just enough above the motor radius for proper clearance, which minimizes frontal area (reducing drag).  
+  • The overall body length is reduced to 2.4 m (down from previous 2.8–3.0 m designs) so that the rocket is lean and lower in weight, yet still long enough to house the motor, recovery system and aerodynamic surfaces.  
+  • We keep the strong “composite” for the body for its proven strength/weight benefits while reducing wall thickness slightly to 0.007 m (from earlier 0.008–0.009 m) in order to lower mass and cost.
+
+4. Aerodynamics  
+  a. Nose Cone – We use an “ogive” nose cone with a 0.5 m length. A shorter but smooth ogive minimizes drag while still providing a gradual transition along the body. “fiberglass” is chosen because of its smooth finish and light weight.  
+  b. Fins – To trim weight and drag we opt for 3 fins rather than 4. Their dimensions are scaled down:
+  • Root chord: 0.18 m and tip chord: 0.09 m (for proper tapering), with a span of 0.25 m.  
+  • A very small cant angle of 0.5° helps with damping without adding extra side force.  
+  • “ABS_plastic” is chosen for fins: this material is cost‐effective and provides sufficient stiffness while keeping mass lower than heavier composites. The thickness is set to 0.004 m.
+  c. Tail – For additional stability a small fin‐like tail is used. With a 0.3 m length and radii of 0.03 m (top) and 0.05 m (bottom) the design meets the tolerances (radii not equal) while keeping extra drag low. “ABS_plastic” is again used here to be consistent with the lightweight fin design.
+
+5. Parachute Recovery System  
+  Safe recovery is critical. We slightly increase the effective drag area of the main parachute (cd_s = 0.45) to target a landing impact of less than 5 m/s. The drogue remains at cd_s = 0.3 to provide an early drag boost. Both are set to trigger at apogee (sampling_rate = 105 Hz, lag = 1.5 s, noise = (0, 8.3, 0.5)).
+
+6. Launch Rail and Wind Mitigation  
+  The wind is 5 m/s coming from the east. To help the rocket ride out crosswind effects before free flight, we choose a slightly longer rail (4.0 m). An inclination of 90° (vertical launch) paired with a rail heading of 90° (east) is chosen as a countermeasure against the wind’s push which tends to shift the flight path laterally.
+
+7. Payload  
+  Finally, we reduce the payload mass to 0.2 kg (down from 0.3–0.5 kg in previous attempts) and place it at 0.4 m from the center. This decreases overall mass, improving the mass ratio and thus helping to achieve a higher apogee.
+
+──────────────────────────────
+Final configuration in Python dictionary format:
+
+------------------------------------------------
+
+config = {
+    "motor_choice": "CesaroniO5800",  # High impulse motor for reaching high apogee
+    "rocket_body": {
+        "radius": 0.17,               # in meters; must be > motor radius (0.15 m)
+        "length": 2.4,                # overall body length is trimmed to reduce mass and drag
+        "material": "composite",      # provides a high strength-to-weight ratio
+        "thickness": 0.007,           # slightly reduced wall thickness to save weight and cost
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",          # low-drag, streamlined shape
+            "length": 0.5,            # shorter nose cone reduces drag while ensuring smooth flow
+            "material": "fiberglass", # light with a smooth finish
+        },
+        "fins": {
+            "number": 3,              # three fins reduce weight and drag compared to four
+            "root_chord": 0.18,       # provides adequate lift at the base of the fin
+            "tip_chord": 0.09,        # tapers to minimize drag
+            "span": 0.25,             # fin span chosen for adequate control authority
+            "cant_angle": 0.5,        # very slight cant to help damp yaw oscillations
+            "material": "ABS_plastic",# cost-effective and lightweight
+            "thickness": 0.004,       # fin thickness in meters
+        },
+        "tail": {
+            "length": 0.3,            # tail length for additional stability
+            "top_radius": 0.03,         # top radius in meters (different from bottom)
+            "bottom_radius": 0.05,      # bottom radius in meters to satisfy design checks
+            "material": "ABS_plastic",  # selected to be lightweight and cost-effective
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.45,             # larger area for stronger deceleration
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,              # drogue chute for early drag
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 4.0,           # increased rail length to help counteract crosswinds
+        "inclination": 90,            # vertical launch (90°)
+        "heading": 90,                # rail heading set to 90° to help offset an east wind
+    },
+    "payload": { 
+        "mass": 0.2,                # reduced payload mass to improve the mass ratio
+        "position": 0.4,            # payload positioned closer to the center for better stability
+    },
+}
+
+──────────────────────────────
+This design reduces overall mass and drag (by trimming fuselage length and wall thickness, and lowering payload weight) while keeping the aerodynamic surfaces effective and ensuring robust recovery. The improved configuration should help push the apogee closer to 3048 m while still meeting cost and safety requirements.
+Score: 0.00/100
+
+
+Based on previous attempts, please provide an improved rocket design.

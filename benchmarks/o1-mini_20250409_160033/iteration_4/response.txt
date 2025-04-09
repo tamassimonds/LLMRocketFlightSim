@@ -1,0 +1,289 @@
+## Rocket Design Task - Improved Design
+
+### Design Reasoning
+
+Designing a rocket to achieve a **target apogee** of **3,048 meters** (10,000 feet) under **wind conditions** of 5 m/s from the East requires a balanced approach that optimizes propulsion, minimizes mass and cost, ensures structural integrity, and guarantees a safe landing. Building upon the insights from previous attempts, the following design focuses on leveraging high-efficiency propulsion while employing lightweight materials and aerodynamic optimizations to enhance performance.
+
+---
+
+### 1. **Motor Selection**
+
+**Available Motors Consideration:**
+
+- **CesaroniO5800**:
+  - **Total Impulse (I):** 30,382.7 Ns
+  - **Dry Mass:** 12.418 kg
+  - **Max Thrust:** 6,395.5 N
+  - **Burn Time:** 5.2 s
+
+- **Pro75M1670**:
+  - **Total Impulse (I):** 6,023.6 Ns
+  - **Dry Mass:** 1.815 kg
+  - **Max Thrust:** 2,200 N
+  - **Burn Time:** 3.9 s
+
+**Selection:** **CesaroniO5800**
+
+**Rationale:**
+
+- **High Total Impulse:** The CesaroniO5800 offers the highest total impulse among available motors, providing substantial thrust necessary to overcome gravitational and aerodynamic forces to reach the target apogee.
+  
+- **Single Motor Simplicity:** Utilizing a single motor avoids the complexities and structural challenges associated with multi-motor configurations, ensuring reliability and reducing potential points of failure.
+  
+- **Performance Benchmark:** In previous attempts, the CesaroniO5800 achieved approximately 78% of the target apogee. By optimizing the rocket's design to reduce mass and enhance aerodynamics, we aim to bridge the gap and achieve the desired altitude.
+
+---
+
+### 2. **Rocket Body Design**
+
+- **Radius:** **0.16 meters**
+  - **Justification:** Slightly larger than the motor radius (0.15 meters) to ensure a secure fit and structural integrity while minimizing excessive cross-sectional area that could increase aerodynamic drag.
+  
+- **Length:** **0.8 meters**
+  - **Justification:** A more compact length reduces the overall mass and minimizes the rocket's frontal area, contributing to lower aerodynamic drag and improved stability.
+  
+- **Material:** **Carbon Fiber**
+  - **Justification:** Carbon fiber offers an excellent strength-to-weight ratio, providing the necessary structural support while keeping the rocket lightweight, essential for maximizing apogee.
+  
+- **Thickness:** **0.005 meters**
+  - **Justification:** Minimal wall thickness reduces mass without compromising the structural integrity required to withstand aerodynamic stresses during flight.
+
+---
+
+### 3. **Aerodynamics**
+
+#### a. **Nose Cone**
+- **Kind:** **Ogive**
+  - **Justification:** The ogive shape is renowned for its superior aerodynamic properties, minimizing drag and enhancing stability during ascent.
+  
+- **Length:** **0.2 meters**
+  - **Justification:** A shorter nose cone reduces the overall mass and frontal area, contributing to lower aerodynamic resistance.
+  
+- **Material:** **Composite**
+  - **Justification:** Composite materials provide a lightweight and strong structure, ideal for maintaining the integrity of the aerodynamic shape under high-speed conditions.
+
+#### b. **Fins**
+- **Number:** **3**
+  - **Justification:** Three fins offer sufficient stability while minimizing the added mass and aerodynamic drag compared to configurations with more fins.
+  
+- **Root Chord:** **0.08 meters**
+  
+- **Tip Chord:** **0.04 meters**
+  
+- **Span:** **0.25 meters**
+  
+- **Cant Angle:** **0 degrees**
+  
+- **Material:** **Balsa Wood**
+  - **Justification:** Balsa wood is exceptionally lightweight while providing adequate structural support for the fins, essential for maintaining stability without adding unnecessary mass.
+  
+- **Thickness:** **0.002 meters**
+  - **Justification:** Thin fins reduce weight and drag, enhancing the rocket's overall aerodynamic efficiency.
+
+#### c. **Tail**
+- **Length:** **0.4 meters**
+  
+- **Top Radius:** **0.03 meters**
+  
+- **Bottom Radius:** **0.035 meters**
+  - **Justification:** Differing top and bottom radii comply with Design Rule Checks (DRC) and prevent structural errors.
+  
+- **Material:** **Carbon Fiber**
+  - **Justification:** Ensures the tail maintains its shape and structural integrity under aerodynamic forces while keeping weight to a minimum.
+
+---
+
+### 4. **Parachutes**
+
+- **Main Parachute:**
+  - **CD_S:** **0.30**
+  - **Trigger:** **Apogee**
+  - **Sampling Rate:** **105**
+  - **Lag:** **1.5 seconds**
+  - **Noise:** **(0, 8.3, 0.5)**
+  
+- **Drogue Parachute:**
+  - **CD_S:** **0.25**
+  - **Trigger:** **Apogee**
+  - **Sampling Rate:** **105**
+  - **Lag:** **1.5 seconds**
+  - **Noise:** **(0, 8.3, 0.5)**
+  
+**Rationale:**
+
+- **Increased Drag Coefficient (CD_S):** Larger CD_S values enhance drag, ensuring a safer and slower descent to maintain impact velocities below 5 m/s.
+  
+- **Dual Parachute System:** Utilizing both main and drogue parachutes provides redundancy and controlled descent phases, enhancing landing safety.
+
+---
+
+### 5. **Launch Rail Configuration**
+
+- **Rail Length:** **1.0 meters**
+  
+- **Inclination:** **90 degrees** (Vertical Launch)
+  
+- **Heading:** **0 degrees** (Aligned with Wind Direction)
+  
+**Rationale:**
+
+- **Vertical Launch:** Maximizes altitude by directing all thrust upwards, minimizing horizontal drift caused by wind.
+  
+- **Aligned Heading:** Launching in the direction of the prevailing wind (East) mitigates lateral displacement, ensuring the rocket lands closer to the launch site to optimize scoring related to horizontal distance.
+
+---
+
+### 6. **Payload**
+
+- **Mass:** **0.3 kg**
+  
+- **Position:** **0.4 meters** relative to rocket center
+  
+**Rationale:**
+
+- **Lightweight Payload:** Minimizes the total mass, enhancing the thrust-to-weight ratio and contributing to a higher apogee.
+  
+- **Optimized Positioning:** Ensures the center of mass is appropriately balanced, maintaining aerodynamic stability during flight.
+
+---
+
+### 7. **Wind Conditions Consideration**
+
+- **Wind Speed:** **5 m/s from East**
+  
+**Design Mitigation:**
+
+- **Stability Enhancements:** The tri-fin configuration and lightweight tail structure stabilize the rocket against lateral wind forces.
+  
+- **Launch Alignment:** By aligning the launch heading with the wind direction, horizontal displacement is minimized, ensuring the rocket remains within the desired vicinity of the launch site.
+
+---
+
+### 8. **Cost Optimization**
+
+**Strategic Material and Component Selection:**
+
+- **Carbon Fiber and Balsa Wood:** Selected for their lightweight properties, reducing overall mass and launch costs associated with heavier materials.
+  
+- **Minimalist Design:** Compact body dimensions and simplified fin structures decrease material usage and manufacturing costs.
+  
+- **Single Motor Usage:** Utilizing a single CesaroniO5800 avoids the additional costs and complexities of multi-motor configurations while providing substantial thrust.
+
+**Expected Outcome:**
+
+- **Balanced Cost vs. Performance:** The chosen materials and design dimensions aim to lower the total cost without compromising the rocket's ability to reach the target apogee.
+  
+- **Enhanced Scoring:** By optimizing for cost and performance, the design anticipates higher rewards in both cost efficiency and distance achievement.
+
+---
+
+### 9. **Structural Integrity**
+
+- **Material Strength:** Carbon fiber and composite materials ensure the rocket maintains structural integrity under high-thrust conditions.
+  
+- **Tail Design Compliance:** Differing top and bottom radii in the tail design comply with DRCs, preventing structural errors and ensuring aerodynamic balance.
+
+**Rationale:**
+
+- **Robust Construction:** Ensures the rocket withstands aerodynamic stresses and launch forces without structural failure, maintaining the integrity necessary for a successful mission.
+
+---
+
+## Final Rocket Configuration
+
+Based on the comprehensive reasoning and optimizations outlined above, the following Python dictionary defines the improved rocket design suitable for the simulation:
+
+```python
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.16,  # Body radius in meters (must be greater than motor radius of 0.15 m)
+        "length": 0.8,    # Body length in meters
+        "material": "carbon_fiber",
+        "thickness": 0.005,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.2,  # Nose cone length in meters
+            "material": "composite",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.08,  # Fin root chord in meters
+            "tip_chord": 0.04,   # Fin tip chord in meters
+            "span": 0.25,         # Fin span in meters
+            "cant_angle": 0,      # Cant angle in degrees
+            "material": "balsa_wood",
+            "thickness": 0.002   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.4,          # Tail length in meters
+            "top_radius": 0.03,     # Top radius in meters
+            "bottom_radius": 0.035, # Bottom radius in meters (different from top radius)
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.30,       # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.25,       # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.0,    # Length of the launch rail in meters
+        "inclination": 90,     # Rail inclination in degrees (vertical launch)
+        "heading": 0,          # Launch heading in degrees (aligned with wind direction)
+    },
+    "payload": {
+        "mass": 0.3,           # Payload mass in kg
+        "position": 0.4        # Payload position relative to rocket center in meters
+    }
+}
+```
+
+---
+
+### Anticipated Performance and Scoring
+
+**1. Apogee Achievement:**
+- **Target Apogee:** 3,048 meters
+- **Expected Apogee:** Enhanced due to reduced rocket mass and optimized aerodynamics.
+- **Rationale:** Utilizing the high total impulse of the CesaroniO5800 in conjunction with a lightweight, aerodynamically optimized rocket body is projected to achieve the target apogee.
+
+**2. Cost Optimization:**
+- **Material Choices:** Selecting carbon fiber and balsa wood balances strength and weight, reducing overall material costs.
+- **Component Simplification:** Fewer and thinner fins, along with a compact body design, minimize material usage and associated costs.
+- **Motor Selection:** A single CesaroniO5800, while costlier than smaller motors, provides the necessary performance to reach the target apogee without the complexities of multiple motors.
+
+**3. Safe Landing:**
+- **Parachute Optimization:** Increased CD_S values ensure a slower and controlled descent, maintaining impact velocities below the 5 m/s threshold.
+- **Dual Parachute System:** Enhances reliability and ensures a safe landing even if one parachute fails.
+
+**4. Structural Integrity:**
+- **Material Strength:** Carbon fiber and composite materials provide the necessary structural support to withstand high thrust and aerodynamic forces.
+- **Compliant Tail Design:** Differing top and bottom radii in the tail ensure compliance with DRCs and maintain aerodynamic balance.
+
+**5. Horizontal Distance Minimization:**
+- **Launch Configuration:** Vertical launch with a heading aligned to prevailing wind reduces horizontal drift.
+- **Aerodynamic Stability:** Optimized fin and tail designs ensure a straight and stable flight path, minimizing lateral displacement.
+
+---
+
+### Conclusion
+
+This improved rocket design meticulously balances propulsion efficiency, structural integrity, aerodynamic optimization, and cost-effectiveness. By leveraging the high total impulse of the CesaroniO5800 and employing lightweight, strong materials, the design is poised to achieve the target apogee of 3,048 meters. Additionally, strategic design choices ensure a safe landing, structural reliability, and minimal horizontal displacement, aligning closely with the specified scoring criteria.
+
+**Expected Score:** Anticipated to significantly exceed previous attempts by achieving closer proximity to the target apogee, reducing costs through material optimization, ensuring a safe landing, maintaining structural integrity, and minimizing horizontal displacement.

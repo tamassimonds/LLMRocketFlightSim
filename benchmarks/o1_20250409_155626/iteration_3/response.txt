@@ -1,0 +1,111 @@
+Below is a step-by-step discussion of how I refined the second attempt to improve both the altitude performance and structural integrity, followed by the final Python dictionary “config.” The main change is to strengthen the rocket (especially the fins and tail) so that it does not fail under the higher thrust while trying to remain close to the target 3048 m apogee and keep costs under the 1000 limit.
+
+────────────────────────────────────────────────────────────────
+1) Observing the Previous Structural Failure
+────────────────────────────────────────────────────────────────
+• The second attempt, using the Pro75M1670 (≈6024 Ns), reached 2682.77 m but failed structurally.  
+• This usually indicates the rocket body, tail, or fins could not withstand high thrust/drag loads.  
+
+────────────────────────────────────────────────────────────────
+2) Upgrading Materials and Increasing Thickness
+────────────────────────────────────────────────────────────────
+• To remedy structural weakness, the simplest approach is to increase wall thickness and/or use stronger materials where high loads are expected.  
+• Body Tube:  
+  – Previously 3 mm thick (fiberglass). I increased it to 5 mm (0.005 m) while keeping fiberglass, which is relatively cost-effective and stronger with greater wall thickness.  
+• Fins and Tail:  
+  – The tail experiences significant aerodynamic and thrust loads. To ensure it won’t break, I switched its material from fiberglass to carbon_fiber, which has higher tensile and compressive strength.  
+  – The fins are also upgraded to carbon_fiber with a slightly thicker 4 mm (0.004 m) cross-section. Plywood might have been cheaper but is more prone to failure under high thrust/drag.  
+
+────────────────────────────────────────────────────────────────
+3) Keeping Dimensions Similar
+────────────────────────────────────────────────────────────────
+• The rocket’s overall geometry is largely unchanged from Attempt 2, because we still want ~2.0 m of body length and a nose cone length of ~0.4 m to reach near 3 km. Shortening the rocket might reduce mass but also risk lower stability margins; lengthening it more could add too much mass.  
+• The radius remains 0.08 m to match the 75 mm diameter motor.  
+• The tail is still 0.2 m long, top_radius = 0.08 m, and bottom_radius = 0.07 m to maintain aerodynamic efficiency (and avoid “same radius” errors).
+
+────────────────────────────────────────────────────────────────
+4) Expected Effects on Performance and Cost
+────────────────────────────────────────────────────────────────
+• Increasing thickness and switching to carbon fiber in crucial areas will raise mass and cost. However, it should still remain well below the 1000 cost threshold and hopefully in the same ballpark as Attempt 2 (which was around 685).  
+• The added mass may slightly reduce the apogee from 2682 m, but it should remain fairly close to the 3000 m range, given the high total impulse of the Pro75M1670.  
+• Most importantly, the stronger materials and thicker walls should allow the rocket to pass structural integrity checks.
+
+────────────────────────────────────────────────────────────────
+5) Parachutes, Launch, and Payload
+────────────────────────────────────────────────────────────────
+• Parachute sizes remain the same (Main cd_s = 1.0, Drogue cd_s = 0.1) to keep landing speeds low enough to be safe (<5 m/s).  
+• A 2.0 m rail, 90° inclination, and 0° heading minimize horizontal drift and keep flight near the launch site despite 5 m/s winds.  
+• A 0.5 kg payload is still mounted around the middle of the rocket (0.4 m from center).
+
+Below is the final rocket configuration in the requested Python dictionary format.
+
+────────────────────────────────────────────────────────────────
+Final Python Dictionary Configuration
+────────────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",  # ~6023.6 Ns total impulse
+    "rocket_body": {
+        "radius": 0.08,         # Must exceed motor radius (0.075 m)
+        "length": 2.0,          # Main cylindrical length
+        "material": "fiberglass",
+        "thickness": 0.005,     # Increased wall thickness to 5 mm for strength
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.4,       # Nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.20,  # Fin root chord in meters
+            "tip_chord": 0.08,   # Fin tip chord in meters
+            "span": 0.25,        # Fin span in meters
+            "cant_angle": 1.0,   # Slight cant for stability
+            "material": "carbon_fiber", 
+            "thickness": 0.004   # Thicker carbon-fiber fins for extra strength
+        },
+        "tail": {
+            "length": 0.2,       # Tail length in meters
+            "top_radius": 0.08,  # Matches main body
+            "bottom_radius": 0.07, # Narrower for aerodynamic shaping
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.0,         # Large canopy for safe descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.1,         # Small drogue chute
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,     # 2 m launch rail
+        "inclination": 90,      # Vertical launch
+        "heading": 0,           # Heading in degrees
+    },
+    "payload": {
+        "mass": 0.5,            # 0.5 kg payload mass
+        "position": 0.4,        # Payload CG location (m from rocket center)
+    }
+}
+```
+
+Explanation Summary:
+• We kept the high-thrust Pro75M1670 to approach the 3 km altitude goal.  
+• The rocket body is still fiberglass for cost reasons but with increased thickness to better handle thrust/drag loads.  
+• Tail and fins are switched to carbon fiber for even greater strength.  
+• The rest of the design remains similar to attempt 2 so that performance should remain near the 3000 m altitude mark, but now with improved structural integrity.

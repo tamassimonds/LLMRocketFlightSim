@@ -1,0 +1,132 @@
+After analyzing the previous attempts, I'll design an improved rocket that better balances impulse, weight, and cost to achieve the target apogee. Here's my reasoning and optimized design:
+
+### Key Learnings from Previous Attempts:
+1. **Impulse Requirements**:
+   - 6023.6 Ns (M1670 motors) reached ~2700-2800m (9-22% short)
+   - Need ~15-20% more impulse for 3048m target
+   - Next available option: AeroTechK700W (2249 Ns) is too small
+   - Must optimize current motor performance
+
+2. **Weight Optimization**:
+   - Previous designs were either too heavy (Attempt 2) or slightly underpowered
+   - Need to reduce dry mass while maintaining structure
+
+3. **Aerodynamic Efficiency**:
+   - Von Karman nose performed better than ogive
+   - Fin sizing needs careful balance between stability and drag
+
+### Improved Design Strategy:
+1. **Motor Selection**:
+   - Stick with CesaroniM1670 (6023.6 Ns)
+   - Compensate for impulse deficit with:
+     - Reduced airframe weight
+     - Improved aerodynamics
+     - Optimized mass distribution
+
+2. **Structural Optimization**:
+   - Thinner walls where possible
+   - Lighter materials for non-critical components
+   - Shorter overall length to reduce weight
+
+3. **Aerodynamic Improvements**:
+   - More aggressive nose cone (LV-Haack for minimum drag)
+   - Smaller, more efficient fins
+   - Better fin cant angle for wind compensation
+
+4. **Recovery System**:
+   - Larger main chute for safer landing
+   - Smaller drogue to limit drift
+
+### Calculations:
+- Estimated total mass: ~4.5kg (motor 3.1kg + structure 0.7kg + payload 0.7kg)
+- Thrust-to-weight: 1533.9N/(4.5kg*9.81) ≈ 35
+- Expected altitude: ~3000m (with improved efficiency)
+- Landing speed: ~4.5 m/s (with 0.3 cd_s main)
+
+### Final Optimized Design:
+
+```python
+config = {
+    "motor_choice": "CesaroniM1670",
+    "rocket_body": {
+        "radius": 0.08,
+        "length": 1.3,
+        "material": "carbon_fiber",  # Stronger and lighter than fiberglass
+        "thickness": 0.0035,  # Reduced thickness possible with carbon fiber
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "lvhaack",  # Most efficient shape
+            "length": 0.4,  # Longer for better aero
+            "material": "composite",
+        },
+        "fins": {
+            "number": 3,  # Fewer fins = less drag
+            "root_chord": 0.2,
+            "tip_chord": 0.1,
+            "span": 0.2,  # Smaller span
+            "cant_angle": 1.0,  # More cant for wind
+            "material": "carbon_fiber",
+            "thickness": 0.003,
+        },
+        "tail": {
+            "length": 0.2,
+            "top_radius": 0.075,
+            "bottom_radius": 0.08,
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.3,  # Larger for safer landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.15,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.5,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.7,
+        "position": 0.7,
+    },
+}
+```
+
+### Key Improvements:
+1. **Material Upgrade**: Carbon fiber body for strength-to-weight ratio
+2. **Aerodynamic Optimization**:
+   - LV-Haack nose cone (minimum drag)
+   - 3 fins instead of 4 (reduced drag)
+   - Increased cant angle (1°) for better wind stability
+3. **Weight Reduction**:
+   - Thinner walls (3.5mm)
+   - Shorter body (1.3m)
+4. **Recovery System**:
+   - Larger main chute (0.3 cd_s) for safer landing
+   - Maintained drogue size to limit drift
+5. **Cost Control**:
+   - Despite carbon fiber, reduced material amounts keep cost reasonable
+   - Estimated cost: ~$800-900
+
+This design should:
+- Reach closer to 3048m through improved efficiency
+- Maintain structural integrity
+- Land safely (<5 m/s)
+- Minimize horizontal drift
+- Stay within reasonable cost parameters
+
+The combination of aerodynamic improvements and weight reduction should compensate for the slight impulse deficit from the M1670 motor, while the recovery system ensures safe landing and minimal drift.

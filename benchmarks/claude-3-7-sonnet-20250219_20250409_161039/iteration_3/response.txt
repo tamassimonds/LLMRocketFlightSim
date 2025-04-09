@@ -1,0 +1,126 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Design Approach and Reasoning
+
+Looking at the previous attempts, I can see that:
+1. The first attempt with AeroTechK700W reached only 1669m (45% below target) and failed structurally
+2. The second attempt with Pro75M1670 reached 2661m (13% below target) and passed structural integrity
+
+For this improved design, I need to:
+- Increase apogee to exactly 3048m (currently undershooting)
+- Maintain structural integrity
+- Optimize cost (second attempt was $673.31)
+- Ensure safe landing speed (<5 m/s)
+- Minimize horizontal drift
+
+## Motor Selection Refinement
+
+The Pro75M1670 motor got us closer to our target but still undershot by ~13%. I have two options:
+1. Keep the same motor but reduce weight/drag
+2. Use a slightly more powerful motor
+
+Since we're still significantly under our target, I'll select the CesaroniM1670 which has the same total impulse (6023.6 Ns) as Pro75M1670 but with different burn characteristics that might help us reach our target altitude.
+
+## Weight Optimization
+
+To reach a higher apogee with the same impulse class:
+- Reduce body length slightly (1.2m → 1.1m)
+- Use lighter materials where structural integrity permits
+- Optimize fin size to reduce drag while maintaining stability
+
+## Structural Integrity Considerations
+
+The second attempt passed structural integrity tests, so I'll maintain:
+- Adequate wall thickness (0.005m)
+- Strong materials for critical components
+- Proper sizing of aerodynamic surfaces
+
+## Parachute Sizing Recalculation
+
+With slightly reduced weight (estimated ~3.5kg vs previous 3.7kg):
+CD_S = 2mg/(ρv²) = 2 × 3.5 × 9.81/(1.225 × 5²) ≈ 1.12
+
+Split between main and drogue:
+- Main: CD_S = 0.85
+- Drogue: CD_S = 0.27
+
+## Launch Configuration Adjustment
+
+To account for the 5 m/s easterly wind:
+- Maintain inclination at 85° (slightly angled into the wind)
+- Keep heading at 270° (west, opposite to the easterly wind)
+- Increase rail length slightly for better initial stability
+
+## Final Design Configuration
+
+```python
+config = {
+    "motor_choice": "CesaroniM1670",
+    "rocket_body": {
+        "radius": 0.08,  # Body radius in meters
+        "length": 1.1,    # Slightly reduced body length
+        "material": "fiberglass",
+        "thickness": 0.005,  # Maintain wall thickness for structural integrity
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.28,  # Slightly shorter nose cone
+            "material": "fiberglass",  # Maintain strong material
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.16,  # Slightly reduced from previous 0.18m
+            "tip_chord": 0.08,  # Slightly reduced from previous 0.09m
+            "span": 0.13,  # Slightly reduced from previous 0.14m
+            "cant_angle": 0.0,  # No cant angle
+            "material": "plywood",  # Maintain strong material
+            "thickness": 0.008  # Maintain thickness for strength
+        },
+        "tail": {
+            "length": 0.22,  # Slightly reduced from previous 0.25m
+            "top_radius": 0.07,  # Top radius in meters
+            "bottom_radius": 0.08,  # Bottom radius in meters
+            "material": "fiberglass",  # Maintain strong material
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.85,  # Slightly reduced from previous 0.9
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.27,  # Slightly reduced from previous 0.28
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.6,  # Slightly increased rail length
+        "inclination": 85,   # Maintain inclination
+        "heading": 270,      # Maintain heading
+    },
+    "payload": {
+        "mass": 0.35,  # Slightly reduced payload mass
+        "position": 0.4  # Maintain payload position
+    }
+}
+```
+
+This design improves upon the previous attempt by:
+
+1. Using the CesaroniM1670 motor which has the same total impulse as Pro75M1670 but different burn characteristics
+2. Reducing overall weight by slightly decreasing dimensions of body, nose cone, and fins
+3. Maintaining structural integrity with adequate material thickness and strength
+4. Properly sizing the parachutes for a safe landing speed
+5. Optimizing the launch configuration for wind conditions
+6. Balancing performance with cost considerations
+
+The CesaroniM1670 motor should provide the necessary impulse to reach our target altitude of 3048m, while the structural components remain robust enough to prevent failure. The parachute system is sized to ensure a safe landing speed below 5 m/s, and the aerodynamic design is optimized for stability and performance.

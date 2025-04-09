@@ -1,0 +1,129 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Design Approach and Reasoning
+
+I need to design a rocket that will reach exactly 3048m (10,000 ft) in a 5 m/s easterly wind, while minimizing cost, ensuring structural integrity, achieving a safe landing speed, and minimizing horizontal drift.
+
+### Motor Selection Analysis
+
+First, I'll analyze the available motors based on their total impulse and mass characteristics:
+
+| Motor | Total Impulse (Ns) | Mass (kg) | Avg Thrust (N) | Burn Time (s) | Cost Factor |
+|-------|-------------------|-----------|----------------|--------------|------------|
+| CesaroniO5800 | 30382.7 | 12.418 | 5040.2 | 5.2 | Very High |
+| CesaroniO3700 | 29930.2 | 14.194 | 2836.9 | 8.2 | Very High |
+| Pro75M1670 | 6023.6 | 1.815 | 1533.9 | 3.9 | Medium |
+| CesaroniM1670 | 6023.6 | 3.101 | 1533.9 | 3.6 | Medium |
+| AeroTechK700W | 2249 | 0.732 | 658.7 | 3.5 | Low |
+| CesaroniK160 | 1521.7 | 0.7 | 190.2 | 9.7 | Low |
+| AeroTechH128W | 176.5 | 0.108 | 141.2 | 1.29 | Very Low |
+
+The previous attempt with AeroTechK700W reached only 1669m, which is significantly below our target. We need more impulse but must avoid structural failure. The Pro75M1670 offers a good balance with moderate mass and sufficient impulse to reach our target altitude.
+
+### Structural Considerations
+
+The previous design failed structurally. To address this:
+- Increase body wall thickness
+- Use stronger materials where needed
+- Ensure proper sizing of components relative to expected forces
+
+### Weight and Aerodynamic Optimization
+
+- Balancing weight: Heavier rocket needs more impulse but provides stability
+- Aerodynamic efficiency: Streamlined design reduces drag
+- Stability: Center of pressure must be behind center of gravity
+
+## Detailed Design Calculations
+
+### Estimated Mass Budget
+- Motor (Pro75M1670): 1.815 kg
+- Body structure: ~1.0 kg
+- Nose cone: ~0.2 kg
+- Fins and tail: ~0.3 kg
+- Payload: 0.4 kg
+- Total estimated mass: ~3.7 kg
+
+### Parachute Sizing for Safe Landing
+For terminal velocity v = 5 m/s with estimated mass of 3.7 kg:
+CD_S = 2mg/(ρv²) = 2 × 3.7 × 9.81/(1.225 × 5²) ≈ 1.18
+
+Split between main and drogue:
+- Main: CD_S = 0.9
+- Drogue: CD_S = 0.28
+
+### Launch Configuration
+- Angling slightly against the wind (85° inclination)
+- Heading west (270°) to counteract easterly wind drift
+
+## Final Design Configuration
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.08,  # Body radius in meters
+        "length": 1.2,    # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.005,  # Increased wall thickness for structural integrity
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.3,  # Nose cone length in meters
+            "material": "fiberglass",  # Stronger material than previous ABS
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.18,  # Fin root chord in meters
+            "tip_chord": 0.09,  # Fin tip chord in meters
+            "span": 0.14,  # Fin span in meters
+            "cant_angle": 0.0,  # No cant angle for simplicity
+            "material": "plywood",  # Stronger than balsa for structural integrity
+            "thickness": 0.008  # Increased thickness for strength
+        },
+        "tail": {
+            "length": 0.25,  # Tail length in meters
+            "top_radius": 0.07,  # Top radius in meters
+            "bottom_radius": 0.08,  # Bottom radius in meters
+            "material": "fiberglass",  # Stronger material
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.9,  # Main parachute CD_s for <5 m/s landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.28,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.5,  # Increased rail length for better initial stability
+        "inclination": 85,   # Rail inclination in degrees (slightly angled into wind)
+        "heading": 270,      # Launch heading in degrees (west, opposite to easterly wind)
+    },
+    "payload": {
+        "mass": 0.4,  # Payload mass in kg
+        "position": 0.4  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This design addresses the previous failure by:
+1. Using a more powerful motor (Pro75M1670) to reach the target altitude
+2. Strengthening the structure with thicker walls and stronger materials
+3. Properly sizing the parachutes for a safe landing speed
+4. Optimizing the launch configuration to account for wind
+5. Maintaining a reasonable cost by avoiding the most expensive O-class motors
+6. Ensuring proper aerodynamic stability with appropriate fin design
+
+The Pro75M1670 motor provides sufficient impulse to reach our target altitude while maintaining a reasonable weight and cost. The structural components have been strengthened to prevent failure, and the parachute system is sized to ensure a safe landing speed below 5 m/s.

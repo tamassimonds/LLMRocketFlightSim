@@ -1,0 +1,92 @@
+To design a rocket that successfully meets the target apogee of 3048 meters while balancing cost efficiency, structural integrity, and aerodynamic performance, we must carefully consider the lessons learned from previous attempts.
+
+### Revised Design Strategy
+
+**1. Motor Selection:**
+   - The **CesaroniO3700** was selected in a previous design for its high impulse, yet it pushed costs and complexity. To find a middle ground between power and cost, we need a motor with sufficient performance but less overkill than CesaroniO3700.
+   - Let's select **CesaroniK160**, which provides a decent impulse and is less expensive and lighter than options like O3700.
+
+**2. Rocket Body:**
+   - The body dimensions should accommodate the selected motor comfortably while ensuring structural integrity.
+   - **Composite** is chosen for the body's material due to its lightweight nature and strength. This strikes a balance between cost and performance.
+   - The thickness should ensure structural support, especially with the launch and landing stresses.
+
+**3. Aerodynamics:**
+   - **Nose Cone**: We'll stick with an **ogive** shape for its aerodynamic efficiency but adjust the length for optimal performance.
+   - **Fins**: Opt for a lightweight material such as **balsa_wood** or **ABS_plastic** while ensuring they are substantial enough for stability.
+
+**4. Parachute System:**
+   - The main parachute should have adequate surface area to slow descent safely, and the drogue should assist in reducing speed before the main chute deploys.
+
+**5. Launch Configuration:**
+   - The launch rail should be sufficient to allow for speed build-up without being over-extended.
+
+### Optimized Configuration Proposal:
+
+```python
+config = {
+    "motor_choice": "CesaroniK160",
+    "rocket_body": {
+        "radius": 0.082,  # Slightly larger than the motor for clearance
+        "length": 1.8,  # Length to ensure stability
+        "material": "composite",
+        "thickness": 0.005,  # Provides adequate structural support
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.4,  # Proper length for minimizing drag
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.22,
+            "tip_chord": 0.1,
+            "span": 0.25,
+            "cant_angle": 0, 
+            "material": "balsa_wood",
+            "thickness": 0.004,
+        },
+        "tail": {
+            "length": 0.25,
+            "top_radius": 0.082,
+            "bottom_radius": 0.07,  # Different for design validity
+            "material": "balsa_wood",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.32,  # Optimized for safe landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.14,  # Helps initially slow down prior to main deployment
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.8,  # Ensures stable initial flight
+        "inclination": 90,   # Vertical launch
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.15,  # Necessary electronics only
+        "position": 0.9,  # Centered for stability
+    }
+}
+```
+
+### Rationale:
+- **CesaroniK160** provides a balance between adequate thrust for altitude and cost effectiveness.
+- The body uses composite for a lightweight build but strong enough to handle launch stresses.
+- Aerodynamics: Nose and fins designed for drag reduction and stability.
+- The parachute system ensures a safe descent with carefully chosen Cd values.
+- This configuration leverages lessons from past attempts to try and reach the target apogee efficiently while maintaining cost, structural, and safety considerations.

@@ -1,0 +1,117 @@
+Below is a step-by-step reasoning of my design process, followed by the final rocket configuration in the requested Python dictionary format.
+
+──────────────────────────────────
+1. Target Apogee and Motor Choice
+──────────────────────────────────
+• The rocket must reach about 3048 meters (10,000 ft).  
+• From the list of motors, I considered the CesaroniK160 and AeroTechK700W. Both have total impulse in the 1500–2250 Ns range, which is generally suitable for a mid-sized high-power rocket reaching a few thousand meters in altitude.  
+• The K160 has a total impulse of about 1521.7 Ns, an average thrust of about 190 N, and a relatively long burn time of 9.7 seconds. This longer burn reduces peak acceleration and helps keep the rocket from overshooting too high when combined with a mid-weight rocket design. Also, it should keep cost lower than larger motors.  
+
+──────────────────────────────────
+2. Mass and Geometry Estimates
+──────────────────────────────────
+• To hit about 3 km, I estimated a total mass (empty rocket + motor + payload) roughly between 3 kg and 5 kg.  
+• The K160 motor radius is 54 mm (0.054 m). Therefore, the rocket body radius must be larger than 0.054 m; I chose 0.06 m so there’s enough clearance.  
+• A body length of 1.5 m is a common size for mid-power/high-power rockets aiming for a few kilometers of altitude.  
+
+──────────────────────────────────
+3. Material Selection
+──────────────────────────────────
+• Fiberglass is a common choice for a mid-power rocket body because it provides a decent strength-to-weight ratio and is relatively cost-effective compared to carbon fiber.  
+• For fins, plywood or balsa wood is often used in many hobby rockets to lower costs. I chose plywood for moderate strength and low cost.  
+• Nose cone also fiberglass for simplicity and to ensure consistent material properties, though balsa or plastic are often used in smaller rockets.  
+
+──────────────────────────────────
+4. Nose Cone and Fin Design
+──────────────────────────────────
+• Nose Cone: “ogive” shape, about 0.25 m in length is typical for a rocket of ~1.5 m body length.  
+• Fins: Four fins, each with a moderate root chord and tip chord. A small cant angle (0° to 2°) or so can help with spin for stability, but I will keep it 0.5° to keep aerodynamic efficiency. Root chord of 0.15 m, tip chord of 0.06 m, and a 0.2 m span are typical proportions for a 6 cm radius body.  
+
+──────────────────────────────────
+5. Tail Cone
+──────────────────────────────────
+• The top radius (matching the rocket’s main body) is 0.06 m, and to avoid a DRC error, we make the bottom radius slightly bigger at 0.065 m. A 0.2 m length is enough to taper gently and maintain stable airflow behind the rocket.  
+
+──────────────────────────────────
+6. Parachutes and Safe Landing
+──────────────────────────────────
+• We need a main parachute large enough to land under 5 m/s. While we don’t have an exact simulation in this text-based environment, a CD·S of around 0.75 for the main is a ballpark figure for a mid-power rocket returning slowly. A smaller drogue (CD·S ~ 0.1) is often used to control descent from high altitude until main deployment, but because the triggers are both set to “apogee” in this example, effectively only one might be used or the drogue is a small stabilizer.  
+• These values are representative and commonly used in simulation software to yield a safe landing speed.  
+
+──────────────────────────────────
+7. Launch Rail Configuration
+──────────────────────────────────
+• A typical launch rail length of around 2 m is chosen to ensure stable liftoff.  
+• Launch inclination is 90° (vertical). Despite a 5 m/s wind from the east, a near-vertical launch is usually assumed unless we specifically want a significant downrange travel. We want to minimize horizontal distance to stay near the launch site.  
+• Heading at 0° means we are oriented “north” or simply consistent with a baseline (straight up in many simulations).  
+
+──────────────────────────────────
+8. Payload
+──────────────────────────────────
+• A small payload of 0.5 kg placed near the rocket’s center of gravity (mid-body). I chose position=0.75 m from the bottom if the rocket is 1.5 m in total body length, but because the simulation references rocket center, we can just put 0.3 or 0.4. In this configuration, position=0.4 means it is 0.4 m from the rocket’s center.  
+
+These choices together should plausibly reach around 3 km, keep cost moderate (not using an enormous motor or exotic materials), and return safely under parachute.
+
+────────────────────────────────────
+Final Rocket Configuration (Python)
+────────────────────────────────────
+```python
+config = {
+    "motor_choice": "CesaroniK160",  # Selected for moderate total impulse ~1522 Ns
+    "rocket_body": {
+        "radius": 0.06,         # Body radius in meters > motor radius (0.054 m)
+        "length": 1.5,          # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.003,     # 3 mm wall thickness
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.25,      # Nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.15,  # Fin root chord in meters
+            "tip_chord": 0.06,   # Fin tip chord in meters
+            "span": 0.2,         # Fin span in meters
+            "cant_angle": 0.5,   # Cant angle in degrees
+            "material": "plywood",
+            "thickness": 0.003   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.2,       # Tail length in meters
+            "top_radius": 0.06,  # Same as body radius
+            "bottom_radius": 0.065,  # Slightly larger to avoid DRC error
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.75,         # Estimated chute area*Cd for safe landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.1,          # Smaller drogue to stabilize descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,      # Launch rail length in meters
+        "inclination": 90,       # Straight up
+        "heading": 0,            # 0° heading
+    },
+    "payload": {
+        "mass": 0.5,             # Payload mass in kg
+        "position": 0.4          # Position relative to rocket center in meters
+    }
+}
+```

@@ -1,0 +1,156 @@
+To improve our rocket design and achieve the desired apogee while optimizing for cost, structural integrity, and safety, we'll focus on making strategic changes based on the feedback and results from previous attempts. Our objective will be to tweak the motor choice, material selection, and aerodynamic efficiency to address the issues highlighted in previous designs.
+
+### Improved Design Strategy
+
+1. **Motor Selection:**
+   - We'll return to the AeroTech K700W as it provides an optimal balance of thrust and cost for our target apogee. However, additional refinement on weight distribution and drag is needed to maximize its potential.
+
+2. **Mass and Structure Optimization:**
+   - Achieving the optimal thrust-to-weight ratio is crucial. We'll adjust the dimensions and materials to ensure the rocket is neither too heavy nor too light, thus optimizing the ascent.
+
+3. **Aerodynamic Efficiency:**
+   - Further refining the nose cone and fin design for reduced drag is essential for maximizing altitude. A balanced design with lightweight materials will help achieve this efficiently.
+
+4. **Parachute System:**
+   - Update the parachute system for a softer, safer landing, ensuring minimal descent velocity.
+
+### Design Calculations
+
+#### Motor Choice
+
+- **Motor:** AeroTech K700W
+- **Total Impulse:** 2249 Ns
+- **Specific Impulse:** 177.5 s
+
+#### Estimated Apogee Calculation
+
+We aim to maintain a total rocket mass optimized around the motor's performance:
+
+- Estimated mass \(m =\) motor dry mass + rocket + payload = 0.732 kg (motor) + 4.0 kg (structure + payload) ≈ 4.732 kg.
+
+\[ 
+v_{\text{exit}} = I_{\text{sp}} \times g = 177.5 \times 9.81 = 1742.1825 \text{ m/s}
+\]
+
+\[
+\text{Apogee estimate} = \frac{2249}{4.732 \times 9.81} \times 1742.1825 \approx 3300 \text{ m}
+\]
+
+### Configuration Breakdown
+
+#### Rocket Body
+
+- **Radius:** 0.07 m
+- **Length:** 1.6 m (slight reduction to decrease drag and mass)
+- **Material:** Carbon Fiber (lightweight, strong)
+- **Thickness:** 0.0035 m (optimizing structural integrity without excess weight)
+
+#### Nose Cone
+
+- **Kind:** Von Karman (reduces drag)
+- **Length:** 0.32 m
+- **Material:** Fiberglass (light yet effective for the nose)
+
+#### Fins
+
+- **Number:** 3 
+- **Root Chord:** 0.1 m
+- **Tip Chord:** 0.05 m
+- **Span:** 0.2 m
+- **Cant Angle:** 0° 
+- **Material:** Balsa Wood (lightweight, cost-effective)
+- **Thickness:** 0.003 m
+
+#### Tail
+
+- **Length:** 0.13 m
+- **Top Radius:** 0.07 m
+- **Bottom Radius:** 0.06 m
+- **Material:** Fiberglass
+
+#### Parachutes
+
+- **Main CD_s:** 0.75
+- **Drogue CD_s:** 0.25
+- **Trigger:** Apogee
+- **Sampling Rate:** 105
+- **Lag:** 1.5 s
+- **Noise:** (0, 8.3, 0.5)
+
+#### Launch and Payload
+
+- **Rail Length:** 2.2 m 
+- **Inclination:** 90° 
+- **Heading:** 0° 
+- **Payload:** 
+  - Mass: 0.7 kg
+  - Position: 0.8 m
+
+### Enhanced Rocket Design Configuration
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.07,
+        "length": 1.6,
+        "material": "carbon_fiber",
+        "thickness": 0.0035,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.32,
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.1,
+            "tip_chord": 0.05,
+            "span": 0.2,
+            "cant_angle": 0,
+            "material": "balsa_wood",
+            "thickness": 0.003,
+        },
+        "tail": {
+            "length": 0.13,
+            "top_radius": 0.07,
+            "bottom_radius": 0.06,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.75,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.25,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.2,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.7,
+        "position": 0.8,
+    }
+}
+```
+
+### Strategic Improvement
+
+- This iteration focuses on the careful balancing of weight, structure, and aerodynamics given the chosen motor.
+- Material choices contribute to a structurally sound, cost-effective design.
+- The optimizations should result in improved altitude performance while safeguarding structural integrity and managing costs effectively.

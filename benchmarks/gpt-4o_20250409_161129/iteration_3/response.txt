@@ -1,0 +1,91 @@
+To improve upon the previous attempts and better meet the target apogee while managing structural integrity, costs, and safe landing conditions, we need to analyze the key areas of improvement:
+
+### Key Improvements Needed:
+
+1. **Motor Selection**: The previous motors were either too weak or too strong relative to the rocket's mass and design. The **CesaroniO3700** was too powerful, leading to very high costs and possibly inefficiency due to overpowered elements. Let's opt for a more balanced motor that still provides enough thrust: **AeroTechK700W**. It offers a total impulse of 2249 Ns, which is balanced for the desired apogee without excessive costs.
+
+2. **Rocket Dimensions and Material**:
+   - **Body Radius**: Ensure it fits the motor. The **AeroTechK700W** has a 54 mm radius, so we can afford a 0.08 m body radius for added stability while keeping it less bulky.
+   - **Material**: Use fiberglass to balance cost and strength.
+   - **Thickness**: Maintain structural integrity with a 0.01 m thickness.
+
+3. **Nose Cone and Fin Design**:
+   - A longer nose cone and adjusted fin dimensions for better aerodynamics and stability during flight. Let's choose an ogive with slightly longer dimensions.
+   - Use lightweight, strong materials such as carbon fiber for fins to reduce inertia and improve stabilization.
+
+4. **Parachute and Descent Safety**:
+   - Adjust the parachute areas for a softer landing to remain under 5 m/s. A main chute cd_s of 0.6 and a drogue of 0.3 for initial slowing.
+
+5. **Launch Rail and Payload Configuration**:
+   - A standard vertical launch with a slightly shorter rail to ensure efficiency with the chosen motor's thrust dynamics.
+
+### Revised Rocket Design:
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.08,  # Matches snugly around the motor, slightly larger
+        "length": 1.8,   # Slightly extended to provide stability length for the motor
+        "material": "fiberglass",
+        "thickness": 0.01,  # Standard for maintaining structural integrity
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.4,  # Slightly elongated for reduced drag
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.18,  # Slightly increased for stabilizing larger body length
+            "tip_chord": 0.09,   # Proportionate to maintain taper benefits
+            "span": 0.25,        # Increased span for better control
+            "cant_angle": 1,     # For slight spin stability
+            "material": "carbon_fiber",  # Lightweight yet strong for stabilization
+            "thickness": 0.005,
+        },
+        "tail": {
+            "length": 0.2,  
+            "top_radius": 0.075,  # Consistent with design to maintain stability
+            "bottom_radius": 0.08,  # Necessary variance to avoid symmetry issues
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.6,  # Adequate to slow efficiently within landing speed constraints
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,  # Supports the main in effective initial speed reduction
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 4.5,  # Slightly reduced for more efficient thrust utilization
+        "inclination": 90,   # Direct vertical launch for minimized horizontal drift
+        "heading": 0,        # Straight vertical for efficiency and stability
+    },
+    "payload": {
+        "mass": 0.3,  # Slightly reduced to manage apogee and performance demands
+        "position": 0.9,  # Centred more towards the mass distribution
+    }
+}
+```
+
+### Expected Outcome:
+
+- **Apogee Improvement**: The **AeroTechK700W** should help in optimizing the altitude with a good balance of impulse and thrust for the rocket mass and design.
+- **Structural and Stability Improvements**: Adjustments to dimensions and materials should aid in maintaining balance and integrity throughout flight phases.
+- **Cost Efficiency**: This configuration aims to remain under budget constraints while optimizing apogee and safety aspects.
+
+This refined approach should align with the objective of achieving a closer match to the apogee target, enabling safe landings and structural integrity.

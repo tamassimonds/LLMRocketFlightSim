@@ -1,0 +1,126 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+After analyzing the previous six attempts, I can see we're getting closer to our target apogee but still falling short. Let me make a final optimization to reach exactly 3048m while balancing all scoring criteria.
+
+## Analysis of Previous Attempts
+
+| Attempt | Motor | Actual Apogee | Error | Structure | Cost |
+|---------|-------|---------------|-------|-----------|------|
+| 1 | AeroTechK700W | 2221.74m | 27.11% | PASSED | $236.79 |
+| 2 | Pro75M1670 with balsa | 2512.16m | 17.58% | FAILED | $521.35 |
+| 3 | Pro75M1670 with fiberglass | 2809.61m | 7.82% | PASSED | $594.10 |
+| 4 | Pro75M1670 optimized | 2869.81m | 5.85% | PASSED | $587.92 |
+| 5 | Pro75M1670 further optimized | 2932.45m | 3.79% | PASSED | $589.88 |
+| 6 | Pro75M1670 with carbon fiber | 2948.19m | 3.27% | PASSED | $707.30 |
+
+The trend shows we're getting closer with the Pro75M1670 motor, but the last attempt with carbon fiber significantly increased cost without proportional performance improvement. We need to find a better balance.
+
+## Motor Selection Analysis
+
+Looking at the motors again:
+
+| Motor | Total Impulse (Ns) | Mass (kg) | Radius (mm) | Avg Thrust (N) |
+|-------|-------------------|-----------|-------------|----------------|
+| Pro75M1670 | 6023.6 | 1.815 | 75 | 1533.9 |
+| CesaroniM1670 | 6023.6 | 3.101 | 75 | 1533.9 |
+| AeroTechK700W | 2249 | 0.732 | 54 | 658.7 |
+
+The Pro75M1670 has been getting us closest. Let's try a slightly more powerful motor - the CesaroniO3700. While it's much more powerful (29930.2 Ns), we can design a heavier rocket to compensate and hit our target apogee precisely.
+
+## Weight and Drag Calculation
+
+With the CesaroniO3700 motor:
+- We need to increase the rocket's weight to prevent overshooting
+- Use more cost-effective materials (fiberglass instead of carbon fiber)
+- Design a larger rocket with more drag to control the apogee
+
+## Final Optimized Design
+
+```python
+config = {
+    "motor_choice": "CesaroniO3700",
+    "rocket_body": {
+        "radius": 0.17,  # 170mm body radius (> 161mm motor radius)
+        "length": 1.5,   # 150cm body length (larger rocket)
+        "material": "fiberglass",
+        "thickness": 0.004,  # 4mm wall thickness
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",  # Simple, effective shape
+            "length": 0.45,  # 45cm nose cone
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.25,  # 25cm root chord
+            "tip_chord": 0.12,   # 12cm tip chord
+            "span": 0.18,        # 18cm span
+            "cant_angle": 0,     # No cant angle
+            "material": "fiberglass",
+            "thickness": 0.006   # 6mm thickness
+        },
+        "tail": {
+            "length": 0.2,       # 20cm tail length
+            "top_radius": 0.165, # Slightly less than body radius
+            "bottom_radius": 0.17, # Same as body radius
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 4.0,  # Larger parachute for heavier rocket
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.8,  # Larger drogue for heavier rocket
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,  # 2m launch rail for better initial stability
+        "inclination": 87,   # Slight angle to compensate for wind
+        "heading": 270,      # Launch toward west to counter east wind
+    },
+    "payload": {
+        "mass": 2.0,  # 2kg payload (increased to control apogee)
+        "position": 0.5  # Positioned toward the middle
+    }
+}
+```
+
+## Design Rationale
+
+1. **Motor Selection**: 
+   - Switched to CesaroniO3700 which has much more impulse (29930.2 Ns)
+   - This allows us to design a larger, heavier rocket that will reach exactly 3048m
+
+2. **Weight Management**:
+   - Increased body radius, length, and wall thickness
+   - Added a heavier 2kg payload to control apogee
+   - Used fiberglass throughout for good strength-to-weight ratio at reasonable cost
+
+3. **Aerodynamic Design**:
+   - Larger fins for stability of the heavier rocket
+   - Ogive nose cone for good aerodynamic performance
+   - Larger body diameter creates more drag to control apogee
+
+4. **Launch Configuration**:
+   - Longer 2m rail for the larger, heavier rocket
+   - 87° inclination to compensate for wind drift
+
+5. **Parachute System**:
+   - Significantly larger parachutes sized for the heavier rocket
+   - Main parachute cd_s of 4.0 to ensure landing velocity under 5 m/s
+
+This design takes a different approach from previous attempts. Instead of trying to squeeze more performance from the Pro75M1670 motor, we're using a much more powerful motor (CesaroniO3700) and controlling the apogee through increased weight and drag. This approach should allow us to hit our target apogee precisely while maintaining structural integrity and ensuring a safe landing.
+
+The use of fiberglass throughout keeps costs lower than carbon fiber while still providing sufficient strength. The larger, heavier design with the powerful motor should provide a stable flight and precise apogee control.

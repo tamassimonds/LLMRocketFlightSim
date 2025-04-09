@@ -1,0 +1,123 @@
+### Analysis of Previous Attempts:
+1. **Best Performing Design (Attempt 7)**:
+   - **Score**: 85.56 (best so far)
+   - **Apogee**: 2836.94m (6.92% undershoot)
+   - **Cost**: $699.66 (excellent)
+   - **Key Features**: Pro75M1670 motor, von Karman nose, 3 carbon fiber fins
+
+2. **Key Shortcomings**:
+   - Still undershooting target by ~7%
+   - Potential to further optimize drag/mass ratio
+   - Could slightly increase motor performance without excessive cost
+
+### Improved Design Strategy:
+1. **Motor Selection**:
+   - Stick with **Pro75M1670** (best cost/performance balance)
+   - Add small payload increase (0.4kg → 0.5kg) to improve mass distribution
+
+2. **Aerodynamics**:
+   - Switch to **LV-Haack nose cone** (slightly better supersonic performance than von Karman)
+   - Increase fin span to 0.08m (better stability in 5 m/s wind)
+   - Reduce cant angle to 0.1° (minimal spin drag)
+
+3. **Materials**:
+   - Keep **fiberglass body** (cost-effective)
+   - Use **plywood fins** (cheaper than carbon fiber, sufficient for this size)
+   - **Composite nose** (best aerodynamics)
+
+4. **Recovery**:
+   - Slightly larger main chute (Cd_s=0.55) for safer landing
+   - Smaller drogue (Cd_s=0.18) to reduce drift
+
+5. **Launch Parameters**:
+   - 1° inclination into wind (89°) for better wind compensation
+   - Longer rail (1.8m) for improved stability
+
+### Calculations:
+- Estimated total mass: ~5.5kg
+- Drag reduction from LV-Haack nose: ~3% altitude gain
+- Fin adjustments maintain stability while minimizing drag
+- Cost remains under $750
+
+### Final Design:
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.08,
+        "length": 1.4,
+        "material": "fiberglass",
+        "thickness": 0.004,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "lvhaack",
+            "length": 0.4,
+            "material": "composite",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.14,
+            "tip_chord": 0.07,
+            "span": 0.08,
+            "cant_angle": 0.1,
+            "material": "plywood",
+            "thickness": 0.006,
+        },
+        "tail": {
+            "length": 0.2,
+            "top_radius": 0.075,
+            "bottom_radius": 0.085,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.55,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.18,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.8,
+        "inclination": 89,
+        "heading": 90,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 0.7,
+    },
+}
+```
+
+### Expected Performance:
+- **Apogee**: 2950-3100m (within 3% of target)
+- **Cost**: ~$720 (under $750)
+- **Landing**: ~4.5 m/s (safe)
+- **Drift**: <250m (better wind compensation)
+- **Structural**: No failures
+
+### Score Optimization:
+- **Distance reward**: ~0.97 (3% error)
+- **Cost reward**: ~0.93 ($720 cost)
+- **Impact reward**: ~0.91 (4.5 m/s)
+- **Structural reward**: 1.0
+- **Drift reward**: ~0.85 (250m drift)
+- **Total score**: ~0.97 + (0.85*0.2) + (0.93*0.3) + (0.91*0.3) + (1.0*0.2) ≈ **1.14** (scaled to 100)
+
+This design improves upon Attempt 7 by:
+1. Reducing apogee error to ~3% via aerodynamic optimizations
+2. Maintaining low cost with plywood fins
+3. Enhancing stability with longer rail and fin adjustments
+4. Better wind compensation with 1° launch angle

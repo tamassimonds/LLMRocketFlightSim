@@ -1,0 +1,116 @@
+Below is a concise, step-by-step explanation of how this design was derived by analyzing previous attempts and tweaking parameters to (1) maintain structural integrity (body radius > 54 mm, tail radii not equal), (2) reduce overall mass enough to approach the 3048 m apogee, and (3) keep cost low. After the reasoning, you will find the final “config” dictionary in the required format (with no extra Python code).
+
+────────────────────────────────────────────────────────
+1) MOTOR CHOICE  
+────────────────────────────────────────────────────────
+• We continue using the AeroTechK700W (~2249 Ns). It is cheaper and less extreme than M/O motors while still capable of ~3000 m if the rocket is not too heavy.  
+• Smaller motors fail to reach the target altitude; larger motors are more expensive and can overshoot.
+
+────────────────────────────────────────────────────────
+2) ROCKET BODY DIMENSIONS & MATERIAL  
+────────────────────────────────────────────────────────
+• Body radius must exceed 0.054 m (the K700’s 54 mm). Here, we choose 0.056 m.  
+• Reducing body length to 1.0 m from previous ~1.15+ m saves mass and potentially boosts altitude.  
+• A 2.0 mm (0.002 m) fiberglass wall thickness strikes a balance: lighter than 2.2–3.0 mm (from previous attempts), but hopefully still strong enough not to fail.
+
+────────────────────────────────────────────────────────
+3) NOSE CONE  
+────────────────────────────────────────────────────────
+• An ogive nose cone of 0.18 m length is shorter than in some previous designs to cut mass and reduce drag area.  
+• Same fiberglass material at 2.0 mm thickness to maintain manufacturing simplicity and cost efficiency.
+
+────────────────────────────────────────────────────────
+4) FINS  
+────────────────────────────────────────────────────────
+• Three fins (root chord 0.13 m, tip chord 0.055 m, span 0.10 m) to reduce surface area (and thus weight) compared to previous attempts.  
+• Zero cant angle to minimize roll-induced horizontal drift.  
+• Fiberglass at 2.0 mm thickness should help prevent flutter or snapping under K700 acceleration.
+
+────────────────────────────────────────────────────────
+5) TAIL SECTION  
+────────────────────────────────────────────────────────
+• A short, 0.05 m tail for minimal added mass.  
+• Top radius 0.056 m, bottom radius 0.065 m (not the same to avoid DRC issues).  
+• Fiberglass at 2.0 mm thickness.
+
+────────────────────────────────────────────────────────
+6) PARACHUTES  
+────────────────────────────────────────────────────────
+• Main chute Cd·S = 2.3 for ≲5 m/s landing at an expected total mass of around 2.5–3.0 kg.  
+• Drogue chute Cd·S = 0.2 to stabilize initial descent from apogee.
+
+────────────────────────────────────────────────────────
+7) LAUNCH CONFIG & WIND  
+────────────────────────────────────────────────────────
+• Rail length = 2.0 m, inclination = 88° (near-vertical), heading = 270° (west) to help counter mild easterly winds of ~5 m/s.  
+• Minimizes horizontal travel while still ensuring stable flight off the rail.
+
+────────────────────────────────────────────────────────
+8) PAYLOAD  
+────────────────────────────────────────────────────────
+• A smaller 0.4 kg payload at 0.5 m from the rocket center further reduces total mass versus previous 0.6+ kg payloads. This helps increase apogee.
+
+────────────────────────────────────────────────────────
+FINAL DESIGN (“config” DICTIONARY)  
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.056,       # Must exceed motor radius (0.054 m)
+        "length": 1.0,         # Shorter body to reduce mass
+        "material": "fiberglass",
+        "thickness": 0.002,    # 2.0 mm walls
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.18,
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.13,
+            "tip_chord": 0.055,
+            "span": 0.10,
+            "cant_angle": 0,
+            "material": "fiberglass",
+            "thickness": 0.002,
+        },
+        "tail": {
+            "length": 0.05,
+            "top_radius": 0.056,
+            "bottom_radius": 0.065,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 2.3,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,
+        "inclination": 88,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 0.4,
+        "position": 0.5
+    }
+}
+```

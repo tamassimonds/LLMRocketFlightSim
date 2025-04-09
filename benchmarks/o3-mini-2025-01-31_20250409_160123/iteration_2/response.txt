@@ -1,0 +1,116 @@
+Below is my full reasoning followed by a finalized configuration that you can drop into the simulation.
+
+──────────────────────────────
+Design Reasoning:
+
+We want to hit an apogee of 3048.0 m while keeping costs low, avoiding structural failures, and limiting horizontal drift despite a 5 m/s easterly wind. In previous attempts the Pro75M1670 motor (with about 6023.6 Ns of total impulse) powered a rocket whose “blow‐up” geometry (a relatively large body diameter) produced excessive aerodynamic drag. That design reached only about 1320 m of altitude. To improve our performance without immediately “jumping” to a much more expensive (and heavy) high‐impulse motor, we instead decided to fine–tune our geometry while still using the moderate–impulse Pro75M1670. In doing so we can enjoy lower cost and lower mass benefits while reducing drag losses. 
+
+Key ideas and sample calculations:
+
+1. Motor Selection:
+  • We choose Pro75M1670. Its impulse is moderate (6023.6 Ns) and its mass of 1.815 kg keeps the cost and overall mass low.
+  • Its listed motor radius is 75 mm (0.075 m). That forces us to have a rocket body with an inner diameter larger than that.
+  
+2. Rocket Body:
+  • In the previous attempt the body radius was 0.1 m—but that produced a relatively large drag cross–section. By tightening the body we can reduce drag considerably.
+  • However the body still must be larger than the motor. We choose 0.08 m for the body radius. (Note: 0.08 m > 0.075 m so the clearance is minimal but acceptable for simulation purposes.) 
+  • We lengthen the body to 2.5 m so that the aerodynamic “loading” is spread over a longer vehicle and internal components (like the payload, motor, and parachute attachment) can be accommodated.
+  • The wall thickness is held at 0.005 m and we use “aluminum” because it is strong yet cost–effective.
+  
+3. Aerodynamics:
+  Nose Cone:
+   • We choose a “von karman” profile because it is known for excellent drag performance.
+   • A length of 0.4 m provides a smoothly tapered tip.
+   • We use “composite” to keep the nose cone light.
+  
+  Fins:
+   • Four fins are retained for balanced roll stability.
+   • Because the overall body is now slimmer, we reduce the fin chord lengths. The root chord is 0.1 m and the tip chord 0.05 m (providing a clean taper).
+   • We select a modest fin span of 0.1 m as even small fins can provide adequate aerodynamic stability on a streamlined craft.
+   • A modest cant angle of 1.0° is added to assist roll stability without inducing excessive side–force.
+   • “carbon_fiber” is chosen for its high stiffness-to-weight ratio and resistance to breakage, with a thickness of 0.003 m.
+  
+  Tail:
+   • The tail is used not only for mounting but also has aerodynamic importance. To satisfy the design check the top and bottom radii must not be equal—so we select 0.02 m (top) and 0.03 m (bottom).
+   • A tail length of 0.3 m is sufficient.
+   • We also use “carbon_fiber” for consistency and strength.
+  
+4. Parachutes:
+  • A safe landing (impact velocity below 5 m/s) is essential. We choose a slightly larger main chute with cd_s = 0.3, while the drogue uses cd_s = 0.2.
+  • Both parachutes are triggered at apogee and have the standard sampling rate, lag, and noise.
+  
+5. Launch Rail Configuration:
+  • A rail length of 2.0 m is adopted. A longer rail helps with guiding the rocket during the powered flight phase and minimizes horizontal perturbations.
+  • The rail is set to exactly 90° (vertical) so that any horizontal wind (5 m/s from the east) is countered by launching straight up.
+  
+6. Payload:
+  • A modest payload mass of 0.5 kg is used.
+  • Placing the payload near the center of a 2.5 m body (at 1.25 m from the nose) helps optimize the center of mass for stability.
+
+By concentrating on improved aerodynamic efficiency (especially by reducing the body diameter and refining the nose cone and fins) we expect drag losses to be minimized. This should allow the Pro75M1670 motor to deliver more of its impulse to reaching near the 3048 m target apogee while keeping the cost and structural risks low.
+
+──────────────────────────────
+Final Configuration Dictionary:
+
+------------------------------------------------
+config = {
+    "motor_choice": "Pro75M1670",  # Using the moderate–impulse, cost–effective motor
+    "rocket_body": {
+        "radius": 0.08,          # meters; must be greater than motor radius (0.075 m)
+        "length": 2.5,           # meters; provides better aspect ratio and lower drag
+        "material": "aluminum",  # Strong and cost–effective
+        "thickness": 0.005,      # meters; sufficient for a lightweight structure
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",  # Chosen for its low drag properties
+            "length": 0.4,         # meters; a smooth taper aids supersonic performance
+            "material": "composite",  # Light and strong
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.1,     # meters; scaled down to match the slimmer rocket body
+            "tip_chord": 0.05,     # meters; creates a good taper for stability
+            "span": 0.1,           # meters; lower span reduces drag while ensuring stability
+            "cant_angle": 1.0,     # degrees; slight cant aiding in roll stability
+            "material": "carbon_fiber",  # Very stiff yet light, minimizing risk of breakage
+            "thickness": 0.003,    # meters; adequate for the fin area
+        },
+        "tail": {
+            "length": 0.3,         # meters; tail length to aid directional stability
+            "top_radius": 0.02,      # meters; different from bottom_radius to meet requirements
+            "bottom_radius": 0.03,   # meters; ensures DRC check passes
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.3,          # Larger effective drag area for a slower, safer descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,          # A bit smaller to deploy earlier and stabilize the descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,  # meters; a longer rail aids during initial acceleration and minimizes drift
+        "inclination": 90,   # degrees; a vertical launch to counter horizontal wind effects
+        "heading": 0,        # degrees; aiming straight up despite a 5 m/s easterly crosswind
+    },
+    "payload": {
+        "mass": 0.5,     # kg; a modest payload to keep overall mass low
+        "position": 1.25,  # meters; near the center of the 2.5 m body
+    },
+}
+
+──────────────────────────────
+This improved configuration focuses on reducing drag and optimizing the mass distribution so that the flight will more nearly reach the target apogee (3048.0 m), while ensuring a safe landing and lower cost.

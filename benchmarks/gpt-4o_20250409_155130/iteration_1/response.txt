@@ -1,0 +1,131 @@
+To design a rocket that meets the given requirements, we should first analyze the components we have at our disposal and the objectives we need to meet. Let's break down the design considerations step by step:
+
+### Objectives
+1. Achieve a target apogee of 3048.0 meters.
+2. Minimize costs to increase the cost reward.
+3. Ensure safe landing with an impact speed below 5 m/s.
+4. Ensure that the rocket remains structurally intact (no breaking).
+5. Minimize horizontal drift due to wind (5 m/s from E direction).
+
+### Materials & Motor Selection
+#### Materials:
+- Selection based on cost, weight, and strength.
+- Lighter materials generally mean a higher apogee due to reduced overall mass.
+- Potential choices: lightweight options like fiberglass, carbon fiber (though expensive), and balsa wood (for non-structural parts).
+
+#### Motors:
+- Analyze the available motors based on impulse and thrust.
+- We need a motor with enough thrust to overcome gravity and achieve the target apogee but not too much to overshoot.
+- Given the data and considering efficiency, the AeroTech K700W seems like a balanced choice with moderate thrust and a high Isp, good for a mid-sized budget option.
+
+### Design Process
+**Motor Choice:**  
+Based on thrust requirements and cost balancing:
+- **Motor Selected:** AeroTech K700W
+
+**Rocket Body:**
+- **Radius:** Needs to be larger than the motor radius of 0.054m (54mm).
+- **Material:** Fiberglass, due to its lightweight and relatively low cost.
+- **Length:** Sufficient to house the motor and payload, around 1.2 meters.
+- **Thickness:** Keeping it thin to minimize weight, around 0.003m.
+
+**Nose Cone:**
+- **Type:** Tangent – offers a good balance between drag reduction and simplicity.
+- **Length:** About 0.3 meters which is a common proportion to the body length.
+- **Material:** Composite for a balance of weight and strength.
+
+**Fins:**
+- To ensure good stability and control during flight:
+- **Number of Fins:** 4
+- **Root Chord:** 0.15 meters
+- **Tip Chord:** 0.075 meters
+- **Span:** 0.2 meters
+- **Cant Angle:** 0 to optimize straight flight.
+- **Material:** ABS Plastic to reduce cost.
+- **Thickness:** 0.005 meters to ensure structural stability.
+
+**Tail:**
+- **Length:** 0.1 meters
+- **Top Radius:** 0.055 meters (slightly larger than the motor radius)
+- **Bottom Radius:** 0.06 meters
+- **Material:** Plywood due to cost considerations.
+
+**Parachute:**
+- Two parachutes (main and drogue) for safe recovery:
+- **Main CD_s:** 0.8 (for a slower descent)
+- **Drogue CD_s:** 0.3 (for stability without rapid deceleration)
+
+**Launch Settings:**
+- **Rail Length:** 1.5 meters to ensure enough velocity off the rail.
+- **Inclination:** 90 degrees for maximum altitude.
+- **Heading:** Adjusted considering wind from E, setting to 270 degrees.
+
+**Payload:**
+- Small payload to balance total mass and achieve desired altitude.
+- **Mass:** 0.5 kg
+- **Position:** 0.6 meters from the nose cone.
+
+Now, based on these considerations, here's the final configuration:
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.07,  # Body radius in meters
+        "length": 1.2,   # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.003,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "tangent",
+            "length": 0.3,  # Nose cone length in meters
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.15,  # Fin root chord in meters
+            "tip_chord": 0.075,  # Fin tip chord in meters
+            "span": 0.2,         # Fin span in meters
+            "cant_angle": 0,     # Cant angle in degrees
+            "material": "ABS_plastic",
+            "thickness": 0.005   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.1,  # Tail length in meters
+            "top_radius": 0.055,  # Top radius in meters
+            "bottom_radius": 0.06,  # Bottom radius in meters
+            "material": "plywood",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.8,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.5,  # Length of the launch rail in meters
+        "inclination": 90,   # Rail inclination in degrees (vertical)
+        "heading": 270,      # Launch heading in degrees (compensating for wind)
+    },
+    "payload": {
+        "mass": 0.5,  # Payload mass in kg
+        "position": 0.6  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This configuration is designed to meet the apogee target while considering cost and structural integrity, factoring in the likely horizontal drift due to the eastward wind, and ensuring safe landing with the parachute system.

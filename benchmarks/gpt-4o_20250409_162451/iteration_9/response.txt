@@ -1,0 +1,89 @@
+### Analysis of Previous Attempts
+
+From the previous designs, we identified the following key learning points:
+
+1. **Motor Selection**: Both excessive and insufficient motor thrust have been problematic. The CesaroniO3700 overshot the target, and smaller motors like AeroTechK700W insufficiently powered the rocket. An optimal choice would balance sufficient thrust and cost without significant overshooting or falling short.
+
+2. **Material Choice**: Materials like carbon fiber provide excellent strength-to-weight ratios but can be costly if used extensively. Fiberglass is a good compromise, lightweight and affordable, suitable for most parts of the rocket.
+
+3. **Aerodynamic Considerations**: The shape and material of the nose cone and fins significantly affect drag. The von Karman nose cone offers good aerodynamic efficiency.
+
+### Design Strategy
+
+1. **Motor Choice**: CesaroniM1670 has been identified as reasonable for maintaining a balance between the cost, impulse, and thrust needed to approach the target apogee better than underpowered solutions.
+
+2. **Rocket Design**:
+   - **Body**: Fiberglass with optimized dimensions for cost and weight balance, ensuring the structural integrity.
+   - **Nose Cone**: Von Karman shape for drag reduction.
+   - **Fins**: Positioned for stability, using lightweight materials such as balsa wood or plywood.
+
+3. **Cost Management**: Use more economical materials where possible without excessive sacrifices on weight.
+
+4. **Launch Offset**: Adjust rail inclination to slightly counter wind effects, reducing lateral drift without significant complexity.
+
+### Proposed Design Configuration
+
+```python
+config = {
+    "motor_choice": "CesaroniM1670",
+    "rocket_body": {
+        "radius": 0.11,  # Body radius in meters
+        "length": 3.2,    # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.005,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.4,  # Nose cone length in meters
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.22,  # Fin root chord in meters
+            "tip_chord": 0.1,  # Fin tip chord in meters
+            "span": 0.3,  # Fin span in meters
+            "cant_angle": 2,  # Cant angle in degrees
+            "material": "balsa_wood",
+            "thickness": 0.003  # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.12,  # Tail length in meters
+            "top_radius": 0.065,  # Top radius in meters
+            "bottom_radius": 0.075,  # Bottom radius in meters
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.4,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 6,  # Length of the launch rail in meters
+        "inclination": 89,  # Rail inclination in degrees, near vertical
+        "heading": 270,  # Launch heading in degrees, opposite wind direction
+    },
+    "payload": {
+        "mass": 0.45,  # Payload mass in kg
+        "position": 1.6  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+### Summary
+
+This design aims to reach the target apogee with a balanced motor choice, efficient aerodynamic design, and cost-effective, lightweight materials. By focusing on maintaining structural integrity and adjusting launch conditions, the rocket should perform well within the given requirements and constraints. The design carefully balances thrust, stability, and drag considerations, while material choices are optimized for weight and cost.

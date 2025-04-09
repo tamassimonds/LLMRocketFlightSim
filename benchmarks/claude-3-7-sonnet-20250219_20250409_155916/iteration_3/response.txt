@@ -1,0 +1,154 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Comprehensive Design Approach
+
+Looking at the previous attempts, I see that the first design with AeroTechK700W failed structurally and didn't reach the target apogee. The second design with Pro75M1670 and carbon fiber construction was structurally sound but still undershot the apogee by 12.33% and was quite expensive at $857.43.
+
+I'll refine the approach to optimize for all scoring criteria: apogee accuracy, cost efficiency, structural integrity, landing speed, and horizontal distance.
+
+## Motor Selection Reconsideration
+
+The Pro75M1670 motor got us closer to the target apogee but still fell short. Let's analyze our options again:
+
+| Motor | Total Impulse (Ns) | Mass (kg) | Cost Factor | Notes |
+|-------|-------------------|-----------|------------|-------|
+| CesaroniM1670 | 6023.6 | 3.101 | Medium | Same impulse as Pro75M1670 but heavier |
+| Pro75M1670 | 6023.6 | 1.815 | Medium | Good impulse-to-weight ratio |
+| AeroTechK700W | 2249 | 0.732 | Low | Insufficient impulse for our target |
+
+I'll stick with the Pro75M1670 motor but optimize the rest of the design to reduce weight and drag, which should help us reach the target apogee. The CesaroniM1670 has the same impulse but is heavier, which would reduce our maximum altitude.
+
+## Material Selection Optimization
+
+Carbon fiber is strong but expensive. Let's consider alternatives that maintain structural integrity but reduce cost:
+
+- Body: Fiberglass (good strength-to-weight ratio, lower cost than carbon fiber)
+- Nose cone: Fiberglass (aerodynamically important, needs strength)
+- Fins: Plywood (good strength, much cheaper than carbon fiber)
+- Tail: Fiberglass (consistent with body material)
+
+## Weight Reduction Strategy
+
+To increase our apogee:
+1. Reduce wall thickness where possible
+2. Optimize fin dimensions
+3. Streamline overall design
+
+## Refined Altitude Estimation
+
+For Pro75M1670 with 6023.6 Ns and estimated reduced mass of ~3.0 kg:
+```
+h ≈ (6023.6)²/(2 * 3.0 * 9.81) ≈ 6150m
+```
+
+This rough estimate is still higher than our target, giving us margin for drag losses. We need to carefully balance the design to hit our 3048m target.
+
+## Body Dimensions Refinement
+
+For the Pro75M1670 motor (75mm = 0.075m radius):
+- Body radius: 0.08m (provides 5mm clearance around motor)
+- Body length: 0.85m (slightly shorter than previous design)
+- Wall thickness: 0.003m (reduced from previous 0.004m)
+
+## Aerodynamic Considerations
+
+- Nose cone: Ogive shape (good aerodynamic performance)
+- Fins: 3 fins instead of 4 (reduces drag and weight while maintaining stability)
+- Fin dimensions: Slightly reduced from previous design
+
+## Recovery System Adjustment
+
+For a safe landing speed (<5 m/s) with estimated mass of 3.0 kg:
+```
+Terminal velocity = sqrt(2*m*g/(ρ*Cd*A))
+5 m/s = sqrt(2*3.0*9.81/(1.225*0.8*A))
+A = 2*3.0*9.81/(1.225*0.8*5²) ≈ 1.2 m²
+```
+
+So Cd*A (cd_s) should be approximately 0.96 for the main parachute.
+
+## Wind Compensation
+
+With a 5 m/s easterly wind, I'll adjust the launch angle:
+- Inclination: 87° (slightly angled against wind)
+- Heading: 270° (west, opposite to the easterly wind)
+
+## Final Optimized Design
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.08,  # Body radius in meters
+        "length": 0.85,  # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.003,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.22,  # Nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.14,  # Fin root chord in meters
+            "tip_chord": 0.07,   # Fin tip chord in meters
+            "span": 0.11,        # Fin span in meters
+            "cant_angle": 0,     # Cant angle in degrees
+            "material": "plywood",
+            "thickness": 0.004   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.16,  # Tail length in meters
+            "top_radius": 0.075,  # Top radius in meters
+            "bottom_radius": 0.08,  # Bottom radius in meters
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.96,  # Main parachute CD_s for ~5 m/s landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.18,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.2,  # Length of the launch rail in meters
+        "inclination": 87,   # Rail inclination in degrees
+        "heading": 270,      # Launch heading in degrees
+    },
+    "payload": {
+        "mass": 0.25,  # Payload mass in kg
+        "position": 0.25  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This optimized design addresses the issues from previous attempts:
+
+1. **Material Selection**: Using fiberglass and plywood significantly reduces cost compared to carbon fiber while maintaining structural integrity
+2. **Weight Optimization**: Reduced wall thickness, fewer fins, and slightly smaller dimensions to improve altitude performance
+3. **Aerodynamic Efficiency**: Maintained ogive nose cone but streamlined other components
+4. **Recovery System**: Properly sized for safe landing under 5 m/s
+5. **Launch Configuration**: Adjusted for wind conditions
+
+The design balances all scoring criteria:
+- Should reach closer to the target apogee of 3048m
+- Significantly lower cost than the previous carbon fiber design
+- Maintains structural integrity with appropriate materials and thicknesses
+- Ensures safe landing with properly sized parachute
+- Accounts for wind to minimize horizontal distance from launch site
+
+This design represents a better balance between performance and cost, which should improve the overall score.

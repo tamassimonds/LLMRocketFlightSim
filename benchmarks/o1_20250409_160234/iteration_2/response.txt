@@ -1,0 +1,120 @@
+Below is a step-by-step outline of the reasoning used to arrive at an improved rocket design over the previous attempt, aiming to get closer to the 3048 m apogee while maintaining safety and minimizing cost. After these detailed considerations, you will find the final “config” dictionary in the requested format, containing no extraneous Python code.
+
+────────────────────────────────────────────────────────
+1) Why We Needed a Change
+────────────────────────────────────────────────────────
+The previous design with the AeroTechK700W motor only reached about 2651 m (roughly 13% under the 3048 m goal). To get closer to 3048 m without overshooting too much (which could risk structural stress or higher cost), we decided to lower overall rocket mass (so the same motor can accelerate it more efficiently) while still remaining stable.
+
+────────────────────────────────────────────────────────
+2) Motor Selection
+────────────────────────────────────────────────────────
+• We keep the AeroTechK700W motor because it already provides decent thrust and total impulse (2249 Ns).  
+• Larger motors (like M- or O-class) would be more expensive and could far overshoot the target, which might reduce score if the rocket drifts too far or if cost is too high.
+
+────────────────────────────────────────────────────────
+3) Reducing Mass While Preserving Structure
+────────────────────────────────────────────────────────
+• The rocket body is shortened to 1.2 m (compared to 1.4 m before) to lighten the vehicle and reduce material cost.  
+• The radius is reduced to 0.045 m, still larger than the motor’s ~0.027 m radius.  
+• Wall thickness is reduced from 3 mm to 2 mm to save weight, but fiberglass still provides enough strength.
+
+────────────────────────────────────────────────────────
+4) Nose Cone
+────────────────────────────────────────────────────────
+• We use an ogive nose cone for low drag.  
+• A length of 0.22 m helps maintain a good aerodynamic profile without adding excess mass.
+
+────────────────────────────────────────────────────────
+5) Fin Design
+────────────────────────────────────────────────────────
+• Three fins (fewer fins reduce mass and drag).  
+• Balsa wood is chosen because it is cheaper and lighter than fiberglass or carbon fiber, reducing overall mass further.  
+• Dimensions (root chord 0.14 m, tip chord 0.06 m, span 0.11 m, thickness 0.002 m) provide adequate stability at transonic speeds typical of K-impulse rockets.
+
+────────────────────────────────────────────────────────
+6) Tail Section
+────────────────────────────────────────────────────────
+• A short tail (0.08 m) ensures stable motor mounting and transitions flow from the rocket to the nozzle exhaust area.  
+• The top radius matches the body (0.045 m) and expands slightly to a bottom radius of 0.055 m, satisfying the requirement that top and bottom radii not be the same.
+
+────────────────────────────────────────────────────────
+7) Parachutes
+────────────────────────────────────────────────────────
+• Using a main parachute Cd·S of 2.3 helps limit descent speed to near or below 5 m/s for a ~3.5 – 4 kg rocket.  
+• A small drogue chute (Cd·S = 0.2) stabilizes descent prior to main deployment.
+
+────────────────────────────────────────────────────────
+8) Launch Configuration & Wind Considerations
+────────────────────────────────────────────────────────
+• The rail length is 2.0 m, allowing the rocket to reach stable velocity before leaving the rail.  
+• We slightly tilt (88 ° inclination) and set heading due west (270 °) to counter a prevailing wind from the east, helping reduce horizontal drift.  
+
+────────────────────────────────────────────────────────
+9) Payload
+────────────────────────────────────────────────────────
+• A 0.6 kg payload is included at 0.6 m from the rocket’s center, ensuring the center of gravity remains sufficiently fore of the center of pressure, while still meeting the mission’s needs.
+
+────────────────────────────────────────────────────────
+FINAL DESIGN (“config” DICTIONARY)
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.045,     # 45 mm > motor radius (27 mm)
+        "length": 1.2,       # meters
+        "material": "fiberglass",
+        "thickness": 0.002,  # 2 mm wall
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.22,          # meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.14,      # meters
+            "tip_chord": 0.06,       # meters
+            "span": 0.11,            # meters
+            "cant_angle": 0,         # degrees
+            "material": "balsa_wood",
+            "thickness": 0.002,      # 2 mm
+        },
+        "tail": {
+            "length": 0.08,          # meters
+            "top_radius": 0.045,     # meters
+            "bottom_radius": 0.055,  # meters
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 2.3,             # for ~5 m/s descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,             # small drogue chute
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,   # meters
+        "inclination": 88,    # degrees from horizontal
+        "heading": 270,       # launch heading (west)
+    },
+    "payload": {
+        "mass": 0.6,    # kg
+        "position": 0.6 # meters from rocket center
+    }
+}
+```

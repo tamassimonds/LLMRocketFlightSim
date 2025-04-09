@@ -1,0 +1,858 @@
+# Rocket Design Task
+
+## Design Requirements
+
+- **Target Apogee**: 3048.0 meters
+- **Wind Conditions**: 5 m/s from E direction
+
+## You are scored off the following
+Distance to max apogee
+Cost: Cheaper the rocket the better the score
+Does it land safely (less than 5 m/s)
+Does it not break
+Horz distance: How far is it from the intial launch site
+
+#Score func code shown below:
+structural_failure = None  # Whether the rocket structure failed during flight
+structural_failure_reward = 0
+
+if structural_failure is not None:
+    if structural_failure:
+        structural_failure_reward = 0
+    else:
+        # Structural failure did not occur
+        structural_failure_reward = 1
+
+# Calculate horizontal distance reward
+# Lower horizontal distance from launch site is better
+horz_distance = abs(horizontal_distance)  # Distance in meters from launch site
+max_horz_distance = target_apogee * 0.3  # Maximum acceptable horizontal distance
+horz_distance_reward = max(0, 1 - horz_distance / max_horz_distance)
+
+# Calculate cost reward
+# Lower cost designs receive higher rewards
+cost = total_cost  # Total cost of rocket components
+max_cost = 1000  # Maximum cost threshold
+cost_reward = max(0, 1 - cost / max_cost)
+
+# Calculate landing impact velocity reward
+# Lower impact velocity (safer landing) is better
+impact_velocity = abs(impact_velocity)  # Landing speed in m/s
+max_impact_velocity = 50  # Maximum acceptable impact velocity
+impact_reward = max(0, 1 - impact_velocity / max_impact_velocity)
+
+percent_difference = abs(apogee - target_apogee) / target_apogee
+distance_reward = 1.0 - percent_difference
+distance_reward = max(0, distance_reward)
+
+
+# Calculate total reward with component weights
+reward = distance_reward + horz_distance_reward * 0.2 + cost_reward * 0.3 + impact_reward * 0.3 + structural_failure_reward * 0.2
+
+
+
+
+## Available Materials
+
+The following materials are available for the rocket components:
+aluminum, composite, fiberglass, carbon_fiber, balsa_wood, plywood, ABS_plastic
+
+## Available Motors
+
+Name,Manufacturer,Radius (mm),Length (mm),Dry Mass (kg),Max Thrust (N),Avg Thrust (N),Burn Time (s),Total Impulse (Ns),Isp (s)
+Pro75M1670,CTI,75,757,1.815,2200,1533.9,3.9,6023.6,198
+AeroTechK700W,AT,54,568,0.732,1029.3,658.7,3.5,2249,177.5
+CesaroniM1670,CTI,75,757,3.101,2200,1533.9,3.6,6023.6,198
+AeroTechH128W,AT,29,194,0.108,190.5,141.2,1.29,176.5,191.3
+CesaroniO3700,CTI,161,957,14.194,4030.3,2836.9,8.2,29930.2,177.8
+CesaroniO5800,CTI,150,754,12.418,6395.5,5040.2,5.2,30382.7,222
+CesaroniK160,CTI,54,404,0.7,272.2,190.2,9.7,1521.7,182.9
+
+## Design Task
+
+Based on the requirements and available components, design a rocket that will reach the target apogee. Your design should include:
+
+1. Motor selection (choose from the available motors list)
+2. Body dimensions and material
+3. Nose cone dimensions and material
+4. Fin design and material
+5. Parachute specifications
+6. Launch rail configuration
+
+
+### Notes
+DRC are run on the design so you need to make sure the design is feasible.
+Here are some of the checks:
+Notes for the tail the top and bottom radius cannot be the same (causes error)
+The material must be specified exactly as listed above
+The body radius must be greater than the motor radius
+Nose cone but by exactly one of the listed 
+Don't include any additional python code (other than config. Putting calculation in there is ok like 32/4 but not whole functions
+
+## Response Format
+
+Please provide your design as a Python dictionary that can be directly used in our simulation software. Use the following format:
+
+```python
+config = {
+    "motor_choice": "MOTOR_NAME",  # Choose from available motors
+    "rocket_body": {
+        "radius": RADIUS_IN_METERS,  # Body radius in meters (must be greater than motor Radius)
+        "length": LENGTH_IN_METERS,  # Body length in meters
+        "material": "MATERIAL",  # Choose from available materials
+        "thickness": THICKNESS_IN_METERS,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "SHAPE",  # "conical", "ogive", "elliptical", "tangent", "von karman", "parabolic", "powerseries" or "lvhaack".
+            "length": LENGTH_IN_METERS,
+            "material": "MATERIAL",
+        },
+        "fins": {
+            "number": NUMBER_OF_FINS,
+            "root_chord": LENGTH_IN_METERS,
+            "tip_chord": LENGTH_IN_METERS,
+            "span": LENGTH_IN_METERS,
+            "cant_angle": ANGLE_IN_DEGREES,
+            "material": "MATERIAL",
+            "thickness": THICKNESS_IN_METERS,
+        },
+        "tail": {
+            "length": LENGTH_IN_METERS,
+            "top_radius": RADIUS_IN_METERS,
+            "bottom_radius": RADIUS_IN_METERS,
+            "material": "MATERIAL",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": AREA,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": AREA,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": LENGTH_IN_METERS, 
+        "inclination": ANGLE_IN_DEGREES, #90 is vertical launch
+        "heading": ANGLE_IN_DEGREES, # Heading in degrees 0 is up
+    },
+    "payload": { #point mass as position specified 
+        "mass": MASS_IN_KG,
+        "position": POSITION_IN_METERS,  # relative to rocket center
+    },
+}
+```
+
+
+Here's an example valid design. This is not at all indicative of what you should do just an example:
+
+```python
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.1,  # Body radius in meters
+        "length": 1.2,    # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.01,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.3,  # Nose cone length in meters
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.15,  # Fin root chord in meters
+            "tip_chord": 0.075,  # Fin tip chord in meters
+            "span": 0.3,         # Fin span in meters
+            "cant_angle": 0.5,   # Cant angle in degrees
+            "material": "carbon_fiber",
+            "thickness": 0.005   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 1.2,  # Tail length in meters
+            "top_radius": 0.04,  # Top radius in meters
+            "bottom_radius": 0.05,  # Bottom radius in meters
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.25,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.2,  # Length of the launch rail in meters
+        "inclination": 90,   # Rail inclination in degrees (vertical)
+        "heading": 0,        # Launch heading in degrees (straight up)
+    },
+    "payload": {
+        "mass": 0.5,  # Payload mass in kg
+        "position": 0.6  # Payload position relative to rocket center in meters
+    }
+}
+```
+Before answering you should provide your full reasoning for the design choices you made thinking like a rocket scientist. Run sample calulations, make approximations etc to find best design
+
+
+
+=== PREVIOUS ATTEMPTS ===
+
+--- ATTEMPT 1 ---
+Design:
+# Rocket Design Analysis
+
+## Initial Considerations
+
+To design a rocket that reaches a target apogee of 3048 meters (10,000 ft) in a 5 m/s easterly wind, I need to balance several factors:
+
+1. **Motor selection**: Must provide enough thrust to reach target apogee without excessive power
+2. **Aerodynamic stability**: Proper center of pressure and center of gravity relationship
+3. **Weight optimization**: Lighter materials where possible without compromising structural integrity
+4. **Recovery system**: Safe landing speed (<5 m/s)
+5. **Cost efficiency**: Lower cost improves score
+
+## Motor Selection Analysis
+
+First, I'll analyze the available motors based on total impulse, which correlates with maximum altitude potential:
+
+| Motor | Total Impulse (Ns) | Mass (kg) | Impulse-to-Weight Ratio | Cost Factor |
+|-------|-------------------|-----------|-------------------------|------------|
+| CesaroniO5800 | 30382.7 | 12.418 | High | Very High |
+| CesaroniO3700 | 29930.2 | 14.194 | Medium | Very High |
+| Pro75M1670 | 6023.6 | 1.815 | High | Medium |
+| CesaroniM1670 | 6023.6 | 3.101 | Medium | Medium |
+| AeroTechK700W | 2249 | 0.732 | High | Low |
+| CesaroniK160 | 1521.7 | 0.7 | Medium | Low |
+| AeroTechH128W | 176.5 | 0.108 | Medium | Very Low |
+
+For a 3048m apogee, the mid-range motors (Pro75M1670 or AeroTechK700W) should be sufficient. The O-class motors would be excessive and costly. The H-class motor is likely too small.
+
+I'll select the **AeroTechK700W** as it offers good impulse with lower mass and cost.
+
+## Body Design Calculations
+
+For the AeroTechK700W motor:
+- Radius: 54mm = 0.054m
+- Length: 568mm = 0.568m
+
+The rocket body should be:
+- Radius: At least 10% larger than motor radius → 0.06m
+- Length: Sufficient for motor, recovery system, and payload → approximately 0.8m
+- Material: Balsa wood or fiberglass for good strength-to-weight ratio
+
+## Aerodynamic Considerations
+
+For stability, the center of pressure must be behind the center of gravity by at least one caliber (body diameter).
+
+- **Nose cone**: Ogive shape provides good aerodynamic performance with moderate manufacturing complexity
+- **Fins**: 3-4 fins with moderate size for stability without excessive drag
+- **Fin material**: Balsa wood for lightweight with adequate strength
+
+## Recovery System
+
+For a safe landing speed (<5 m/s), I need to calculate the required parachute size:
+
+```
+Terminal velocity = sqrt(2*m*g/(ρ*Cd*A))
+```
+
+Where:
+- m = rocket mass (estimated ~1.5kg)
+- g = 9.81 m/s²
+- ρ = air density (1.225 kg/m³)
+- Cd = drag coefficient (~0.8 for parachutes)
+- A = parachute area
+
+For v = 5 m/s:
+```
+5 = sqrt(2*1.5*9.81/(1.225*0.8*A))
+A = 2*1.5*9.81/(1.225*0.8*5²) ≈ 0.6 m²
+```
+
+So Cd*A (cd_s) should be approximately 0.48.
+
+## Launch Configuration
+
+- Inclination: 85° (slightly angled away from wind)
+- Heading: 270° (west, opposite to the easterly wind)
+- Rail length: 1m for stable launch
+
+## Final Design
+
+Based on these calculations and considerations, here's my optimized rocket design:
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.06,  # Body radius in meters (larger than motor radius of 0.054m)
+        "length": 0.8,   # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.003,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.2,  # Nose cone length in meters
+            "material": "balsa_wood",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.12,  # Fin root chord in meters
+            "tip_chord": 0.06,   # Fin tip chord in meters
+            "span": 0.1,         # Fin span in meters
+            "cant_angle": 0,     # Cant angle in degrees
+            "material": "balsa_wood",
+            "thickness": 0.003   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.15,  # Tail length in meters
+            "top_radius": 0.055,  # Top radius in meters
+            "bottom_radius": 0.06,  # Bottom radius in meters
+            "material": "balsa_wood",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.48,  # Main parachute CD_s for ~5 m/s landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.1,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.0,  # Length of the launch rail in meters
+        "inclination": 85,   # Rail inclination in degrees (slightly angled against wind)
+        "heading": 270,      # Launch heading in degrees (opposite to easterly wind)
+    },
+    "payload": {
+        "mass": 0.3,  # Payload mass in kg
+        "position": 0.2  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This design balances performance, cost, and safety requirements. The lightweight materials reduce overall mass while maintaining structural integrity. The motor provides sufficient impulse to reach the target apogee without excessive cost. The recovery system ensures a safe landing speed under 5 m/s, and the launch configuration accounts for the wind conditions.
+Score: 13.27/100
+Target Apogee: 3048.0m, Actual: 2194.76m, Error: 27.99%
+Structural integrity: FAILED
+Cost: $204.81
+
+--- ATTEMPT 2 ---
+Design:
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Comprehensive Design Approach
+
+I'll approach this rocket design systematically, focusing on reaching the 3048m target apogee while ensuring structural integrity, safe landing, and cost efficiency.
+
+## Motor Selection Analysis
+
+First, I need to select an appropriate motor based on the target apogee:
+
+| Motor | Total Impulse (Ns) | Mass (kg) | Avg Thrust (N) | Burn Time (s) | Radius (mm) |
+|-------|-------------------|-----------|----------------|--------------|-------------|
+| CesaroniO5800 | 30382.7 | 12.418 | 5040.2 | 5.2 | 150 |
+| CesaroniO3700 | 29930.2 | 14.194 | 2836.9 | 8.2 | 161 |
+| Pro75M1670 | 6023.6 | 1.815 | 1533.9 | 3.9 | 75 |
+| CesaroniM1670 | 6023.6 | 3.101 | 1533.9 | 3.6 | 75 |
+| AeroTechK700W | 2249 | 0.732 | 658.7 | 3.5 | 54 |
+| CesaroniK160 | 1521.7 | 0.7 | 190.2 | 9.7 | 54 |
+| AeroTechH128W | 176.5 | 0.108 | 141.2 | 1.29 | 29 |
+
+The previous attempt with AeroTechK700W failed to reach the target apogee and had structural issues. I'll select the **Pro75M1670** motor which offers significantly more impulse (6023.6 Ns vs 2249 Ns) while still being moderate in weight and cost compared to the O-class motors.
+
+## Rocket Mass Estimation
+
+Let's estimate the total rocket mass to calculate expected performance:
+- Motor mass: 1.815 kg (Pro75M1670)
+- Body structure: ~1.0 kg (depends on material choice)
+- Payload: 0.3 kg
+- Recovery system: ~0.2 kg
+- Estimated total mass: ~3.3 kg
+
+## Altitude Estimation
+
+Using a simplified rocket equation to estimate apogee:
+```
+h ≈ (Total Impulse)²/(2 * m * g)
+```
+
+For Pro75M1670 with 6023.6 Ns and estimated mass of 3.3 kg:
+```
+h ≈ (6023.6)²/(2 * 3.3 * 9.81) ≈ 5600m
+```
+
+This is higher than our target, but this is a very rough estimate that doesn't account for drag. The actual altitude will be lower, so this motor should be appropriate.
+
+## Structural Design Considerations
+
+The previous design failed structurally, so I'll strengthen the design:
+
+1. **Body Material**: Carbon fiber instead of fiberglass for better strength-to-weight ratio
+2. **Wall Thickness**: Increase to 0.004m for better structural integrity
+3. **Fin Material**: Carbon fiber instead of balsa wood for durability
+4. **Fin Dimensions**: Increase thickness to 0.004m
+
+## Body Dimensions
+
+For the Pro75M1670 motor (75mm radius):
+- Body radius: 0.085m (provides 10mm clearance around motor)
+- Body length: 0.9m (accommodates motor length of 757mm plus recovery system)
+
+## Aerodynamic Stability
+
+For stability, the center of pressure must be behind the center of gravity:
+- Nose cone: Ogive shape for good aerodynamic performance
+- Fins: 4 fins with moderate size for stability
+- Fin placement: At the rear of the rocket for maximum stability
+
+## Recovery System
+
+For a safe landing speed (<5 m/s) with estimated mass of 3.3 kg:
+```
+Terminal velocity = sqrt(2*m*g/(ρ*Cd*A))
+5 m/s = sqrt(2*3.3*9.81/(1.225*0.8*A))
+A = 2*3.3*9.81/(1.225*0.8*5²) ≈ 1.32 m²
+```
+
+So Cd*A (cd_s) should be approximately 1.06 for the main parachute.
+
+## Wind Compensation
+
+With a 5 m/s easterly wind, I'll adjust the launch angle slightly:
+- Inclination: 88° (slightly angled against wind)
+- Heading: 270° (west, opposite to the easterly wind)
+
+## Final Design Configuration
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.085,  # Body radius in meters (larger than motor radius of 0.075m)
+        "length": 0.9,    # Body length in meters
+        "material": "carbon_fiber",
+        "thickness": 0.004,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.25,  # Nose cone length in meters
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.15,  # Fin root chord in meters
+            "tip_chord": 0.08,   # Fin tip chord in meters
+            "span": 0.12,        # Fin span in meters
+            "cant_angle": 0,     # Cant angle in degrees
+            "material": "carbon_fiber",
+            "thickness": 0.004   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.18,  # Tail length in meters
+            "top_radius": 0.08,  # Top radius in meters
+            "bottom_radius": 0.085,  # Bottom radius in meters
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.06,  # Main parachute CD_s for ~5 m/s landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.5,  # Length of the launch rail in meters
+        "inclination": 88,   # Rail inclination in degrees (slightly angled against wind)
+        "heading": 270,      # Launch heading in degrees (opposite to easterly wind)
+    },
+    "payload": {
+        "mass": 0.3,  # Payload mass in kg
+        "position": 0.3  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This design addresses the previous failure by:
+1. Using a more powerful motor (Pro75M1670)
+2. Strengthening the structure with carbon fiber materials
+3. Increasing wall and fin thickness for better structural integrity
+4. Providing a larger parachute for safe landing
+5. Optimizing launch angle to compensate for wind
+
+The carbon fiber construction provides excellent strength while keeping weight reasonable. The Pro75M1670 motor offers sufficient impulse to reach our target apogee. The recovery system is sized to ensure landing speeds below 5 m/s, and the launch configuration accounts for the wind conditions.
+Score: 45.65/100
+Target Apogee: 3048.0m, Actual: 2672.04m, Error: 12.33%
+Structural integrity: PASSED
+Cost: $857.43
+
+--- ATTEMPT 3 ---
+Design:
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Comprehensive Design Approach
+
+Looking at the previous attempts, I see that the first design with AeroTechK700W failed structurally and didn't reach the target apogee. The second design with Pro75M1670 and carbon fiber construction was structurally sound but still undershot the apogee by 12.33% and was quite expensive at $857.43.
+
+I'll refine the approach to optimize for all scoring criteria: apogee accuracy, cost efficiency, structural integrity, landing speed, and horizontal distance.
+
+## Motor Selection Reconsideration
+
+The Pro75M1670 motor got us closer to the target apogee but still fell short. Let's analyze our options again:
+
+| Motor | Total Impulse (Ns) | Mass (kg) | Cost Factor | Notes |
+|-------|-------------------|-----------|------------|-------|
+| CesaroniM1670 | 6023.6 | 3.101 | Medium | Same impulse as Pro75M1670 but heavier |
+| Pro75M1670 | 6023.6 | 1.815 | Medium | Good impulse-to-weight ratio |
+| AeroTechK700W | 2249 | 0.732 | Low | Insufficient impulse for our target |
+
+I'll stick with the Pro75M1670 motor but optimize the rest of the design to reduce weight and drag, which should help us reach the target apogee. The CesaroniM1670 has the same impulse but is heavier, which would reduce our maximum altitude.
+
+## Material Selection Optimization
+
+Carbon fiber is strong but expensive. Let's consider alternatives that maintain structural integrity but reduce cost:
+
+- Body: Fiberglass (good strength-to-weight ratio, lower cost than carbon fiber)
+- Nose cone: Fiberglass (aerodynamically important, needs strength)
+- Fins: Plywood (good strength, much cheaper than carbon fiber)
+- Tail: Fiberglass (consistent with body material)
+
+## Weight Reduction Strategy
+
+To increase our apogee:
+1. Reduce wall thickness where possible
+2. Optimize fin dimensions
+3. Streamline overall design
+
+## Refined Altitude Estimation
+
+For Pro75M1670 with 6023.6 Ns and estimated reduced mass of ~3.0 kg:
+```
+h ≈ (6023.6)²/(2 * 3.0 * 9.81) ≈ 6150m
+```
+
+This rough estimate is still higher than our target, giving us margin for drag losses. We need to carefully balance the design to hit our 3048m target.
+
+## Body Dimensions Refinement
+
+For the Pro75M1670 motor (75mm = 0.075m radius):
+- Body radius: 0.08m (provides 5mm clearance around motor)
+- Body length: 0.85m (slightly shorter than previous design)
+- Wall thickness: 0.003m (reduced from previous 0.004m)
+
+## Aerodynamic Considerations
+
+- Nose cone: Ogive shape (good aerodynamic performance)
+- Fins: 3 fins instead of 4 (reduces drag and weight while maintaining stability)
+- Fin dimensions: Slightly reduced from previous design
+
+## Recovery System Adjustment
+
+For a safe landing speed (<5 m/s) with estimated mass of 3.0 kg:
+```
+Terminal velocity = sqrt(2*m*g/(ρ*Cd*A))
+5 m/s = sqrt(2*3.0*9.81/(1.225*0.8*A))
+A = 2*3.0*9.81/(1.225*0.8*5²) ≈ 1.2 m²
+```
+
+So Cd*A (cd_s) should be approximately 0.96 for the main parachute.
+
+## Wind Compensation
+
+With a 5 m/s easterly wind, I'll adjust the launch angle:
+- Inclination: 87° (slightly angled against wind)
+- Heading: 270° (west, opposite to the easterly wind)
+
+## Final Optimized Design
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.08,  # Body radius in meters
+        "length": 0.85,  # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.003,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.22,  # Nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.14,  # Fin root chord in meters
+            "tip_chord": 0.07,   # Fin tip chord in meters
+            "span": 0.11,        # Fin span in meters
+            "cant_angle": 0,     # Cant angle in degrees
+            "material": "plywood",
+            "thickness": 0.004   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.16,  # Tail length in meters
+            "top_radius": 0.075,  # Top radius in meters
+            "bottom_radius": 0.08,  # Bottom radius in meters
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.96,  # Main parachute CD_s for ~5 m/s landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.18,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.2,  # Length of the launch rail in meters
+        "inclination": 87,   # Rail inclination in degrees
+        "heading": 270,      # Launch heading in degrees
+    },
+    "payload": {
+        "mass": 0.25,  # Payload mass in kg
+        "position": 0.25  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This optimized design addresses the issues from previous attempts:
+
+1. **Material Selection**: Using fiberglass and plywood significantly reduces cost compared to carbon fiber while maintaining structural integrity
+2. **Weight Optimization**: Reduced wall thickness, fewer fins, and slightly smaller dimensions to improve altitude performance
+3. **Aerodynamic Efficiency**: Maintained ogive nose cone but streamlined other components
+4. **Recovery System**: Properly sized for safe landing under 5 m/s
+5. **Launch Configuration**: Adjusted for wind conditions
+
+The design balances all scoring criteria:
+- Should reach closer to the target apogee of 3048m
+- Significantly lower cost than the previous carbon fiber design
+- Maintains structural integrity with appropriate materials and thicknesses
+- Ensures safe landing with properly sized parachute
+- Accounts for wind to minimize horizontal distance from launch site
+
+This design represents a better balance between performance and cost, which should improve the overall score.
+Score: 52.87/100
+Target Apogee: 3048.0m, Actual: 2801.12m, Error: 8.10%
+Structural integrity: PASSED
+Cost: $602.32
+
+--- ATTEMPT 4 ---
+Design:
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Analysis of Previous Attempts
+
+Looking at the three previous attempts, I can see a clear progression:
+
+1. **First attempt**: Used AeroTechK700W motor, failed structurally and reached only 2194.76m (27.99% error)
+2. **Second attempt**: Used Pro75M1670 motor with carbon fiber construction, reached 2672.04m (12.33% error), passed structural tests but was expensive ($857.43)
+3. **Third attempt**: Used Pro75M1670 with fiberglass/plywood, reached 2801.12m (8.10% error), passed structural tests with lower cost ($602.32)
+
+The trend shows we're getting closer to the target apogee while maintaining structural integrity and reducing costs. For this attempt, I'll further refine the design to reach the target apogee more accurately while optimizing for cost.
+
+## Motor Selection Analysis
+
+The Pro75M1670 motor has proven to be a good choice, getting us within 8.10% of our target. Let's stick with this motor but make adjustments to the rocket design to increase altitude slightly:
+
+| Motor | Total Impulse (Ns) | Mass (kg) | Avg Thrust (N) | Burn Time (s) |
+|-------|-------------------|-----------|----------------|--------------|
+| Pro75M1670 | 6023.6 | 1.815 | 1533.9 | 3.9 |
+
+## Altitude Optimization Strategy
+
+To increase our apogee from 2801.12m to 3048m (an increase of about 8.8%), I'll:
+
+1. **Reduce drag**: Streamline the design further
+2. **Reduce weight**: Use lighter materials where possible without compromising structural integrity
+3. **Optimize aerodynamics**: Adjust fin and nose cone design
+
+## Material Selection Refinement
+
+Based on previous results, I'll use:
+- Body: Fiberglass (good strength-to-weight ratio)
+- Nose cone: Fiberglass (consistent with body)
+- Fins: Balsa wood (lighter than plywood while still providing adequate strength)
+- Tail: Fiberglass (consistent with body)
+
+## Body Dimensions Optimization
+
+For the Pro75M1670 motor (75mm radius):
+- Body radius: 0.078m (provides minimal clearance around motor to reduce weight and drag)
+- Body length: 0.82m (reduced to save weight)
+- Wall thickness: 0.0025m (reduced from previous 0.003m to save weight)
+
+## Aerodynamic Refinements
+
+- Nose cone: Longer ogive shape (0.25m) for better aerodynamic performance
+- Fins: 3 fins with optimized dimensions for stability with minimal drag
+- Fin thickness: 0.003m for balsa wood (adequate for structural integrity)
+
+## Recovery System Calculation
+
+For a safe landing speed (<5 m/s) with estimated mass of 2.8 kg:
+```
+Terminal velocity = sqrt(2*m*g/(ρ*Cd*A))
+5 m/s = sqrt(2*2.8*9.81/(1.225*0.8*A))
+A = 2*2.8*9.81/(1.225*0.8*5²) ≈ 1.12 m²
+```
+
+So Cd*A (cd_s) should be approximately 0.9 for the main parachute.
+
+## Wind Compensation
+
+With a 5 m/s easterly wind, I'll adjust the launch angle:
+- Inclination: 86° (angled against wind)
+- Heading: 270° (west, opposite to easterly wind)
+
+## Final Optimized Design
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.078,  # Body radius in meters
+        "length": 0.82,  # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.0025,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.25,  # Nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.13,  # Fin root chord in meters
+            "tip_chord": 0.06,   # Fin tip chord in meters
+            "span": 0.10,        # Fin span in meters
+            "cant_angle": 0,     # Cant angle in degrees
+            "material": "balsa_wood",
+            "thickness": 0.003   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.15,  # Tail length in meters
+            "top_radius": 0.076,  # Top radius in meters
+            "bottom_radius": 0.078,  # Bottom radius in meters
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.9,  # Main parachute CD_s for ~5 m/s landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.15,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.2,  # Length of the launch rail in meters
+        "inclination": 86,   # Rail inclination in degrees
+        "heading": 270,      # Launch heading in degrees
+    },
+    "payload": {
+        "mass": 0.2,  # Payload mass in kg (reduced)
+        "position": 0.2  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This optimized design builds on the progress of previous attempts with these key improvements:
+
+1. **Weight Reduction**: 
+   - Thinner body walls (0.0025m vs 0.003m)
+   - Lighter balsa wood fins instead of plywood
+   - Reduced payload mass (0.2kg vs 0.25kg)
+   - Slightly smaller body dimensions
+
+2. **Aerodynamic Improvements**:
+   - Longer nose cone (0.25m vs 0.22m)
+   - Optimized fin dimensions
+   - Minimized body radius while maintaining clearance for motor
+
+3. **Launch Adjustments**:
+   - Increased angle against wind (86° vs 87°) to further compensate for drift
+
+4. **Cost Optimization**:
+   - Maintained use of fiberglass for critical components
+   - Used balsa wood for fins (cheaper than carbon fiber, lighter than plywood)
+
+This design should reach closer to our target apogee of 3048m while maintaining structural integrity, ensuring a safe landing speed, and keeping costs reasonable. The adjustments are incremental but targeted based on the data from previous attempts, focusing on the areas that will have the most impact on performance without compromising safety or significantly increasing costs.
+Score: 28.03/100
+Target Apogee: 3048.0m, Actual: 2852.72m, Error: 6.41%
+Structural integrity: FAILED
+Cost: $596.61
+
+
+Based on previous attempts, please provide an improved rocket design.

@@ -1,0 +1,98 @@
+Below is the thought process behind a further-optimized design, followed by the final Python dictionary configuration. The objective is to nudge the cost a bit lower than Attempt 6 (which was already close to the target altitude and structurally sound), maintain a safe margin on structural integrity, and retain a near-vertical launch to minimize horizontal drift.
+
+────────────────────────────────────────────────────────
+1) Starting Point: Attempt 6
+────────────────────────────────────────────────────────
+• Attempt 6 achieved an apogee within 0.05% of the 3048 m target.  
+• It had a wall and fin thickness of 2.8 mm in fiberglass (body/tail) and plywood (fins), which passed structural checks.  
+• The total cost was around $620.49.
+
+────────────────────────────────────────────────────────
+2) Reducing Cost Without Jeopardizing Safety
+────────────────────────────────────────────────────────
+• Lowering thickness slightly shaves material cost and mass, but too thin can trigger structural failure under thrust.  
+• Moving from 2.8 mm to 2.7 mm for both the rocket body and fins is a small step that may still preserve structural integrity.  
+
+────────────────────────────────────────────────────────
+3) Minor Adjustments to Recovery System
+────────────────────────────────────────────────────────
+• Slightly decreasing the main parachute’s cd_s from 0.7 to 0.68 can reduce packing volume and possibly cost. As long as the rocket still lands under ~5 m/s, it remains safe.  
+
+────────────────────────────────────────────────────────
+4) Launch Rail & Overall Dimensions
+────────────────────────────────────────────────────────
+• Keep the 1.3 m body length and 0.076 m body radius from Attempt 6, since they provided near-perfect altitude performance.  
+• Reduce the launch rail length from 2.3 m to 2.2 m for marginal cost savings, trusting that the rocket remains stable at liftoff under high thrust.  
+
+────────────────────────────────────────────────────────
+5) Final Expectation
+────────────────────────────────────────────────────────
+• With only a slight reduction in thickness, a minor tweak to the parachute, and a slightly shorter rail, we anticipate the rocket remains near 3048 m apogee, keeps structural integrity, and lands gently at acceptable velocities. The cost should improve incrementally while preserving an excellent overall score.
+
+────────────────────────────────────────────────────────
+Final Configuration Dictionary
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.076,         # meters (> 0.075 m motor radius)
+        "length": 1.3,           # meters
+        "material": "fiberglass",
+        "thickness": 0.0027,     # 2.7 mm wall thickness
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.3,        # nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.14,   # meters
+            "tip_chord": 0.06,    # meters
+            "span": 0.1,          # meters
+            "cant_angle": 0,      # degrees
+            "material": "plywood",
+            "thickness": 0.0027,  # 2.7 mm fin thickness
+        },
+        "tail": {
+            "length": 0.08,       # meters
+            "top_radius": 0.076,
+            "bottom_radius": 0.065,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.68,          # slightly reduced from 0.7
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.05,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.2,  # meters (slightly less than 2.3 m)
+        "inclination": 90,   # degrees (vertical)
+        "heading": 0,        # degrees
+    },
+    "payload": {
+        "mass": 0.2,         # kg
+        "position": 0.65,    # meters from rocket center
+    }
+}
+```
+
+Explanation Summary:
+• By making small, careful adjustments to thickness, parachute size, and rail length, this design should remain very close to the 3048 m target apogee, keep the landing velocity well within safe limits, and modestly lower the overall cost compared to Attempt 6.

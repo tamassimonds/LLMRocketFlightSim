@@ -1,0 +1,168 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Comprehensive Analysis of Previous Attempts
+
+After analyzing all nine previous attempts, I can identify clear patterns and insights:
+
+| Attempt | Apogee (m) | Error (%) | Structural | Cost ($) | Key Features |
+|---------|------------|-----------|------------|----------|--------------|
+| 1 | 2298.99 | 24.57% | FAILED | 209.18 | AeroTechK700W, thin walls |
+| 2 | 2245.03 | 26.34% | PASSED | 589.37 | Pro75M1670, all aluminum |
+| 3 | 2797.31 | 8.22% | PASSED | 623.77 | Pro75M1670, fiberglass body, plywood fins |
+| 4 | 2804.20 | 8.00% | FAILED | 561.76 | Pro75M1670, lighter materials, thinner walls |
+| 5 | 2783.61 | 8.67% | PASSED | 617.22 | Pro75M1670, fiberglass body, plywood fins |
+| 6 | 2753.91 | 9.65% | PASSED | 637.32 | CesaroniM1670, fiberglass body, plywood fins |
+| 7 | 2355.35 | 22.72% | PASSED | 293.30 | AeroTechK700W, carbon_fiber construction |
+| 8 | 2799.64 | 8.15% | PASSED | 561.47 | Pro75M1670, mixed materials |
+| 9 | 2791.10 | 8.43% | FAILED | 557.06 | Pro75M1670, balsa fins (too thin) |
+
+**Critical Insights:**
+1. The Pro75M1670 motor consistently gets us closest to target (~8-9% error)
+2. Attempt 8 had the best balance of performance, structural integrity, and cost
+3. Balsa wood fins in attempt 9 failed structurally despite increased thickness
+4. We need to increase altitude by ~250m to reach our target
+5. Mixed materials approach works well when properly implemented
+
+## Refined Design Strategy
+
+For this final attempt, I'll:
+1. Continue with the Pro75M1670 motor which has shown the best performance
+2. Use a mixed materials approach similar to attempt 8 but with further optimization
+3. Consider a slightly more powerful motor (CesaroniO3700) to reach target apogee
+4. Ensure structural integrity with appropriate materials and thicknesses
+5. Fine-tune launch parameters for optimal trajectory
+
+## Motor Selection Analysis
+
+After careful consideration, I'll use the CesaroniO3700 motor which has significantly more impulse (29,930.2 Ns vs 6,023.6 Ns) than the Pro75M1670. This should provide the extra altitude needed to reach our target, though it will require a larger body diameter and careful weight management.
+
+## Body Design Calculations
+
+For the CesaroniO3700 motor (161mm diameter):
+- Body radius: 0.085m (provides clearance for motor)
+- Length: 1.0m (optimized for the larger motor)
+- Material: fiberglass (good strength-to-weight ratio at moderate cost)
+- Thickness: 0.0035m (ensures structural integrity)
+
+## Nose Cone Design
+
+- Shape: Von Karman (optimal aerodynamic performance)
+- Length: 0.3m (approximately 3.5x body radius)
+- Material: fiberglass (consistent with body for structural integrity)
+
+## Fin Design
+
+For stability with structural integrity:
+- 4 fins (provides stability for the larger rocket)
+- Root chord: 0.18m
+- Tip chord: 0.09m (tapered for reduced drag)
+- Span: 0.14m
+- Material: plywood (good strength-to-weight ratio at lower cost)
+- Thickness: 0.007m (ensures structural integrity)
+
+## Tail Design
+
+- Length: 0.2m
+- Top radius: 0.083m
+- Bottom radius: 0.085m (minimal difference to maintain structural requirements)
+- Material: fiberglass (consistent with body)
+
+## Parachute Sizing
+
+Estimated rocket mass: ~16kg (including the heavier O3700 motor)
+
+For a safe landing speed (<5 m/s):
+Cd_S = 2 × mass × g / (ρ × v²)
+Cd_S = 2 × 16 × 9.81 / (1.225 × 5²)
+Cd_S ≈ 5.12
+
+I'll split this between main and drogue:
+- Main: Cd_S = 4.5 (for final descent)
+- Drogue: Cd_S = 0.6 (for initial descent)
+
+## Launch Configuration
+
+To compensate for the easterly wind:
+- Inclination: 87 degrees (slight westward tilt)
+- Heading: 270 degrees (west, opposite to wind direction)
+- Rail length: 1.5m (provides adequate stability for the larger rocket)
+
+## Payload
+
+- Mass: 0.5kg
+- Position: 0.4m (forward of center to help with stability)
+
+## Final Design
+
+```python
+config = {
+    "motor_choice": "CesaroniO3700",
+    "rocket_body": {
+        "radius": 0.085,
+        "length": 1.0,
+        "material": "fiberglass",
+        "thickness": 0.0035,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.3,
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.18,
+            "tip_chord": 0.09,
+            "span": 0.14,
+            "cant_angle": 0,
+            "material": "plywood",
+            "thickness": 0.007,
+        },
+        "tail": {
+            "length": 0.2,
+            "top_radius": 0.083,
+            "bottom_radius": 0.085,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 4.5,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.6,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.5,
+        "inclination": 87,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 0.4,
+    }
+}
+```
+
+This design represents a significant departure from previous attempts by using the much more powerful CesaroniO3700 motor. While this increases weight and cost, it should provide the necessary impulse to reach our target apogee of 3048m.
+
+The design ensures structural integrity through:
+1. Fiberglass construction for body, nose cone, and tail
+2. Appropriate wall thickness (0.0035m)
+3. Plywood fins with adequate thickness (0.007m)
+4. Proper sizing of all components for the larger motor
+
+The significantly larger parachutes account for the increased weight of the rocket, ensuring a safe landing speed below 5 m/s. The launch parameters are adjusted to compensate for wind while providing a more vertical trajectory appropriate for the more powerful motor.
+
+This design balances the need to reach our target apogee with structural integrity requirements and cost considerations, based on the lessons learned from all previous attempts.

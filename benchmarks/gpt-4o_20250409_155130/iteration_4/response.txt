@@ -1,0 +1,127 @@
+To improve on the previous attempts and achieve a higher score, we need to focus on improving the following areas:
+
+1. **Achieve Target Apogee More Precisely**: Previous designs have consistently underperformed in achieving the target apogee, indicating a need for higher thrust or more aerodynamic efficiency.
+
+2. **Cost Efficiency**: Staying below the max cost while balancing the weight and strength of materials is crucial to optimize the cost reward.
+
+3. **Structural Integrity**: Ensure that the rocket can withstand the forces experienced during launch and flight.
+
+4. **Landing Safety and Minimizing Drift**: With optimized parachute specifications, ensure the rocket lands safely and adjust launch configuration to reduce drift.
+
+Let’s focus on refining the motor selection, material choices, and design parameters based on these observations.
+
+### Key Design Adjustments
+
+**Motor Choice:**
+- **Motor Selected**: **CesaroniO3700** (higher impulse and efficient burn time suitable for achieving closer to the target apogee).
+
+**Rocket Body:**
+- **Radius**: 0.16m (accommodates the CesaroniO3700 motor and ensures stability).
+- **Material**: **Carbon Fiber** for its excellent strength-to-weight ratio.
+- **Length**: 2.0m to provide ample space for the motor and maintain directional stability.
+- **Thickness**: 0.002m to keep the structure light yet robust.
+
+**Nose Cone:**
+- **Type**: **Von Karman** (provides good aerodynamic efficiency).
+- **Length**: 0.5m (to reduce drag and enhance lift).
+- **Material**: **Fiberglass** for a balanced blend of weight and strength.
+
+**Fins:**
+- **Number of Fins**: 4 for stability.
+- **Root Chord**: 0.25m to ensure stability throughout the flight.
+- **Tip Chord**: 0.125m.
+- **Span**: 0.3m for sufficient aerodynamic control.
+- **Cant Angle**: 0° to minimize unnecessary drag.
+- **Material**: **Composite** for lightweight and rigidity.
+- **Thickness**: 0.003m to ensure fins withstand force.
+
+**Tail:**
+- **Length**: 0.2m to assist in exhaust and stability.
+- **Top Radius**: 0.15m.
+- **Bottom Radius**: 0.16m.
+- **Material**: **ABS Plastic** for cost control with structural adequacy.
+
+**Parachutes:**
+- **Main CD_s**: 1.2 (larger area to ensure a slower descent).
+- **Drogue CD_s**: 0.4 for controlled initial descent post-apogee.
+
+**Launch Configuration:**
+- **Rail Length**: 2.5m for better initial acceleration and stability.
+- **Inclination**: 89° to slightly counteract drift due to wind.
+- **Heading**: 270° (compensates for drift due to wind).
+
+**Payload:**
+- **Mass**: 0.2 kg (lighter to aid in reaching target apogee).
+- **Position**: 0.9m to balance center of gravity.
+
+Here's the refined configuration:
+
+```python
+config = {
+    "motor_choice": "CesaroniO3700",
+    "rocket_body": {
+        "radius": 0.16,
+        "length": 2.0,
+        "material": "carbon_fiber",
+        "thickness": 0.002,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.5,
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.25,
+            "tip_chord": 0.125,
+            "span": 0.3,
+            "cant_angle": 0,
+            "material": "composite",
+            "thickness": 0.003,
+        },
+        "tail": {
+            "length": 0.2,
+            "top_radius": 0.15,
+            "bottom_radius": 0.16,
+            "material": "ABS_plastic",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.2,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.4,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.5,
+        "inclination": 89,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 0.2,
+        "position": 0.9,
+    },
+}
+```
+
+### Rationale
+- **Motor**: The CesaroniO3700 delivers a higher impulse, improving the apogee achievement performance.
+- **Materials**: Carbon fiber and composites offer a lightweight yet strong structure, balancing cost with necessary performance.
+- **Aerodynamics**: The von Karman nose and sufficient fin span ensure reduced drag and stability.
+- **Parachutes**: Larger parachute area ensures a safe landing.
+- **Launch Setup**: Adjusted inclination helps counteract wind-induced drift.
+
+This configuration aims to push closer to the target apogee, control costs, and ensure a structurally sound and safe recovery system.

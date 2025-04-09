@@ -1,0 +1,125 @@
+Let me analyze the previous attempts and design an improved solution:
+
+Analysis of Previous Attempts:
+1. Attempt 1 (Pro75M1670):
+   - Underperformed by 9% (2773m vs 3048m target)
+   - Good structural integrity and cost ($743)
+   - Needed more impulse
+
+2. Attempt 2 (CesaroniO3700):
+   - Overcorrected with too large motor
+   - Went over budget ($2272)
+   - Still underperformed (2211m)
+   - Too heavy, inefficient design
+
+Key Insights:
+- Need a motor between these two options
+- Must balance impulse and weight
+- Maintain cost-effectiveness
+- Optimize aerodynamics
+
+Improved Design Strategy:
+1. Motor Selection:
+   - Choose CesaroniM1670 (same impulse as Pro75M1670 but better packaging)
+   - 6023.6 Ns total impulse
+   - Dry mass 3.101kg (heavier than Pro75 but better for our needs)
+
+2. Weight Optimization:
+   - Lighter materials where possible
+   - Smaller airframe than Attempt 2
+   - Careful mass distribution
+
+3. Aerodynamic Improvements:
+   - More efficient nose cone shape
+   - Optimized fin design
+   - Better stability margins
+
+4. Cost Control:
+   - Use fiberglass instead of carbon fiber where possible
+   - Reasonable parachute sizes
+
+Calculations:
+- Estimated total mass: ~5kg
+- Thrust-to-weight: 1533.9N / (5kg*9.81) ≈ 31 (excellent)
+- Expected altitude: ~3000m (based on similar rockets with this impulse)
+- Landing speed: <5m/s with chosen parachutes
+
+Final Improved Design:
+
+```python
+config = {
+    "motor_choice": "CesaroniM1670",
+    "rocket_body": {
+        "radius": 0.08,
+        "length": 1.5,
+        "material": "fiberglass",
+        "thickness": 0.004,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.35,
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.18,
+            "tip_chord": 0.09,
+            "span": 0.25,
+            "cant_angle": 0.75,
+            "material": "carbon_fiber",
+            "thickness": 0.004,
+        },
+        "tail": {
+            "length": 0.25,
+            "top_radius": 0.075,
+            "bottom_radius": 0.08,
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.28,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.18,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.8,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.7,
+        "position": 0.8,
+    },
+}
+```
+
+Key Improvements:
+1. Better motor selection - CesaroniM1670 provides same impulse as Pro75 but better packaging
+2. Longer body (1.5m) for better stability
+3. Von Karman nose cone for improved aerodynamics
+4. Optimized fin dimensions (larger root chord, smaller span)
+5. Increased cant angle (0.75°) for better stability in crosswinds
+6. Adjusted parachute sizes for optimal descent
+7. Slightly increased payload capacity (0.7kg)
+8. Maintained reasonable cost through material choices
+
+This design should:
+- Reach closer to target apogee (3000m+)
+- Maintain structural integrity
+- Land safely (<5m/s)
+- Stay within reasonable cost
+- Minimize horizontal drift

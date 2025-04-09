@@ -1,0 +1,125 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+I'll approach this rocket design systematically, focusing on optimizing for all scoring criteria while ensuring we hit our target apogee of 3048m.
+
+## Motor Selection Analysis
+
+First, I need to select an appropriate motor based on the total impulse needed to reach our target altitude. Let's analyze the available motors:
+
+| Motor | Total Impulse (Ns) | Avg Thrust (N) | Mass (kg) | Radius (mm) |
+|-------|-------------------|----------------|-----------|-------------|
+| Pro75M1670 | 6023.6 | 1533.9 | 1.815 | 75 |
+| AeroTechK700W | 2249 | 658.7 | 0.732 | 54 |
+| CesaroniM1670 | 6023.6 | 1533.9 | 3.101 | 75 |
+| AeroTechH128W | 176.5 | 141.2 | 0.108 | 29 |
+| CesaroniO3700 | 29930.2 | 2836.9 | 14.194 | 161 |
+| CesaroniO5800 | 30382.7 | 5040.2 | 12.418 | 150 |
+| CesaroniK160 | 1521.7 | 190.2 | 0.7 | 54 |
+
+The previous attempt used AeroTechK700W but fell short of the target apogee by about 27%. This suggests we need more impulse. The Pro75M1670 offers significantly more impulse (6023.6 Ns vs 2249 Ns) with a reasonable mass increase, making it a better candidate for our target altitude.
+
+## Rocket Mass and Impulse Calculation
+
+For a rough estimate of required impulse:
+- Target altitude: 3048m
+- Gravitational potential energy: m × g × h
+- Assuming total rocket mass ~3-4kg (including motor)
+- Energy needed: 4kg × 9.81m/s² × 3048m ≈ 120,000 J
+- With efficiency losses and drag, we need approximately 5000-6000 Ns of impulse
+
+This confirms Pro75M1670 (6023.6 Ns) should be appropriate for our target.
+
+## Body Design Optimization
+
+- Body radius: Must exceed motor radius (75mm = 0.075m for Pro75M1670)
+- Material: Balsa wood offers excellent strength-to-weight ratio at low cost
+- Length: Optimized for stability while minimizing weight and drag
+
+## Aerodynamics
+
+- Nose cone: Ogive shape for good aerodynamic performance
+- Fins: 3 fins for stability with minimal drag
+- Center of pressure must be behind center of gravity for stability
+
+## Parachute System
+
+For a safe landing (<5 m/s):
+- Terminal velocity calculation: v = sqrt(2mg/ρACd)
+- For ~3-4kg rocket, we need cd_s ≈ 1.5-2.0 m²
+
+## Launch Configuration
+
+- Inclination: Slightly angled (88°) away from wind direction
+- Heading: 270° (West) to counteract the 5 m/s easterly wind
+
+## Final Design
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.08,  # 80mm body radius (> 75mm motor radius)
+        "length": 0.85,  # 85cm body length
+        "material": "balsa_wood",
+        "thickness": 0.005,  # 5mm wall thickness
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.25,  # 25cm nose cone
+            "material": "balsa_wood",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.15,  # 15cm root chord
+            "tip_chord": 0.07,   # 7cm tip chord
+            "span": 0.09,        # 9cm span
+            "cant_angle": 0,     # No cant angle
+            "material": "balsa_wood",
+            "thickness": 0.006   # 6mm thickness
+        },
+        "tail": {
+            "length": 0.12,      # 12cm tail length
+            "top_radius": 0.078, # Slightly less than body radius
+            "bottom_radius": 0.08, # Same as body radius
+            "material": "balsa_wood",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.8,  # Sized for <5 m/s landing velocity
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.4,  # Small drogue for stability
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.2,  # 1.2m launch rail
+        "inclination": 88,   # Slight angle to compensate for wind
+        "heading": 270,      # Launch toward west to counter east wind
+    },
+    "payload": {
+        "mass": 0.25,  # 250g payload
+        "position": 0.3  # Positioned toward the nose
+    }
+}
+```
+
+This design balances:
+1. Sufficient impulse to reach target apogee with the Pro75M1670 motor
+2. Low cost through extensive use of balsa wood
+3. Safe landing velocity with appropriately sized parachute
+4. Structural integrity with appropriate materials and thickness
+5. Wind compensation through launch angle and heading
+
+The lightweight construction with balsa wood reduces overall mass, allowing the Pro75M1670 motor to provide sufficient impulse to reach our target altitude while keeping costs down. The parachute system is sized to ensure a safe landing under 5 m/s.

@@ -1,0 +1,95 @@
+```python
+config = {
+    "motor_choice": "CesaroniO3700",
+    "rocket_body": {
+        "radius": 0.165,  # 165mm > motor radius (161mm)
+        "length": 1.5,
+        "material": "composite",
+        "thickness": 0.003,  # Optimized for weight and strength
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.5,  # 3x body radius for low drag
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.25,
+            "tip_chord": 0.1,
+            "span": 0.3,
+            "cant_angle": 0.5,  # Minimal cant for stability
+            "material": "carbon_fiber",
+            "thickness": 0.005,
+        },
+        "tail": {
+            "length": 0.3,
+            "top_radius": 0.16,
+            "bottom_radius": 0.165,
+            "material": "ABS_plastic",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 25.0,  # Estimated for ~5 m/s descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 2.2,  # Estimated for ~20 m/s descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,  # Longer rail for stable launch
+        "inclination": 90,    # Vertical launch
+        "heading": 0,         # Into wind (E direction handled by simulation)
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 0.75  # Positioned near nose for balance
+    }
+}
+```
+
+**Design Rationale:**
+
+1. **Motor Selection**  
+Selected CesaroniO3700 for its high total impulse (29,930 Ns) and moderate burn time (8.2s). This balances thrust-to-weight ratio (~5.5) and minimizes drag losses compared to shorter-burn motors. The O5800 was rejected due to excessive predicted altitude overshoot.
+
+2. **Body Design**  
+- Radius 0.165m accommodates the motor (161mm) with margin.  
+- Composite material balances strength and cost.  
+- Length 1.5m ensures motor fit and structural stability.  
+- Thickness 3mm reduces weight while maintaining integrity.
+
+3. **Nose Cone**  
+- Ogive shape minimizes drag.  
+- 0.5m length (3x body radius) optimizes aerodynamics.  
+- Composite material for lightweight durability.
+
+4. **Fins**  
+- 4 trapezoidal fins for stability.  
+- Carbon fiber for high strength-to-weight ratio.  
+- Small cant angle (0.5°) mitigates spin while minimizing drag.
+
+5. **Parachutes**  
+- Drogue (CdS=2.2) stabilizes descent at ~20 m/s.  
+- Main (CdS=25) ensures safe landing <5 m/s.  
+- Both triggered at apogee for simplicity.
+
+6. **Launch Rail**  
+- 2.0m rail ensures stable initial flight.  
+- Vertical launch (90°) minimizes wind drift.
+
+**Tradeoffs:**  
+- Composite materials increase cost slightly but reduce mass for better altitude control.  
+- O3700's longer burn time reduces peak velocity, mitigating drag losses.  
+- Conservative parachute sizing ensures safe landing despite uncertainties in mass/drag.

@@ -1,0 +1,90 @@
+To optimize the rocket design further, we need to address key issues like achieving closer to the target apogee, maintaining structural integrity, and keeping costs low. Based on the feedback from previous attempts, it’s clear that finding a balanced motor choice is crucial, as previous selections either overperformed or underperformed. Let's refine our approach:
+
+### Improved Design Strategy
+
+**1. Motor Selection:**
+   - The AeroTechK700W appears to be a balanced option when considering thrust-to-weight ratio and cost. Given its specifications, it may aid in reaching closer to the apogee. This motor’s lighter weight will reduce the total mass, thus increasing efficiency.
+
+**2. Rocket Body:**
+   - The rocket's structure should be light yet strong. Keeping the radius accommodating the motor, but optimized for lower drag.
+   - **Composite** material is a good compromise for strength and weight.
+   - Wall thickness is kept minimal but safe for structural demands (e.g., launch and recovery stresses).
+
+**3. Aerodynamics:**
+   - **Nose Cone**: Maintain an ogive shape for reduced drag.
+   - **Fins**: Reduce span slightly to decrease drag, using **fiberglass**, known for rigidity and low cost.
+
+**4. Parachute System:**
+   - Balance drag area to ensure safe descent without overly complex recovery equipment.
+
+**5. Launch Configuration:**
+   - Maintain adequacy for stabilizing rail length.
+
+### Improved Configuration Proposal:
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",  # Balances thrust and weight for the target apogee
+    "rocket_body": {
+        "radius": 0.07,  # Accommodates motor while ensuring stability
+        "length": 1.7,  # Length optimized for stability
+        "material": "composite",
+        "thickness": 0.004,  # Minimum for structural support
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.35,  # Optimized for minimizing drag
+            "material": "composite",
+        },
+        "fins": {
+            "number": 3,  # Reducing number to minimize drag
+            "root_chord": 0.18,
+            "tip_chord": 0.09,
+            "span": 0.18,  # Reduced for lower drag and cost
+            "cant_angle": 0,  # Provides baseline stability
+            "material": "fiberglass",
+            "thickness": 0.004,  # Ensures rigidity
+        },
+        "tail": {
+            "length": 0.2,
+            "top_radius": 0.07,
+            "bottom_radius": 0.06,  # Required for aerodynamic design
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.3,  # Designed for safe landing
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.12,  # Optimized size for initial deceleration
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,  # Optimal for stabilization during launch
+        "inclination": 90,  # Direct vertical alignment reduces drag influences
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.1,  # Essential only for electronics
+        "position": 0.85,  # Mid-centered for balance
+    }
+}
+```
+
+### Rationale:
+- **Motor**: The AeroTechK700W provides a sufficient thrust profile that may be closer to reaching the specified apogee given the reduction in overall rocket mass.
+- **Materials**: A consistent choice of composite and fiberglass ensures strength and reduces total weight.
+- **Parachute**: Properly sized for safe landing without extensive system complexity.
+- This revised configuration takes into account cost efficiency, streamlined design, and mass reduction aiming towards a fine balance. By focusing on optimizing individual subsystems within the constraints, the design strives for a higher performance score.

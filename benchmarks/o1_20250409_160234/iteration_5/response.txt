@@ -1,0 +1,111 @@
+Below is a step-by-step outline of the thought process for arriving at an improved rocket design based on the previous attempts. After this reasoning, you will find a “config” dictionary in the exact format required. No extra Python code is included.
+
+────────────────────────────────────────────────────────
+REASONING & DESIGN CHOICES
+────────────────────────────────────────────────────────
+
+1) Why the K700 Motor
+• The AeroTechK700W supplies ~2249 Ns of total impulse.  
+• That proved sufficient in earlier attempts to reach near 3048 m, if the rocket was not too heavy.  
+• Larger motors (e.g., “M” or “O” class) would be more expensive and risk overshooting the target, while smaller motors would not provide enough impulse.  
+
+2) Body Radius Must Be Greater Than 54 mm
+• A key DRC rule is that the rocket body radius must exceed the motor’s 54 mm.  
+• Previous attempts with < 0.054 m body radius were invalid or experienced structural failures in the simulator.  
+• Thus, we choose a 0.055 m rocket body radius to pass the motor fit requirement while still keeping diameter modest.
+
+3) Balancing Structural Integrity and Mass
+• Attempt 4 was structurally sound (no failure) but reached only ~2129 m, suggesting it was too heavy or had too much drag.  
+• To reduce mass and keep decent strength, we use fiberglass (generally cheaper and lighter than some “composite” blends) with 2 mm thickness on the main body.  
+• Fins also made of fiberglass at 2 mm thickness to reduce weight versus thicker or denser materials.
+
+4) Nose Cone
+• An ogive shape (0.25 m length) remains a good aerodynamic choice.  
+• Same fiberglass material (2 mm wall) to maintain uniform manufacturing and cost savings.
+
+5) Fin Geometry
+• Three fins (root chord 0.14 m, tip chord 0.06 m, span 0.11 m) provide adequate stability with lower drag and cost than four fins.  
+• Zero cant angle to reduce roll and horizontal drift.  
+• Fiberglass at 0.002 m thickness is chosen to improve strength without excessive weight or cost.
+
+6) Tail Section
+• A short tail (0.10 m length) helps transition from the main body to the motor nozzle area.  
+• Top radius = 0.055 m and bottom radius = 0.06 m, ensuring they are not identical (avoiding DRC errors).  
+• Fiberglass again for consistency and cost considerations.
+
+7) Parachutes
+• Main chute Cd·S = 2.4 to achieve ~5 m/s or lower landing speed if the rocket mass is in the 3.5–4.5 kg range.  
+• Drogue chute Cd·S = 0.2 to stabilize descent immediately after apogee.
+
+8) Launch Setup & Wind
+• Launch rail length of 2.2 m, giving the rocket more distance to reach safe speed off the rail.  
+• Inclination of 88 ° (close to vertical) and heading of 270 ° (west) to counter moderate easterly winds of ~5 m/s.
+
+9) Payload
+• A 0.6 kg mass at 0.65 m from the rocket center helps set the center of gravity forward.  
+• Keeps the total launch mass from becoming too high while still carrying a practical payload.
+
+────────────────────────────────────────────────────────
+FINAL DESIGN (“config” DICTIONARY)
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.055,        # Must exceed motor radius of 0.054 m
+        "length": 1.25,
+        "material": "fiberglass",
+        "thickness": 0.002,     # 2 mm
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.25,
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.14,
+            "tip_chord": 0.06,
+            "span": 0.11,
+            "cant_angle": 0,
+            "material": "fiberglass",
+            "thickness": 0.002,
+        },
+        "tail": {
+            "length": 0.1,
+            "top_radius": 0.055,
+            "bottom_radius": 0.06,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 2.4,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.2,
+        "inclination": 88,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 0.6,
+        "position": 0.65
+    }
+}
+```

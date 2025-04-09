@@ -1,0 +1,120 @@
+Below is a step-by-step rationale for how I arrived at the new design, followed by the final Python “config” dictionary. The goal is to get closer to the target apogee (3048 m) than the previous attempt while keeping cost reasonably low and ensuring safe recovery.
+
+────────────────────────────────────────────────────────────────
+1) Observing Previous Undershoot and Choosing a Larger Motor
+────────────────────────────────────────────────────────────────
+• The previous rocket, using the CesaroniK160 (≈1522 Ns total impulse), only reached about 641 m, far below the 3048 m target.  
+• Therefore, a bigger motor is needed. The Pro75M1670 has about 6023.6 Ns of total impulse (roughly four times the K160), which is a good candidate to more than triple (hopefully quadruple) apogee.  
+
+────────────────────────────────────────────────────────────────
+2) Accommodating the Motor Dimensions
+────────────────────────────────────────────────────────────────
+• The Pro75M1670 motor has a 75 mm radius (0.075 m). Our rocket body must have a slightly larger radius, so I chose 0.08 m.  
+• The motor’s length is about 0.757 m, so the rocket body should be at least a meter or more to properly house it and maintain stable aerodynamic shape.
+
+────────────────────────────────────────────────────────────────
+3) Rocket Body and Material Selections
+────────────────────────────────────────────────────────────────
+• A fiberglass airframe is still a reasonable compromise between cost, strength, and weight.  
+• To keep mass under control so we can reach near 3 km (instead of going much higher or lower), I chose a 2.0 m overall body length—enough to ensure stable flight but not overly large.  
+• Wall thickness of 0.003 m (3 mm) for structural integrity without too much mass penalty.
+
+────────────────────────────────────────────────────────────────
+4) Nose Cone
+────────────────────────────────────────────────────────────────
+• A 0.4 m ogive nose cone is chosen to reduce drag and help achieve a higher apogee. Material remains fiberglass for consistency.
+
+────────────────────────────────────────────────────────────────
+5) Fins
+────────────────────────────────────────────────────────────────
+• Four fins, each with a moderately sized root chord and tip chord to ensure good stability.  
+• Root chord = 0.20 m, tip chord = 0.08 m, and a 0.25 m span help provide sufficient fin area.  
+• A small cant angle (1 degree) can help with slight spin for stability.  
+• Plywood fins (0.003 m thick) keep costs lower than carbon fiber, while still providing decent strength.
+
+────────────────────────────────────────────────────────────────
+6) Tail Cone
+────────────────────────────────────────────────────────────────
+• Length = 0.2 m, top_radius = 0.08 m (matching the main body), bottom_radius = 0.07 m (narrowing slightly for improved aerodynamics).  
+• Made of fiberglass.  
+• Ensures we satisfy the “top and bottom radius cannot be the same” requirement.
+
+────────────────────────────────────────────────────────────────
+7) Parachutes and Safe Landing
+────────────────────────────────────────────────────────────────
+• Main parachute sized at cd_s = 1.0 to slow descent suitably below about 5 m/s for a rocket in the 4–5 kg range.  
+• A small drogue at cd_s = 0.1 is triggered at apogee to help stable initial descent.  
+• Both have identical triggers here (apogee), but effectively the main is the larger canopy for final slowdown.
+
+────────────────────────────────────────────────────────────────
+8) Launch Rail and Payload
+────────────────────────────────────────────────────────────────
+• A 2.0 m rail length ensures stable launch guidance.  
+• Inclination = 90° (straight up) to minimize horizontal drift despite the 5 m/s crosswind.  
+• A small 0.5 kg payload placed at position 0.4 m from the rocket center (for stable CG location).
+
+With these choices, we expect a significantly higher apogee closer to 3048 m, and the cost should still be well below the 1000 limit, albeit higher than the previous K160 design.
+
+────────────────────────────────────────────────────────────
+Final Rocket Configuration (Python Dictionary)
+────────────────────────────────────────────────────────────
+```python
+config = {
+    "motor_choice": "Pro75M1670",  # ~6023.6 Ns total impulse
+    "rocket_body": {
+        "radius": 0.08,       # Must exceed motor radius of 0.075 m
+        "length": 2.0,        # Main cylindrical length
+        "material": "fiberglass",
+        "thickness": 0.003,   # 3 mm wall thickness
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.4,     # Nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.20,   # Fin root chord in meters
+            "tip_chord": 0.08,    # Fin tip chord in meters
+            "span": 0.25,         # Fin span in meters
+            "cant_angle": 1.0,    # Slight cant for stability
+            "material": "plywood",
+            "thickness": 0.003,   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.2,        # Tail length in meters
+            "top_radius": 0.08,   # Matches body radius
+            "bottom_radius": 0.07,# Slightly narrower
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.0,          # Larger canopy for safe descent
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.1,          # Small drogue
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,     # Launch rail in meters
+        "inclination": 90,      # Vertical to minimize horizontal drift
+        "heading": 0,           # Heading in degrees
+    },
+    "payload": {
+        "mass": 0.5,            # Payload mass in kg
+        "position": 0.4,        # Distance from rocket center (m)
+    }
+}
+```
