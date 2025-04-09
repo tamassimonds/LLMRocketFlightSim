@@ -1,0 +1,19 @@
+============================================================
+================= BULLSEYE LANDING REWARD ==================
+============================================================
+Target Landing Position: (3000.00m, 5000.00m)
+Actual Landing Position: (-1767.11m, 189.61m)
+Landing Error: 6772.38m
+
+Total Cost: $1387.62
+Impact Velocity: 10.00 m/s
+
+Reward Components:
+  Landing Accuracy (70%): 0.06 points
+  Cost Efficiency (5%): 0.00 points
+  Soft Landing (5%): 50.00 points
+  Structural Integrity (20%): 100.00 points
+
+TOTAL BULLSEYE SCORE: 22.54 / 100
+NEEDS IMPROVEMENT IN TARGETING PRECISION
+============================================================

@@ -1,0 +1,116 @@
+Below is a step-by-step explanation and rationale behind a more aggressively lightened design, intended to reach closer to the 3048 m goal with the Pro75M1670 motor while still remaining structurally sound and keeping costs lower.
+
+────────────────────────────────────────────────────────
+1. Overall Strategy
+────────────────────────────────────────────────────────
+• Previous attempts proved that the Pro75M1670 motor (≈6024 Ns total impulse) can loft a medium-weight rocket beyond 2000 m, but struggled to push it all the way to 3048 m when the rocket was heavier or had higher drag.  
+• To approach the target apogee, we reduce the rocket’s mass and drag further by shortening the body, thinning the walls (while still preventing structural failure), and limiting the nose cone, fin, and tail dimensions.
+
+────────────────────────────────────────────────────────
+2. Body Dimensions and Material
+────────────────────────────────────────────────────────
+• Motor radius is 0.075 m, so the body radius is set slightly larger at 0.076 m to fit the motor.  
+• Body length is reduced to 0.75 m to shave off weight and minimize frontal area.  
+• Chosen material: "composite" with 0.002 m (2 mm) thickness. This offers a balance of strength and relatively low mass, hopefully preventing structural failure during thrust and max dynamic pressure.
+
+────────────────────────────────────────────────────────
+3. Nose Cone
+────────────────────────────────────────────────────────
+• A "von karman" shape (0.15 m long) chosen for its efficient aerodynamic profile.  
+• Using “composite” material at the same 2 mm thickness further reduces weight while retaining adequate strength.
+
+────────────────────────────────────────────────────────
+4. Fins
+────────────────────────────────────────────────────────
+• Three fins minimize drag and cost (compared to four).  
+• Chords and span are kept modest (root chord = 0.10 m, tip chord = 0.03 m, span = 0.10 m) to reduce both mass and drag.  
+• Material set to “balsa_wood” (thickness = 0.002 m) to cut weight and cost—balsa can be reinforced or treated for extra strength while remaining light.
+
+────────────────────────────────────────────────────────
+5. Tail
+────────────────────────────────────────────────────────
+• A short 0.07 m tail transitions from top radius 0.076 m to bottom radius 0.08 m (ensures they are not equal, satisfying the design rule).  
+• Made from “composite” for sturdiness where the rocket exhaust and thrust loads are highest.
+
+────────────────────────────────────────────────────────
+6. Parachutes
+────────────────────────────────────────────────────────
+• Main chute Cd·S = 3.5 m², sized to bring a lighter rocket down at under ~5 m/s.  
+• Drogue chute Cd·S = 0.3 m², deployed at apogee for initial stabilization.  
+• Both triggered at apogee for simplicity.
+
+────────────────────────────────────────────────────────
+7. Launch Configuration
+────────────────────────────────────────────────────────
+• 2.0 m rail length to ensure stable departure.  
+• Inclination of 89°, nearly vertical, and heading 270° (west), to reduce horizontal drift in an easterly wind (20 m/s from the east).
+
+────────────────────────────────────────────────────────
+8. Payload
+────────────────────────────────────────────────────────
+• Payload mass: 0.3 kg, placed 0.35 m from rocket center to keep CG sufficiently forward for stability while limiting overall mass.
+
+────────────────────────────────────────────────────────
+Final Configuration Dictionary
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.076,
+        "length": 0.75,
+        "material": "composite",
+        "thickness": 0.002
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.15,
+            "material": "composite",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.10,
+            "tip_chord": 0.03,
+            "span": 0.10,
+            "cant_angle": 0,
+            "material": "balsa_wood",
+            "thickness": 0.002
+        },
+        "tail": {
+            "length": 0.07,
+            "top_radius": 0.076,
+            "bottom_radius": 0.08,
+            "material": "composite",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 3.5,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,
+        "inclination": 89,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 0.3,
+        "position": 0.35
+    }
+}
+```

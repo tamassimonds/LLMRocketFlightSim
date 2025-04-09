@@ -1,0 +1,81 @@
+```python
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.155,
+        "length": 1.8,
+        "material": "aluminum",
+        "thickness": 0.003,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.4,
+            "material": "aluminum",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.25,
+            "tip_chord": 0.1,
+            "span": 0.3,
+            "cant_angle": 0.4,
+            "material": "aluminum",
+            "thickness": 0.005,
+        },
+        "tail": {
+            "length": 0.3,
+            "top_radius": 0.154,
+            "bottom_radius": 0.155,
+            "material": "ABS_plastic",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 22.0,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 1.3,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.2,
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 0.8
+    }
+}
+```
+
+**Design Rationale:**
+
+1. **Motor Selection**:  
+   CesaroniO5800 (30,382 Ns) provides sufficient impulse while allowing apogee reduction via mass/drag tuning. Previous attempts showed this motor can overshoot, but with careful mass addition and drag optimization, we target 3048m.
+
+2. **Mass-Drag Co-optimization**:  
+   - **Aluminum body** (0.003m thick, 1.8m length) adds 14.2 kg vs fiberglass (7 kg), reducing acceleration.  
+   - **Shorter nose cone** (0.4m ogive) increases drag slightly while saving mass.  
+   - **Larger fins** (0.3m span) enhance stability and increase drag to limit overshoot.
+
+3. **Structural Safety**:  
+   - Aluminum body and fins handle O5800's 6,395N max thrust (stress <2 MPa vs 200+ MPa yield strength).  
+   - 2.2m rail ensures stable launch in 5 m/s crosswind (exit velocity ~30 m/s).
+
+4. **Recovery System**:  
+   - **Main chute CdS=22** ensures <5 m/s descent for 33.6 kg total mass (calculated via v = sqrt(2mg/ρCdS)).  
+   - **Drogue CdS=1.3** limits descent to ~20 m/s for safe deployment.
+
+5. **Cost Efficiency**:  
+   Aluminum is cheaper than carbon fiber, keeping costs below $1.5k while prioritizing apogee accuracy. Previous Attempt 5's $1.5k cost suggests this design balances cost and performance.

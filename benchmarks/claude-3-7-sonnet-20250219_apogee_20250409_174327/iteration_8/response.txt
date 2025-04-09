@@ -1,0 +1,133 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Comprehensive Analysis of Previous Attempts
+
+After analyzing all seven previous attempts, I can identify clear patterns:
+
+| Attempt | Motor | Apogee (m) | Error (%) | Structural | Cost ($) | Score |
+|---------|-------|------------|-----------|------------|----------|-------|
+| 1 | Pro75M1670 | 2447.52 | 19.70% | PASSED | 619.70 | 74.92 |
+| 3 | Pro75M1670 | 2280.61 | 25.18% | PASSED | 610.15 | 73.80 |
+| 7 | Pro75M1670 | 2453.77 | 19.50% | PASSED | 602.65 | 73.59 |
+| 4 | AeroTechK700W | 1819.67 | 40.30% | PASSED | 296.84 | 68.18 |
+| 5 | AeroTechK700W | 2019.49 | 33.74% | FAILED | 211.36 | 61.92 |
+| 6 | CesaroniO3700 | 534.97 | 82.45% | PASSED | 2359.35 | 30.78 |
+| 2 | CesaroniK160 | 398.21 | 86.94% | FAILED | 242.67 | 29.89 |
+
+Key insights:
+1. The Pro75M1670 motor has consistently performed best, reaching ~80% of our target altitude
+2. We need to increase altitude by ~20% from our best attempts
+3. Attempts with the Pro75M1670 motor have all been structurally sound
+4. We need to find the right balance between impulse, weight, and drag
+
+## Motor Selection Analysis
+
+Since the Pro75M1670 has consistently gotten us closest to our target, I'll continue with this motor but need to optimize further to increase altitude by approximately 20%.
+
+Looking at the next step up in our motor options:
+
+| Motor | Total Impulse (Ns) | Avg Thrust (N) | Mass (kg) |
+|-------|-------------------|----------------|-----------|
+| Pro75M1670 | 6023.6 | 1533.9 | 1.815 |
+| CesaroniO5800 | 30382.7 | 5040.2 | 12.418 |
+
+The CesaroniO5800 has 5x the impulse but is 6.8x heavier and would likely cause significant overshoot. Let's optimize with the Pro75M1670.
+
+## Altitude Optimization Strategy
+
+To increase altitude from ~2450m to 3048m (25% increase) with the same motor:
+
+1. **Weight Reduction**: The most critical factor for increasing altitude
+   - Use the lightest possible materials that maintain structural integrity
+   - Minimize dimensions while ensuring stability
+   - Reduce payload mass to absolute minimum
+
+2. **Drag Reduction**:
+   - Use an optimized nose cone shape (elliptical or von Karman)
+   - Minimize body diameter to just above motor diameter
+   - Optimize fin design for minimal drag while maintaining stability
+
+3. **Launch Configuration**:
+   - Optimize launch angle to maximize vertical component of thrust while accounting for wind
+
+## Detailed Design Calculations
+
+For Pro75M1670:
+- Motor radius: 75mm = 0.075m
+- Minimum body radius: 0.077m (provides 2mm clearance)
+- Target rocket mass without motor: ~1.0kg (using ultralight materials)
+- Total mass with motor: ~2.8kg
+- Thrust-to-weight ratio: 1533.9N / (2.8kg × 9.81m/s²) ≈ 56 (excellent for quick rail exit)
+
+## Final Optimized Design
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.077,  # Body radius in meters (minimal clearance for motor)
+        "length": 0.85,   # Body length in meters (minimized)
+        "material": "carbon_fiber",  # Lightest material with sufficient strength
+        "thickness": 0.002,  # Wall thickness in meters (minimized while maintaining strength)
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "elliptical",  # Excellent balance of drag and manufacturability
+            "length": 0.22,  # Nose cone length in meters (optimized)
+            "material": "carbon_fiber",  # Lightest material with sufficient strength
+        },
+        "fins": {
+            "number": 3,  # Minimum for stability
+            "root_chord": 0.11,  # Fin root chord in meters
+            "tip_chord": 0.055,  # Fin tip chord in meters
+            "span": 0.085,  # Fin span in meters
+            "cant_angle": 0,  # No cant angle for minimum drag
+            "material": "carbon_fiber",  # Lightest material with sufficient strength
+            "thickness": 0.0035  # Fin thickness in meters (optimized for strength/weight)
+        },
+        "tail": {
+            "length": 0.14,  # Tail length in meters
+            "top_radius": 0.076,  # Top radius in meters
+            "bottom_radius": 0.077,  # Bottom radius in meters
+            "material": "carbon_fiber",  # Lightest material with sufficient strength
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 2.2,  # Main parachute CD_s (sized for safe landing)
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.25,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.5,  # Length of the launch rail in meters
+        "inclination": 89,   # Rail inclination in degrees (nearly vertical for maximum altitude)
+        "heading": 270,      # Launch heading in degrees (west, into the wind)
+    },
+    "payload": {
+        "mass": 0.15,  # Payload mass in kg (absolute minimum)
+        "position": 0.25  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This design represents the ultimate optimization of the Pro75M1670 configuration:
+
+1. **Material Selection**: Carbon fiber throughout provides the best strength-to-weight ratio
+2. **Minimized Dimensions**: Body radius is just 2mm larger than the motor radius
+3. **Optimized Aerodynamics**: Elliptical nose cone and minimal fin size reduce drag
+4. **Weight Reduction**: Minimized wall thickness, payload mass, and overall dimensions
+5. **Launch Configuration**: Nearly vertical launch (89°) to maximize altitude while still accounting for wind
+
+The design pushes the limits of weight reduction while maintaining structural integrity, which should provide the ~20% increase in altitude needed to reach our target of 3048m.

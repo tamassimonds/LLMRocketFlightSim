@@ -1,0 +1,142 @@
+To improve our chances of reaching the desired apogee and addressing the limitations identified in previous attempts, let's perform an analysis and implement a more structured design process.
+
+### Key Learnings from Previous Attempts:
+
+1. **Motor Selection**: The motors used in previous attempts either didn't provide enough thrust for the target apogee or were too costly. Choosing the correct balance is crucial.
+   
+2. **Aerodynamics**: The shape of the rocket, particularly the nose cone and fins, greatly affects max altitude and stability, especially with strong winds.
+
+3. **Structural Weight**: Lighter materials, like carbon fiber, have been consistently advantageous but are costly.
+
+4. **Parachute Design**: Insufficient parachute designs can lead to unsafe landing velocities.
+
+5. **Launch Configuration**: The launch angle and heading can help mitigate atmospheric conditions.
+
+### Improved Design Strategy:
+
+#### Step 1: Motor Selection
+Our previous motor choices resulted in either inadequate launch altitude or exceeded budget constraints. Considering the available options:
+
+- **Motor**: Select **CesaroniK160**. While less powerful, its Isp and extended burn time could allow for a leverage point about achieving adequate altitude affordably.
+
+#### Step 2: Rocket Body
+Select materials and dimensions to meet all constraints, balancing structural integrity with weight:
+
+- **Material**: For cost-effectiveness and adequate performance, use **fiberglass**.
+- **Radius**: 0.09 meters to accommodate the motor easily.
+- **Length**: 3.0 meters, ensuring room for components and enhanced stability.
+- **Thickness**: 0.005 meters.
+
+#### Step 3: Nose Cone
+Select a design that minimizes drag while accommodating the rocket’s dimensions.
+
+- **Shape**: Opt for **von kármán** for reduced drag efficiency.
+- **Length**: 0.45 meters.
+- **Material**: Use **composite** material for effective weight management and cost.
+
+#### Step 4: Fins
+Ensure stability with increased number and optimized dimensions:
+
+- **Number**: 4 fins for increased stability and control.
+- **Material**: Opt for **carbon_fiber** despite cost due to its lightweight, strength.
+- **Dimensions**:
+  - **Root Chord**: 0.25 meters.
+  - **Tip Chord**: 0.125 meters.
+  - **Span**: 0.225 meters.
+  - **Cant Angle**: 0.5 degrees for roll stability.
+  - **Thickness**: 0.003 meters. 
+
+#### Step 5: Tail
+Adjust tail dimensions to ensure stabilization and structural soundness:
+
+- **Material**: Select **fiberglass**.
+- **Length**: 0.25 meters.
+- **Top Radius**: 0.09 meters.
+- **Bottom Radius**: 0.10 meters.
+
+#### Step 6: Parachute System
+Ensure the parachutes are designed effectively:
+
+- **Main Parachute**:
+  - **Cd_S**: 1.0 for soft landing.
+- **Drogue Parachute**:
+  - **Cd_S**: 0.3 for stability during descent.
+
+#### Step 7: Launch Configuration
+Adapt launch configuration to counter wind:
+
+- **Launch Rail Length**: 6.0 meters for additional stabilization before motor burnout.
+- **Inclination**: 88 degrees for slightly direct upward trajectory.
+- **Heading**: 180 degrees against east wind to balance.
+  
+#### Step 8: Payload
+A lightweight payload for practicality:
+
+- **Mass**: 0.5 kg.
+- **Position**: 1.5 meters from base for balanced center of gravity.
+
+### Proposed Design
+
+```python
+config = {
+    "motor_choice": "CesaroniK160",
+    "rocket_body": {
+        "radius": 0.09,
+        "length": 3.0,
+        "material": "fiberglass",
+        "thickness": 0.005,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.45,
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.25,
+            "tip_chord": 0.125,
+            "span": 0.225,
+            "cant_angle": 0.5,
+            "material": "carbon_fiber",
+            "thickness": 0.003,
+        },
+        "tail": {
+            "length": 0.25,
+            "top_radius": 0.09,
+            "bottom_radius": 0.10,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.0,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 6.0,
+        "inclination": 88,
+        "heading": 180,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 1.5,
+    }
+}
+```
+
+### Final Considerations:
+This design focuses on cost-effective optimization of thrust, aerodynamics, and safety, aimed at hitting the target apogee efficiently while keeping within budgetary constraints. The motor choice embodies a calculated risk offset by balanced mechanical design, suitable material choice, and specified aerodynamic features.

@@ -1,0 +1,18 @@
+============================================================
+==================== REWARD CALCULATION ====================
+============================================================
+Target Apogee: 3048.00 m
+Actual Apogee: 19.91 m
+Error: 99.35%
+Total Cost: $343.19
+
+Reward Components:
+  Apogee Accuracy: 0.65 points
+  Horizontal Distance: 90.40 points
+  Cost Efficiency: 65.68 points
+  Impact Velocity: 80.00 points
+  Structural Integrity: 100.00 points
+
+TOTAL REWARD SCORE: 0.41 / 100
+NEEDS IMPROVEMENT
+============================================================

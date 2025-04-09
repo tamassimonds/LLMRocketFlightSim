@@ -1,0 +1,98 @@
+To improve the rocket design to achieve the target landing position of (3000.0m, 5000.0m), I will refine the components and parameters based on the previous attempt, while keeping in mind the constraints and requirements:
+
+1. **Motor Selection**: 
+   - The **CesaroniO5800** motor’s high thrust is suitable, but given that it may lead to excess velocity, I'll consider the **CesaroniO3700** motor, which has a slightly lower thrust but longer burn time. This should reduce peak velocity and help with a controlled descent.
+   - The **CesaroniO3700** offers lower thrust (4030.3 N) and a longer burn time (8.2 s) which provides better control for ascent.
+
+2. **Rocket Body Design**:
+   - I will use a body radius of **0.12 m**, which is slightly larger to ensure it is greater than the motor radius (0.161 m).
+   - Body length will be **1.8 m**, allowing for more structure and stability. I'll use **carbon fiber** for light weight and strength, and maintain a wall thickness of **0.006 m**.
+
+3. **Nose Cone Design**:
+   - I'll stick with an ogive shape for reduced drag, with a length of **0.35 m** to improve aerodynamic efficiency. The material will again be **carbon fiber** to maintain consistency.
+
+4. **Fin Design**:
+   - To enhance stability, I will use **5 fins**. The root chord will be **0.2 m**, the tip chord **0.1 m**, and the span will also be **0.3 m**. The fins will be made of **carbon fiber** for strength, and their thickness will be **0.005 m**.
+
+5. **Tail Design**:
+   - For the tail section, I will use a length of **0.25 m**, with a top radius of **0.065 m** and bottom radius of **0.075 m** to ensure stability and proper airflow. The material choice remains **carbon fiber**.
+
+6. **Parachute Specifications**:
+   - For the main parachute, I will use a CD_s area of **0.8 m²**, which will significantly enhance the deceleration during descent and ensure a landing speed of less than 5 m/s.
+   - The drogue parachute will have a CD_s area of **0.3 m²** for initial slowing of descent.
+
+7. **Launch Rail Configuration**:
+   - The launch rail length will be **2.5 m**, this will aid in maintaining stability during liftoff. The inclination will remain vertical (90 degrees) and the heading will be set to **0 degrees**.
+
+8. **Payload Consideration**:
+   - The payload mass will be **0.5 kg**, with its position set to **0.9 m** from the rocket center to ensure a well-balanced rocket.
+
+### Final Configuration:
+
+With these refinements in mind, here’s the updated rocket design configuration in the required format:
+
+```python
+config = {
+    "motor_choice": "CesaroniO3700",  # Change to O3700 for more control
+    "rocket_body": {
+        "radius": 0.12,  # Body radius in meters
+        "length": 1.8,   # Body length in meters
+        "material": "carbon_fiber",  # Strong and lightweight
+        "thickness": 0.006,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",  # Aerodynamically efficient nose cone
+            "length": 0.35,   # Nose cone length in meters
+            "material": "carbon_fiber",  # Consistent material
+        },
+        "fins": {
+            "number": 5,  # Increased number of fins for stability
+            "root_chord": 0.2,  # Fin root chord in meters
+            "tip_chord": 0.1,   # Fin tip chord in meters
+            "span": 0.3,        # Fin span in meters
+            "cant_angle": 0,    # vertical fins
+            "material": "carbon_fiber",  # Fins material
+            "thickness": 0.005  # Fin thickness
+        },
+        "tail": {
+            "length": 0.25,  # Tail length in meters
+            "top_radius": 0.065,  # Top radius in meters
+            "bottom_radius": 0.075,  # Bottom radius in meters
+            "material": "carbon_fiber",  # Consistent material
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.8,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.5,  # Length of the launch rail in meters
+        "inclination": 90,    # Rail inclination in degrees (vertical)
+        "heading": 0,         # Launch heading in degrees
+    },
+    "payload": {
+        "mass": 0.5,  # Payload mass in kg
+        "position": 0.9  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+### Conclusion
+This updated rocket design will enhance flight stability, control and safety during descent, while aiming to meet the target conditions for landing while minimizing the risks and ensuring structural integrity. The final assembly is focused on achieving ideal performance against the scoring metrics outlined. The use of lightweight materials like carbon fiber is crucial to maintaining weight efficiency and structural integrity. 
+
+This configuration should yield a better score and a more successful flight.

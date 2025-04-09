@@ -1,0 +1,123 @@
+# Rocket Design Analysis
+
+## Initial Considerations
+
+To design a rocket that reaches a target apogee of 3048 meters (10,000 ft) in 20 m/s easterly winds, I need to balance several factors:
+
+1. **Motor selection**: Must provide enough thrust to reach target apogee without excessive overshoot
+2. **Aerodynamic stability**: Critical for maintaining controlled flight in windy conditions
+3. **Weight optimization**: Lighter rockets reach higher altitudes with the same motor
+4. **Recovery system**: Must ensure safe landing (< 5 m/s impact velocity)
+5. **Cost efficiency**: Lower cost improves overall score
+
+## Motor Selection Analysis
+
+First, I'll analyze the available motors to find one with appropriate total impulse for our target altitude:
+
+| Motor | Total Impulse (Ns) | Avg Thrust (N) | Mass (kg) | Cost Factor |
+|-------|-------------------|----------------|-----------|-------------|
+| Pro75M1670 | 6023.6 | 1533.9 | 1.815 | Medium |
+| AeroTechK700W | 2249 | 658.7 | 0.732 | Low |
+| CesaroniM1670 | 6023.6 | 1533.9 | 3.101 | Medium |
+| AeroTechH128W | 176.5 | 141.2 | 0.108 | Very Low |
+| CesaroniO3700 | 29930.2 | 2836.9 | 14.194 | High |
+| CesaroniO5800 | 30382.7 | 5040.2 | 12.418 | High |
+| CesaroniK160 | 1521.7 | 190.2 | 0.7 | Low |
+
+For a 3048m apogee, a medium-impulse motor like the Pro75M1670 or CesaroniM1670 should be sufficient. The O-class motors would likely cause significant overshoot and are more expensive. The H and K class motors might be underpowered.
+
+Between Pro75M1670 and CesaroniM1670, the Pro75M1670 has the same impulse but lower mass, making it more efficient for our purposes.
+
+## Rocket Body Design
+
+For a medium-powered rocket:
+- Body radius: Should be slightly larger than motor radius (75mm = 0.075m for Pro75M1670)
+- Length: Approximately 1.0-1.2m for stability and component housing
+- Material: Balsa wood or fiberglass offers good strength-to-weight ratio at reasonable cost
+
+## Aerodynamic Considerations
+
+- **Nose cone**: Ogive shape provides good aerodynamic performance
+- **Fins**: 3-4 fins with moderate size for stability in wind
+- **Center of Pressure (CP)**: Must be behind Center of Gravity (CG) by at least 1 caliber (1 body diameter)
+
+## Recovery System
+
+For a safe landing (< 5 m/s):
+- Main parachute CD_S calculation: 
+  - For a rocket mass of ~3-4 kg
+  - Terminal velocity = √(2mg/ρACD)
+  - For v < 5 m/s, CD_S ≈ 2.5-3.0 m²
+
+## Wind Compensation
+
+With 20 m/s easterly winds, I'll angle the launch rail slightly into the wind (westward) to compensate for drift:
+- Launch inclination: 85-88 degrees (slightly off vertical)
+- Heading: 270 degrees (west, into the wind)
+
+## Final Design Configuration
+
+Based on these calculations and considerations, here's my optimized rocket design:
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.08,  # Body radius in meters (slightly larger than motor radius)
+        "length": 1.1,   # Body length in meters
+        "material": "fiberglass",
+        "thickness": 0.003,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.25,  # Nose cone length in meters
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.12,  # Fin root chord in meters
+            "tip_chord": 0.06,   # Fin tip chord in meters
+            "span": 0.08,        # Fin span in meters
+            "cant_angle": 0,     # Cant angle in degrees
+            "material": "plywood",
+            "thickness": 0.004   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.2,  # Tail length in meters
+            "top_radius": 0.075,  # Top radius in meters
+            "bottom_radius": 0.08,  # Bottom radius in meters
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 2.8,  # Main parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.5,  # Length of the launch rail in meters
+        "inclination": 87,   # Rail inclination in degrees (slightly angled into wind)
+        "heading": 270,      # Launch heading in degrees (west, into the wind)
+    },
+    "payload": {
+        "mass": 0.3,  # Payload mass in kg
+        "position": 0.4  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This design balances performance, stability, and cost-effectiveness to reach the target apogee while ensuring a safe landing and minimizing horizontal drift in the specified wind conditions.

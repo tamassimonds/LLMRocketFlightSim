@@ -1,0 +1,119 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Analysis of Previous Attempts
+
+Looking at the four previous attempts, I can identify clear patterns:
+
+1. **First attempt**: Pro75M1670 motor → 2447.52m (19.7% below target), structurally sound, $619.70
+2. **Second attempt**: CesaroniK160 motor → 398.21m (86.94% below target), structural failure, $242.67
+3. **Third attempt**: Pro75M1670 motor → 2280.61m (25.18% below target), structurally sound, $610.15
+4. **Fourth attempt**: AeroTechK700W motor → 1819.67m (40.30% below target), structurally sound, $296.84
+
+The Pro75M1670 motor has consistently gotten us closest to our target altitude, but still falls short by ~20-25%. The AeroTechK700W with a lightweight design performed better than expected but still fell short by 40%.
+
+## Motor Selection Reconsideration
+
+Based on our previous attempts, we need more impulse than the Pro75M1670 provides, but the O-class motors would likely cause significant overshoot and increase cost unnecessarily.
+
+The CesaroniM1670 has the same impulse as Pro75M1670 (6023.6 Ns) but is heavier (3.101 kg vs 1.815 kg), which would reduce altitude further.
+
+Let's try a different approach with the AeroTechK700W motor. This motor has less impulse (2249 Ns) but is also much lighter (0.732 kg). If we can optimize the rocket design to be extremely lightweight and aerodynamically efficient, we might be able to reach our target altitude with better cost efficiency.
+
+## Altitude Estimation and Optimization
+
+Using the rocket equation approximation and our previous results:
+- With Pro75M1670, we reached ~2350m (average of attempts 1 & 3)
+- With AeroTechK700W, we reached ~1820m (attempt 4)
+
+The AeroTechK700W attempt showed promise but needs optimization. Let's calculate what we need:
+- To reach 3048m from 1820m, we need approximately a 67% increase in performance
+- This can be achieved through further weight reduction and drag minimization
+
+## Weight and Drag Optimization Strategy
+
+1. **Material Selection**:
+   - Use balsa wood for fins (extremely lightweight)
+   - Use fiberglass for body (lighter than carbon fiber but still strong)
+   - Minimize wall thickness while maintaining structural integrity
+
+2. **Aerodynamic Optimization**:
+   - Elliptical nose cone (good balance of drag reduction and ease of manufacturing)
+   - Optimize fin shape for minimum drag
+   - Reduce body diameter to absolute minimum that can accommodate the motor
+
+3. **Launch Configuration**:
+   - Adjust launch angle to compensate for wind while maximizing vertical component of thrust
+
+## Detailed Calculations
+
+For AeroTechK700W:
+- Motor radius: 54mm = 0.054m
+- Minimum body radius: 0.057m (provides 3mm clearance)
+- Estimated rocket mass without motor: ~0.5kg (using ultralight materials)
+- Total mass with motor: ~1.2kg
+- Thrust-to-weight ratio: 658.7N / (1.2kg × 9.81m/s²) ≈ 56 (excellent for quick rail exit)
+
+## Final Design Configuration
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.057,  # Body radius in meters (minimal clearance for motor)
+        "length": 0.7,    # Body length in meters (minimized)
+        "material": "fiberglass",  # Lightweight but strong material
+        "thickness": 0.0018,  # Wall thickness in meters (minimized)
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "elliptical",  # Good balance of performance and simplicity
+            "length": 0.18,  # Nose cone length in meters
+            "material": "fiberglass",  # Lightweight but strong material
+        },
+        "fins": {
+            "number": 3,  # Minimum for stability
+            "root_chord": 0.09,  # Fin root chord in meters
+            "tip_chord": 0.04,  # Fin tip chord in meters
+            "span": 0.07,  # Fin span in meters
+            "cant_angle": 0,  # No cant angle for minimum drag
+            "material": "balsa_wood",  # Extremely lightweight material
+            "thickness": 0.004  # Fin thickness in meters (increased for structural integrity)
+        },
+        "tail": {
+            "length": 0.12,  # Tail length in meters
+            "top_radius": 0.052,  # Top radius in meters
+            "bottom_radius": 0.057,  # Bottom radius in meters
+            "material": "fiberglass",  # Lightweight but strong material
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.0,  # Main parachute CD_s (sized for lighter rocket)
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.15,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.2,  # Length of the launch rail in meters
+        "inclination": 88,   # Rail inclination in degrees (slightly angled into wind)
+        "heading": 270,      # Launch heading in degrees (west, into the wind)
+    },
+    "payload": {
+        "mass": 0.1,  # Payload mass in kg (minimized)
+        "position": 0.25  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This design takes the lightweight approach with the AeroTechK700W motor to the extreme. By using balsa wood fins, minimizing body dimensions, and using fiberglass for the body and nose cone, we've created an ultra-lightweight rocket that should achieve significantly better altitude than our previous attempt with the same motor. The launch angle has been adjusted to 88 degrees to provide a better balance between wind compensation and vertical thrust component.

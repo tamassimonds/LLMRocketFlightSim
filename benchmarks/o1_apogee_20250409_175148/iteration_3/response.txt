@@ -1,0 +1,116 @@
+Below is a step-by-step explanation of the rationale behind the updated design, followed by the final configuration dictionary.
+
+────────────────────────────────────────────────────────
+1. Target Apogee and Motor Choice
+────────────────────────────────────────────────────────
+• We need to increase our altitude from ~2500 m toward 3048 m without overshooting or causing structural failure.  
+• The Pro75M1670 motor (total impulse ~6024 Ns) is retained to avoid massive changes in cost and complexity.  
+• To reach a higher apogee with the same motor, we reduce overall rocket mass and drag.
+
+────────────────────────────────────────────────────────
+2. Body Dimensions and Material
+────────────────────────────────────────────────────────
+• Reducing the rocket body length from 1.2 m to 1.0 m and keeping radius just above the motor’s 0.075 m (chosen 0.076 m) lowers mass and drag.  
+• Using carbon_fiber with a 3 mm wall (0.003 m) ensures sufficient strength at reduced weight (balancing potential structural loads).
+
+────────────────────────────────────────────────────────
+3. Nose Cone
+────────────────────────────────────────────────────────
+• Ogive shape (0.2 m length), carbon_fiber.  
+• Slightly shorter nose cone than before reduces mass while maintaining reasonable aerodynamic efficiency.
+
+────────────────────────────────────────────────────────
+4. Fins
+────────────────────────────────────────────────────────
+• Three fins to reduce drag and cost vs. four.  
+• Slightly smaller dimensions (root chord=0.14 m, tip chord=0.05 m, span=0.12 m) help reduce mass and drag.  
+• Carbon_fiber at 0.003 m thickness for robustness under dynamic loads.
+
+────────────────────────────────────────────────────────
+5. Tail
+────────────────────────────────────────────────────────
+• 0.1 m length, top radius 0.076 m, bottom radius 0.08 m. This slight flare helps with base drag while satisfying the rule that top and bottom radii differ.  
+• Carbon_fiber to match body strength.
+
+────────────────────────────────────────────────────────
+6. Parachutes
+────────────────────────────────────────────────────────
+• Main parachute Cd·S = 4.5 m² aims for a <5 m/s landing speed at total rocket mass around 7–9 kg.  
+• Drogue chute Cd·S = 0.3 m² for stable initial descent.  
+• Both triggered at apogee for simplicity.
+
+────────────────────────────────────────────────────────
+7. Launch Rail Configuration
+────────────────────────────────────────────────────────
+• 2.0 m rail for stable guidance.  
+• Slight tilt (88° inclination) into the wind (heading=90°) to reduce horizontal drift caused by the 20 m/s wind from the east.  
+
+────────────────────────────────────────────────────────
+8. Payload
+────────────────────────────────────────────────────────
+• 0.5 kg mass placed at 0.4 m from rocket center assists in maintaining a forward center of gravity.
+
+────────────────────────────────────────────────────────
+Final Configuration Dictionary
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.076,
+        "length": 1.0,
+        "material": "carbon_fiber",
+        "thickness": 0.003
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.2,
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.14,
+            "tip_chord": 0.05,
+            "span": 0.12,
+            "cant_angle": 0,
+            "material": "carbon_fiber",
+            "thickness": 0.003
+        },
+        "tail": {
+            "length": 0.1,
+            "top_radius": 0.076,
+            "bottom_radius": 0.08,
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 4.5,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,
+        "inclination": 88,
+        "heading": 90,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 0.4
+    }
+}
+```

@@ -1,0 +1,94 @@
+To design a rocket that meets the target apogee while optimizing cost and ensuring safety and structural integrity, we need to identify the issues in the previous attempts. The key challenge seems to be achieving the desired altitude, as the rockets in prior attempts fell significantly short. Our strategy will involve improving motor thrust and adjusting the design for optimal aerodynamics without significantly increasing costs.
+
+### Strategy for Improved Design
+
+1. **Motor Selection**:
+   - Prior attempts with the **CesaroniM1670** motor did not reach the target apogee. Therefore, we need a more powerful motor, primarily focusing on higher thrust and total impulse.
+   - The **CesaroniO3700** motor seems promising, providing a very high thrust (4030.3 N) and a total impulse of 29930.2 Ns.
+
+2. **Rocket Body**:
+   - We will choose lightweight materials to minimize mass while maintaining structural integrity.
+   - Increase the rocket size to accommodate a larger motor.
+
+3. **Aerodynamics**:
+   - A nose cone shape that reduces drag, such as a Von Kármán shape.
+   - Opt for lightweight materials like carbon fiber for fins and body to improve performance.
+
+4. **Parachute System**:
+   - Ensure the parachutes enable a gentle landing, reducing impact velocity.
+
+5. **Launch Rail Settings**:
+   - Adjust rail inclination and heading to minimize wind effects.
+
+### Calculation Considerations
+
+- The current attempts indicate a priority need for higher thrust motors.
+- Estimate required burn time and impulse to reach the target apogee using a simplified physics calculation.
+- Consider using lightweight and aerodynamic materials to lower drag.
+
+### Proposed Design
+
+```python
+config = {
+    "motor_choice": "CesaroniO3700",
+    "rocket_body": {
+        "radius": 0.161,  # Just enough to fit motor and payload
+        "length": 2.9,
+        "material": "carbon_fiber",
+        "thickness": 0.004,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.4,
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.25,
+            "tip_chord": 0.1,
+            "span": 0.3,
+            "cant_angle": 0,
+            "material": "carbon_fiber",
+            "thickness": 0.003,
+        },
+        "tail": {
+            "length": 0.2,
+            "top_radius": 0.08,
+            "bottom_radius": 0.09,
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.8,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 6.0,  # Ensure stability at launch
+        "inclination": 88,   # Slight angle to mitigate wind effects
+        "heading": 180,      # Opposing wind direction
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 1.45,
+    }
+}
+```
+
+### Final Thoughts
+
+This design utilizes the high-thrust **CesaroniO3700** motor, lighter and aerodynamic construction components, and precautions to handle wind effectively. This should maximize the rocket's potential to reach the desired apogee. Adjustments to parachute configuration improve recovery safety, and structural integrity should be maintained with quality materials like carbon fiber. The adjustments balance cost efficiency with performance objectives, primarily focusing on reaching the maximum height safely.

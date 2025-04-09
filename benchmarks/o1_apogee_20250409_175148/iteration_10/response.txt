@@ -1,0 +1,116 @@
+Below is a step-by-step reasoning for a refined rocket design using the CesaroniO5800 motor. The previous best attempt (≈2996 m apogee) fell just shy of the 3048 m target. To squeeze out the extra altitude, we are making small reductions in diameter, overall length, outer wall thickness, fin area, and payload mass. This lightens the rocket slightly (reducing both mass and drag), helping the powerful O5800 motor propel it closer to the target apogee without incurring a structural failure.
+
+────────────────────────────────────────────────────────
+1. Motor Choice
+────────────────────────────────────────────────────────
+• We continue with the CesaroniO5800. Its ~30 kN·s total impulse and ~5 kN average thrust have proven capable of high altitudes if the rocket’s mass is kept modest.
+
+────────────────────────────────────────────────────────
+2. Body Dimensions & Material
+────────────────────────────────────────────────────────
+• The O5800 has a 150 mm radius, so the rocket body radius must exceed this. We use 0.1505 m, which is just above the required minimum.  
+• Shortening the main body to 1.05 m helps shed weight while still accommodating the 0.754 m motor, parachute(s), and a small payload section.  
+• Fiberglass at 0.003 m wall thickness strikes a balance between lower mass and adequate strength under high thrust.
+
+────────────────────────────────────────────────────────
+3. Nose Cone
+────────────────────────────────────────────────────────
+• A “von karman” shape is retained for low-drag performance, especially useful if transonic speeds are reached.  
+• The nose cone length is shortened to 0.21 m from previous attempts to remove extra mass and frontal area, while still providing a streamlined forebody.  
+• Material: fiberglass (same 3 mm thickness), making the nose cone suitably robust.
+
+────────────────────────────────────────────────────────
+4. Fins
+────────────────────────────────────────────────────────
+• Three fins to keep drag, cost, and complexity down.  
+• Slightly reduced planform dimensions (root chord=0.17 m, tip chord=0.06 m, span=0.11 m) reduce both drag and weight.  
+• Fiberglass at 0.0025 m thickness retains enough strength for the high dynamic pressures expected under a 5000 N thrust.
+
+────────────────────────────────────────────────────────
+5. Tail
+────────────────────────────────────────────────────────
+• A 0.06 m tail cone transitions from top radius=0.1505 m to bottom radius=0.16 m (they cannot be equal per design checks).  
+• Fiberglass construction to carry thrust loads and heat near the nozzle exit, matching the rest of the airframe’s thickness for manufacturing simplicity.
+
+────────────────────────────────────────────────────────
+6. Parachutes
+────────────────────────────────────────────────────────
+• Main parachute Cd·S=4.8 m² should hold ground-impact speeds near or below 5 m/s for a ≤10 kg rocket.  
+• Drogue chute Cd·S=0.4 m² for basic stabilization, both triggered at apogee for a straightforward recovery sequence.
+
+────────────────────────────────────────────────────────
+7. Launch Configuration
+────────────────────────────────────────────────────────
+• A 3.0 m launch rail ensures stable exit under the O5800’s high thrust.  
+• Slight tilt (88°) and heading=270° (west) help limit the horizontal drift in the 20 m/s wind from the east.
+
+────────────────────────────────────────────────────────
+8. Payload
+────────────────────────────────────────────────────────
+• Reducing payload mass to 0.8 kg (down from 0.9 kg) lowers inert mass and further boosts apogee.  
+• Placed at 0.48 m from the rocket’s center to keep the center of gravity forward for a stable flight.
+
+────────────────────────────────────────────────────────
+Final Configuration Dictionary
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.1505,
+        "length": 1.05,
+        "material": "fiberglass",
+        "thickness": 0.003
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.21,
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.17,
+            "tip_chord": 0.06,
+            "span": 0.11,
+            "cant_angle": 0,
+            "material": "fiberglass",
+            "thickness": 0.0025
+        },
+        "tail": {
+            "length": 0.06,
+            "top_radius": 0.1505,
+            "bottom_radius": 0.16,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 4.8,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.4,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 3.0,
+        "inclination": 88,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 0.8,
+        "position": 0.48
+    }
+}
+```

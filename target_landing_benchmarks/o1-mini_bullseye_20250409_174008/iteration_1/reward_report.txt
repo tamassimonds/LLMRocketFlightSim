@@ -1,0 +1,20 @@
+=== COMPLEX BULLSEYE LANDING REPORT ===
+Total Score: 16.41/100
+
+Landing Accuracy:
+  • Error: 5992.16m
+  • Class: MISS
+  • Score: 0.00/100
+
+Apogee Targeting:
+  • Error: 68.00%
+  • Score: 0.31/100
+
+Cost Efficiency:
+  • Total Cost: $752.35
+  • Score: 75.35/100
+
+Safety:
+  • Impact Velocity: 10.00 m/s
+  • Structural Integrity: PASSED
+  • Score: 100.00/100

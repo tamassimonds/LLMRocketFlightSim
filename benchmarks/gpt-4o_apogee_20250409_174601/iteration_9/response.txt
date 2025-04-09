@@ -1,0 +1,134 @@
+To achieve the target apogee of 3048 meters, it's essential to critically analyze previous attempts and focus on optimizing key parameters, particularly in motor selection, aerodynamic efficiency, and weight management. Here's an improved strategy and corresponding design:
+
+### Analysis of Issues:
+1. **Motor Selection**: Previous choices either underperformed or exceeded costs. The chosen motor must strike a balance between providing sufficient thrust and maintaining affordability.
+   
+2. **Aerodynamics**: Streamlining the nose cone and optimizing fin structure to reduce drag and improve stability in wind conditions is crucial.
+
+3. **Weight and Structure**: Materials like carbon_fiber offer strength and lightweight properties, but should be used judiciously to control costs.
+
+4. **Parachutes**: Effective deployment for safe landing with minimal horizontal drift is essential.
+
+### Revised Design Strategy:
+
+#### Step 1: Motor Selection
+After reviewing power, thrust, and cost metrics:
+- **Motor**: Choose **CesaroniM1670** for its significant thrust and total impulse, which should suit the target apogee given proper aerodynamic configuration.
+
+#### Step 2: Rocket Body
+Ensure dimensions and materials balance performance and affordability:
+- **Material**: Use **fiberglass** for acceptable strength and weight properties.
+- **Dimensions**:
+  - **Radius**: 0.08 meters to ensure adequate fit and minimize drag.
+  - **Length**: 2.9 meters for stability and component accommodation.
+  - **Thickness**: 0.005 meters for sufficient structural integrity.
+
+#### Step 3: Nose Cone
+Prioritize aerodynamic efficiency:
+- **Shape**: Opt for a **von kármán** shape, effective for reducing drag.
+- **Length**: 0.4 meters.
+- **Material**: Use **composite** for lightweight efficiency and reduced nose drag.
+
+#### Step 4: Fins
+Improve stability and efficiency:
+- **Number**: 4 fins for comprehensive stability.
+- **Material**: Adopt **carbon_fiber** for strength.
+- **Dimensions**:
+  - Root Chord: 0.18 meters.
+  - Tip Chord: 0.09 meters.
+  - Span: 0.2 meters.
+  - Cant Angle: 1 degree to provide passive spin stabilization.
+  - Thickness: 0.003 meters.
+
+#### Step 5: Tail
+Assist in stabilization:
+- **Material**: Use **fiberglass** to save cost and weight.
+- **Dimensions**:
+  - Length: 0.2 meters.
+  - Top Radius: 0.08 meters.
+  - Bottom Radius: 0.09 meters.
+
+#### Step 6: Parachute System
+Ensure safe, controlled descent:
+- **Main Parachute**:
+  - **Cd_S**: 0.85 for effective slowing.
+  
+- **Drogue Parachute**:
+  - **Cd_S**: 0.2 to initiate controlled descent pre-main deployment.
+
+#### Step 7: Launch Configuration
+Counter wind effects:
+- **Rail Length**: 5.5 meters for initial guidance.
+- **Inclination**: 89 degrees for near-vertical ascent.
+- **Heading**: 180 degrees to oppose the eastward wind.
+
+#### Step 8: Payload
+Keep lightweight and centered:
+- **Mass**: 0.5 kg.
+- **Position**: 1.45 meters from base to optimize center of gravity.
+
+### Proposed Rocket Design:
+
+```python
+config = {
+    "motor_choice": "CesaroniM1670",
+    "rocket_body": {
+        "radius": 0.08,
+        "length": 2.9,
+        "material": "fiberglass",
+        "thickness": 0.005,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von kármán",
+            "length": 0.4,
+            "material": "composite",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.18,
+            "tip_chord": 0.09,
+            "span": 0.2,
+            "cant_angle": 1,
+            "material": "carbon_fiber",
+            "thickness": 0.003,
+        },
+        "tail": {
+            "length": 0.2,
+            "top_radius": 0.08,
+            "bottom_radius": 0.09,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.85,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 5.5,
+        "inclination": 89,
+        "heading": 180,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 1.45,
+    }
+}
+```
+
+### Final Considerations:
+This design employs a balance of robust thrust, aerodynamic efficiency, and cost-effective materials to achieve the desired apogee. The proposed adjustments should optimize launch conditions, counteract external environmental influences, and ensure a safe return, maximally hitting the mark on performance and efficiency.

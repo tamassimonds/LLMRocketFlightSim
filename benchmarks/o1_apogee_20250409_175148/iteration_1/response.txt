@@ -1,0 +1,121 @@
+Below is a step-by-step rationale for the proposed design, followed by the final configuration dictionary.
+
+────────────────────────────────────────────────────────
+1. Motor Selection
+────────────────────────────────────────────────────────
+• Target apogee is about 3048 m.  
+• Smaller motors (e.g., H128 or K160) likely will not easily reach 3 km if the rocket is of moderate size.  
+• The Pro75M1670 (CTI) motor provides 6023.6 Ns of total impulse and a relatively light dry mass (1.815 kg), making it suitable to loft a ~10 kg rocket near 3048 m.  
+• Chose Pro75M1670 over the near-identical CesaroniM1670 because it is lighter (and potentially cheaper overall).  
+
+────────────────────────────────────────────────────────
+2. Body Dimensions and Material
+────────────────────────────────────────────────────────
+• Motor radius is 0.075 m; rocket’s body radius must exceed that. A radius of 0.08 m is chosen to allow space around the motor and simplify construction.  
+• Body length of 1.5 m is enough to house the motor (0.757 m) plus space for parachute, payload, etc., without being excessively large (helps minimize cost, drag, and mass).  
+• Wall thickness of 3 mm (0.003 m) in fiberglass balances strength and weight. Fiberglass is cheaper than carbon fiber but still strong enough for ~2200 N of thrust.  
+
+────────────────────────────────────────────────────────
+3. Nose Cone Dimensions and Material
+────────────────────────────────────────────────────────
+• Nose cone length of 0.25 m (ogive shape) provides a reasonably aerodynamic shape.  
+• Material is also fiberglass for manufacturing simplicity and cost-effectiveness.  
+
+────────────────────────────────────────────────────────
+4. Fin Design and Material
+────────────────────────────────────────────────────────
+• Three fins (instead of four) to reduce cost and drag.  
+• Root chord 0.2 m, tip chord 0.08 m, span 0.15 m, thickness 0.003 m.  
+• Plywood is chosen for fin material: cheaper and still robust enough for flight loads.  
+• Cant angle of 0° to keep design simpler and cost lower.  
+
+────────────────────────────────────────────────────────
+5. Tail Specifications
+────────────────────────────────────────────────────────
+• Tail length 0.15 m with top radius 0.08 m and bottom radius 0.09 m (cannot be the same, per the checks).  
+• Material is fiberglass for ease of integration.  
+• Slight flare (bottom radius > top radius) can help with base drag reduction.  
+
+────────────────────────────────────────────────────────
+6. Parachute Specifications
+────────────────────────────────────────────────────────
+• To ensure safe landing (<5 m/s) for a ~10 kg rocket, the main parachute’s Cd·S is sized at about 6.0 m². This should yield a landing velocity around or below 5 m/s (depending on exact rocket mass and conditions).  
+• A drogue chute with Cd·S of 0.3 m² is included to stabilize descent before main deployment.  
+• Both triggered at apogee for simplicity in this scenario (though in real flights, a drogue is often at apogee, main at lower altitude).  
+
+────────────────────────────────────────────────────────
+7. Launch Rail Configuration
+────────────────────────────────────────────────────────
+• Rail length of 2.0 m is sufficient for stable departure.  
+• Inclination of 85° from horizontal (i.e., nearly vertical) plus heading of 90° (toward the east).  
+• Because the wind is 20 m/s from the east, angling very slightly eastward can help mitigate drift.  
+
+────────────────────────────────────────────────────────
+8. Payload
+────────────────────────────────────────────────────────
+• A 0.5 kg payload at 0.6 m from the rocket center keeps CG comfortably forward.  
+
+────────────────────────────────────────────────────────
+Final Configuration Dictionary
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.08,        # Must exceed motor radius of 0.075 m
+        "length": 1.5,
+        "material": "fiberglass",
+        "thickness": 0.003
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.25,
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.2,
+            "tip_chord": 0.08,
+            "span": 0.15,
+            "cant_angle": 0,
+            "material": "plywood",
+            "thickness": 0.003,
+        },
+        "tail": {
+            "length": 0.15,
+            "top_radius": 0.08,
+            "bottom_radius": 0.09,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 6.0,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,
+        "inclination": 85,
+        "heading": 90,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 0.6
+    }
+}
+```

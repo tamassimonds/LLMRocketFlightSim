@@ -1,0 +1,95 @@
+To improve the rocket design and achieve the target apogee of 3048 meters, we'll need to carefully adjust our approach. The previous attempts either fell short of the target apogee or were not optimized for cost. Analyzing the results, it appears that a more powerful motor and a balanced design focusing on aerodynamics and lightweight materials are needed. Here's how we'll proceed with the revised design:
+
+### Key Considerations
+
+1. **Motor Selection**: 
+   - We need a high-thrust motor with sufficient impulse to reach the target apogee. Previous attempts with lower thrust motors consistently fell short.
+   - The **CesaroniO5800** motor provides a significant thrust with a total impulse of 30382.7 Ns, which is more than adequate for our target altitude.
+
+2. **Rocket Body**:
+   - Use a lightweight but strong structure to maximize the ascent efficiency.
+   - Carbon fiber will be used for the main body due to its excellent strength-to-weight ratio.
+   - Ensure the body dimensions can accommodate the large motor.
+
+3. **Aerodynamics**:
+   - Choose a nose cone shape that minimizes drag.
+   - Optimize fin design for stability and control while reducing weight.
+
+4. **Parachute System**:
+   - Ensure parachutes are sized correctly to achieve a safe landing speed below 5 m/s.
+
+5. **Launch Rail Configuration**:
+   - Adjust the inclination and heading to compensate for wind effects.
+
+### Adjustments and Calculations
+
+- **Motor Power**: The CesaroniO5800 should provide enough thrust to reach and surpass 3048 meters, considering a significant improvement in total impulse over previous attempts.
+  
+- **Weight and Drag**: Components must be lightweight and aerodynamic to minimize drag during ascent and descent. Using carbon fiber for key structural components can save weight and reduce the overall drag profile.
+
+### Proposed Design
+
+```python
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.165,  # Slightly larger than the motor to accommodate it
+        "length": 3.0,
+        "material": "carbon_fiber",
+        "thickness": 0.005,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.5,
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.3,
+            "tip_chord": 0.15,
+            "span": 0.25,
+            "cant_angle": 1,
+            "material": "carbon_fiber",
+            "thickness": 0.004,
+        },
+        "tail": {
+            "length": 0.25,
+            "top_radius": 0.165,
+            "bottom_radius": 0.175,
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.9,
+            "trigger": "apogee+5",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.35,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 6.0,
+        "inclination": 87,
+        "heading": 180,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 1.5,
+    }
+}
+```
+
+### Final Thoughts
+
+This design leverages the high thrust and impulse of the CesaroniO5800 motor, combined with lightweight, aerodynamic components, to reach and ideally exceed the target apogee. The design aims to balance performance, cost, and safety while addressing the shortcomings observed in previous attempts. By fine-tuning the payload position, material choice, and aerodynamic components, the rocket should achieve better efficiency and meet the project goals.

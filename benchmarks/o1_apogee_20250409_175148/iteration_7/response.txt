@@ -1,0 +1,116 @@
+Below is a step-by-step rationale and an updated rocket design intended to reach closer to the 3048 m target apogee. The previous O‑class attempt reached only about 1187 m, indicating that the rocket was too large and heavy relative to the motor’s thrust and burn time. Therefore, in this design, we reduce body diameter, shorten the airframe, and thin the walls (while still aiming to avoid structural failure), so the stronger O3700 motor can loft the rocket higher without excessive mass or drag.
+
+────────────────────────────────────────────────────────
+1. Motor Selection
+────────────────────────────────────────────────────────
+• Reusing the CesaroniO3700 because the M-class motors (~6000 Ns) have struggled to exceed ~2600 m.  
+• This motor’s total impulse (~29930 Ns) is enough margin to hit 3048 m, provided the rocket’s mass and drag are trimmed down to a suitable level.
+
+────────────────────────────────────────────────────────
+2. Body Dimensions & Material
+────────────────────────────────────────────────────────
+• The motor radius is 0.161 m, so the rocket body radius must exceed this (chosen 0.165 m).  
+• Body length set to 1.2 m for motor (0.957 m) plus parachute bay and payload space.  
+• Fiberglass walls at 0.005 m thickness balance structural strength against the substantial thrust and dynamic pressures from an O‑class motor, while keeping mass (and cost) lower than a very thick or overly large diameter design.
+
+────────────────────────────────────────────────────────
+3. Nose Cone
+────────────────────────────────────────────────────────
+• Chosen length of 0.28 m with a “von karman” profile for efficient aerodynamics in a range of speeds.  
+• Material: fiberglass, same thickness as the body, to ensure consistent structural integrity and manufacturability.
+
+────────────────────────────────────────────────────────
+4. Fins
+────────────────────────────────────────────────────────
+• Three fins reduce drag and cost versus four.  
+• Dimensions: root chord = 0.22 m, tip chord = 0.08 m, span = 0.14 m, thickness = 0.004 m. This provides adequate surface area for stability with the larger diameter while limiting weight.  
+• Material: fiberglass to handle high aerodynamic and thrust loads.
+
+────────────────────────────────────────────────────────
+5. Tail
+────────────────────────────────────────────────────────
+• 0.15 m tail cone transitions from top radius = 0.165 m to bottom radius = 0.18 m (ensuring the two radii are not equal).  
+• Fiberglass for uniform structural properties, with 0.005 m thickness matching the main airframe.
+
+────────────────────────────────────────────────────────
+6. Parachutes
+────────────────────────────────────────────────────────
+• With a heavy O‑class motor (~14 kg) and robust airframe, the total rocket mass can approach or exceed 20 kg.  
+• Main parachute Cd · S = 6.0 m² is chosen to keep descent speed near 5 m/s for a safe landing.  
+• A drogue chute of 0.4 m² is used at apogee for initial stabilization before main deployment.
+
+────────────────────────────────────────────────────────
+7. Launch Configuration
+────────────────────────────────────────────────────────
+• A 3.0 m launch rail ensures stable guidance during initial acceleration under the O3700’s high thrust.  
+• Near-vertical inclination (88°) and heading toward 270° (west) help counteract winds from the east.
+
+────────────────────────────────────────────────────────
+8. Payload
+────────────────────────────────────────────────────────
+• 1.0 kg payload mounted 0.65 m from the rocket center helps shift the center of gravity forward for stable flight, representative of a modest instrumentation package.
+
+────────────────────────────────────────────────────────
+Final Configuration Dictionary
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "CesaroniO3700",
+    "rocket_body": {
+        "radius": 0.165,        # Must exceed motor radius 0.161 m
+        "length": 1.2,
+        "material": "fiberglass",
+        "thickness": 0.005
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.28,
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.22,
+            "tip_chord": 0.08,
+            "span": 0.14,
+            "cant_angle": 0,
+            "material": "fiberglass",
+            "thickness": 0.004
+        },
+        "tail": {
+            "length": 0.15,
+            "top_radius": 0.165,
+            "bottom_radius": 0.18,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 6.0,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.4,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 3.0,
+        "inclination": 88,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 1.0,
+        "position": 0.65
+    }
+}
+```

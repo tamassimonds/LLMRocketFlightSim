@@ -1,0 +1,121 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Analyzing Previous Attempt
+
+The previous design scored 74.92/100 with an actual apogee of 2447.52m, which is 19.70% below our target of 3048m. The rocket maintained structural integrity and had a reasonable cost of $619.70, but we need to increase the apogee while maintaining other performance metrics.
+
+## Motor Selection Reconsideration
+
+Looking at the previous motor choice (Pro75M1670), we need more impulse to reach our target altitude. Let's analyze the motors again:
+
+| Motor | Total Impulse (Ns) | Avg Thrust (N) | Mass (kg) | Approx. Cost |
+|-------|-------------------|----------------|-----------|-------------|
+| Pro75M1670 | 6023.6 | 1533.9 | 1.815 | Medium |
+| AeroTechK700W | 2249 | 658.7 | 0.732 | Low |
+| CesaroniM1670 | 6023.6 | 1533.9 | 3.101 | Medium |
+| AeroTechH128W | 176.5 | 141.2 | 0.108 | Very Low |
+| CesaroniO3700 | 29930.2 | 2836.9 | 14.194 | High |
+| CesaroniO5800 | 30382.7 | 5040.2 | 12.418 | High |
+| CesaroniK160 | 1521.7 | 190.2 | 0.7 | Low |
+
+Since we undershot by about 20%, we need more impulse. The CesaroniM1670 has the same impulse as Pro75M1670 but is heavier, so that's not ideal. The AeroTechK700W has less impulse, which would worsen our undershoot.
+
+Let's try the CesaroniK160. While it has less total impulse than Pro75M1670, it has a much better thrust-to-weight ratio (lower mass), which could be advantageous if we optimize the rest of the rocket design to be lighter.
+
+## Weight Optimization
+
+To reach a higher apogee with the CesaroniK160 motor:
+1. Reduce overall rocket weight by using lighter materials
+2. Optimize aerodynamic design to reduce drag
+3. Adjust dimensions for better performance
+
+## Aerodynamic Refinements
+
+- Reduce body radius to minimize drag while maintaining stability
+- Use lightweight but strong materials (balsa wood for fins, carbon fiber for critical components)
+- Optimize nose cone shape for minimum drag (von Karman or elliptical)
+- Reduce fin size to minimize drag while maintaining stability
+
+## Recovery System Adjustments
+
+We'll keep a similar recovery system design but slightly reduce the main parachute size to optimize for the lighter rocket.
+
+## Wind Compensation Strategy
+
+With 20 m/s easterly winds, we'll maintain a slight westward launch angle:
+- Launch inclination: 85 degrees (slightly off vertical)
+- Heading: 270 degrees (west, into the wind)
+
+## Thrust-to-Weight Ratio Calculation
+
+For CesaroniK160:
+- Average thrust: 190.2 N
+- Estimated rocket mass (with motor): ~1.5 kg
+- Thrust-to-weight ratio: 190.2 / (1.5 × 9.81) ≈ 12.9
+
+This is a good thrust-to-weight ratio for our purposes, allowing rapid acceleration off the launch rail.
+
+## Final Optimized Design
+
+```python
+config = {
+    "motor_choice": "CesaroniK160",
+    "rocket_body": {
+        "radius": 0.06,  # Body radius in meters (slightly larger than motor radius of 54mm)
+        "length": 0.8,   # Body length in meters - reduced for lighter weight
+        "material": "carbon_fiber",  # Lightweight, strong material
+        "thickness": 0.002,  # Wall thickness in meters - reduced for weight savings
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",  # Optimized for minimum drag
+            "length": 0.2,  # Nose cone length in meters
+            "material": "carbon_fiber",  # Lightweight, strong material
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.1,  # Fin root chord in meters
+            "tip_chord": 0.05,  # Fin tip chord in meters
+            "span": 0.07,       # Fin span in meters
+            "cant_angle": 0,    # Cant angle in degrees
+            "material": "balsa_wood",  # Very lightweight material
+            "thickness": 0.003  # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.15,  # Tail length in meters
+            "top_radius": 0.055,  # Top radius in meters
+            "bottom_radius": 0.06,  # Bottom radius in meters
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.8,  # Main parachute CD_s - reduced for lighter rocket
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.2,  # Length of the launch rail in meters
+        "inclination": 85,   # Rail inclination in degrees (angled into wind)
+        "heading": 270,      # Launch heading in degrees (west, into the wind)
+    },
+    "payload": {
+        "mass": 0.2,  # Payload mass in kg - reduced
+        "position": 0.3  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This design focuses on creating an ultra-lightweight rocket with optimized aerodynamics to maximize altitude with the CesaroniK160 motor. The carbon fiber components provide excellent strength-to-weight ratio, while the balsa wood fins further reduce weight. The von Karman nose cone offers optimal aerodynamic performance for transonic flight. The launch angle compensates for the easterly winds to minimize horizontal drift.

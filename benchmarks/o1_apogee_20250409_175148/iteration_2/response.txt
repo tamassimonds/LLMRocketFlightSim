@@ -1,0 +1,123 @@
+Below is an updated design along with the reasoning behind it. The main goals were to:  
+• Increase the altitude closer to 3048 m (previously ~2464 m).  
+• Avoid structural failure by strengthening critical components.  
+• Keep cost under control.  
+
+────────────────────────────────────────────────────────
+1. Motor Choice
+────────────────────────────────────────────────────────
+• Previous design used Pro75M1670 (CTI) and reached ~2464 m. Rather than moving to an O-class motor (with ~5x the impulse), we kept the same M1670 motor but reduced drag and rocket mass so that the same impulse can boost the rocket closer to 3048 m.  
+• This motor also has a relatively low dry mass (1.815 kg) and decent average thrust (~1533.9 N) for a medium-sized rocket.
+
+────────────────────────────────────────────────────────
+2. Body Dimensions and Material
+────────────────────────────────────────────────────────
+• Shrinking the body diameter from 0.08 m to 0.076 m lowers frontal area and drag.  
+• Shortening the main body from 1.5 m to 1.2 m reduces overall rocket mass.  
+• Switching to carbon_fiber with slightly thicker walls (0.004 m) helps prevent structural failures potentially caused by higher dynamic pressures. Although more expensive than fiberglass, it’s stronger for the high-thrust phases.  
+
+────────────────────────────────────────────────────────
+3. Nose Cone Dimensions and Material
+────────────────────────────────────────────────────────
+• An ogive shape, 0.2 m length in carbon_fiber.  
+• Shorter nose cone reduces mass and cost, but ogive remains aerodynamically efficient at subsonic to transonic speeds.  
+
+────────────────────────────────────────────────────────
+4. Fins
+────────────────────────────────────────────────────────
+• Reduced chord dimensions relative to the first attempt, again to cut drag and mass.  
+• Carbon_fiber chosen for similar structural reasons as the body.  
+• Three fins for simplicity and to minimize drag and cost; each fin thickness is 0.003 m.  
+
+────────────────────────────────────────────────────────
+5. Tail
+────────────────────────────────────────────────────────
+• Tail length: 0.1 m, top radius: 0.076 m, bottom radius: 0.085 m (cannot be the same per design rules).  
+• Carbon_fiber for superior strength under thrust and any aerodynamic loads.  
+
+────────────────────────────────────────────────────────
+6. Parachute Sizing
+────────────────────────────────────────────────────────
+• Main parachute Cd·S set to 5.5 to target a safe landing speed under 5 m/s for a ~10 kg total mass.  
+• Drogue remains small (0.3 Cd·S) just for stabilization during the initial descent.  
+• Both triggered at apogee for simplicity.  
+
+────────────────────────────────────────────────────────
+7. Launch Rail Configuration
+────────────────────────────────────────────────────────
+• 2.0 m rail length ensures sufficient guidance to stable flight.  
+• Inclination of 90° (near-vertical).  
+• Heading set to 270° (west); with wind from the east (blowing westward), pointing west can help reduce total drift.  
+
+────────────────────────────────────────────────────────
+8. Payload
+────────────────────────────────────────────────────────
+• 0.5 kg payload at 0.5 m from rocket center.  
+• Slightly forward of geometric center to assist in keeping center of gravity ahead of center of pressure.  
+
+Below is the final configuration in the requested Python dictionary format:
+
+────────────────────────────────────────────────────────
+Final Configuration Dictionary
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.076,     # Slightly larger than motor radius 0.075 m
+        "length": 1.2,
+        "material": "carbon_fiber",
+        "thickness": 0.004
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.2,
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.15,
+            "tip_chord": 0.06,
+            "span": 0.13,
+            "cant_angle": 0,
+            "material": "carbon_fiber",
+            "thickness": 0.003
+        },
+        "tail": {
+            "length": 0.1,
+            "top_radius": 0.076,
+            "bottom_radius": 0.085,
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 5.5,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,
+        "inclination": 90,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 0.5
+    }
+}
+```

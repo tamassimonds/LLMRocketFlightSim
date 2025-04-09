@@ -1,0 +1,134 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Analysis of Previous Attempts
+
+Analyzing the three previous attempts reveals important patterns:
+
+1. **First attempt**: Pro75M1670 motor → 2447.52m (19.7% below target), structurally sound, $619.70
+2. **Second attempt**: CesaroniK160 motor → 398.21m (86.94% below target), structural failure, $242.67
+3. **Third attempt**: Pro75M1670 motor → 2280.61m (25.18% below target), structurally sound, $610.15
+
+The Pro75M1670 motor gets us closest to our target but still falls short. We need more impulse without significantly increasing cost or weight.
+
+## Motor Selection Reconsideration
+
+Looking at our available motors:
+
+| Motor | Total Impulse (Ns) | Avg Thrust (N) | Mass (kg) | Burn Time (s) |
+|-------|-------------------|----------------|-----------|--------------|
+| Pro75M1670 | 6023.6 | 1533.9 | 1.815 | 3.9 |
+| AeroTechK700W | 2249 | 658.7 | 0.732 | 3.5 |
+| CesaroniM1670 | 6023.6 | 1533.9 | 3.101 | 3.6 |
+| AeroTechH128W | 176.5 | 141.2 | 0.108 | 1.29 |
+| CesaroniO3700 | 29930.2 | 2836.9 | 14.194 | 8.2 |
+| CesaroniO5800 | 30382.7 | 5040.2 | 12.418 | 5.2 |
+| CesaroniK160 | 1521.7 | 190.2 | 0.7 | 9.7 |
+
+Since we're consistently undershooting with the Pro75M1670, we need a motor with more impulse. The AeroTechK700W has insufficient impulse. The O-class motors have excessive impulse and would be too expensive.
+
+The CesaroniM1670 has the same impulse as Pro75M1670 but is heavier, which would reduce altitude. However, we could try the AeroTechK700W with a significantly lighter and more aerodynamic design.
+
+## Altitude Estimation
+
+Using a simplified rocket equation:
+- Altitude ∝ (Total Impulse / Rocket Mass)
+
+With Pro75M1670, we reached ~2350m (average of attempts 1 & 3)
+To reach 3048m (30% increase), we need either:
+1. 30% more impulse with the same mass
+2. 23% less mass with the same impulse
+3. Some combination of both
+
+## New Design Approach
+
+Let's try the AeroTechK700W motor with an ultra-lightweight design:
+
+1. **Motor**: AeroTechK700W (2249 Ns, 0.732 kg)
+   - Much lighter than Pro75M1670 (1.815 kg)
+   - About 37% of the impulse
+
+2. **Weight Reduction Strategy**:
+   - Minimum body radius to fit motor (54mm + margin)
+   - Thinner walls using carbon fiber for strength
+   - Minimal fin size for stability
+   - Lightweight nose cone
+   - Reduced payload mass
+
+3. **Aerodynamic Optimization**:
+   - Von Karman nose cone for minimum drag
+   - Optimized fin shape
+   - Smooth transitions
+
+## Detailed Calculations
+
+For AeroTechK700W:
+- Motor radius: 54mm = 0.054m
+- Body radius: 0.06m (provides 6mm clearance)
+- Estimated rocket mass without motor: ~0.8kg
+- Total mass with motor: ~1.5kg
+- Thrust-to-weight ratio: 658.7N / (1.5kg × 9.81m/s²) ≈ 44.8 (excellent for quick rail exit)
+
+## Final Design Configuration
+
+```python
+config = {
+    "motor_choice": "AeroTechK700W",
+    "rocket_body": {
+        "radius": 0.06,  # Body radius in meters (slightly larger than motor radius)
+        "length": 0.8,   # Body length in meters (minimized)
+        "material": "carbon_fiber",  # Lightweight, strong material
+        "thickness": 0.002,  # Wall thickness in meters (minimized)
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",  # Optimal aerodynamic shape
+            "length": 0.2,  # Nose cone length in meters
+            "material": "carbon_fiber",  # Lightweight, strong material
+        },
+        "fins": {
+            "number": 3,  # Minimum for stability
+            "root_chord": 0.1,  # Fin root chord in meters
+            "tip_chord": 0.05,  # Fin tip chord in meters
+            "span": 0.08,  # Fin span in meters
+            "cant_angle": 0,  # No cant angle for minimum drag
+            "material": "carbon_fiber",  # Lightweight, strong material
+            "thickness": 0.003  # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.15,  # Tail length in meters
+            "top_radius": 0.055,  # Top radius in meters
+            "bottom_radius": 0.06,  # Bottom radius in meters
+            "material": "carbon_fiber",  # Lightweight, strong material
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 1.2,  # Main parachute CD_s (sized for lighter rocket)
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.2,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 1.2,  # Length of the launch rail in meters
+        "inclination": 85,   # Rail inclination in degrees (angled into wind)
+        "heading": 270,      # Launch heading in degrees (west, into the wind)
+    },
+    "payload": {
+        "mass": 0.15,  # Payload mass in kg (minimized)
+        "position": 0.3  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This design takes a completely different approach by using a smaller motor with a much lighter rocket. The carbon fiber construction throughout provides excellent strength-to-weight ratio. The von Karman nose cone offers optimal aerodynamic performance. The launch angle compensates for the easterly winds to minimize horizontal drift.

@@ -1,0 +1,122 @@
+In order to improve the rocket design and ensure it reaches the desired apogee of 3048 meters while optimizing cost, safety, and other parameters, we'll need to make some strategic adjustments. Let's address the shortcomings from the last attempt and devise a more suitable design.
+
+### Design Strategy
+
+1. **Motor Selection**: The previous motor choice, **CesaroniK160**, was severely underpowered for achieving the target apogee. We need a motor with higher thrust and total impulse. Given our options, we will explore a more potent motor.
+   
+2. **Rocket Dimensions and Materials**: To accommodate a larger motor and enhance aerodynamic performance, we'll adjust the dimensions and select suitable materials.
+
+3. **Aerodynamics**: Optimize the nose cone and fin design for reduced drag.
+
+4. **Parachute System**: Ensure parachutes are adequately sized for a safe landing speed.
+
+5. **Cost and Structural Integrity**: Balance the choice of materials to keep costs under control while ensuring structural integrity.
+
+### Step-by-Step Approach
+
+#### Step 1: Motor Selection
+- Choose **CesaroniM1670**, which provides a higher average thrust of 1533.9 N and a total impulse of 6023.6 Ns. It’s a significant step up from the previous motor choice, allowing the rocket to achieve a higher apogee.
+
+#### Step 2: Rocket Body
+- **Material**: Use **fiberglass** for a balance between affordability and strength.
+- **Dimensions**:
+  - **Radius**: 0.08 meters (motor radius is 0.075 meters).
+  - **Length**: 2.5 meters to house the larger motor while ensuring stability.
+  - **Wall Thickness**: 0.005 meters.
+
+#### Step 3: Nose Cone
+- **Shape**: Use an **ogive** or **tangent** shape for efficient aerodynamics.
+- **Length and Material**: 0.3 meters, using **fiberglass** to minimize weight and cost.
+
+#### Step 4: Fins
+- **Number and Material**: Use 3 fins made of **carbon_fiber** to maintain a light yet sturdy framework.
+- **Dimensions**:
+  - Root Chord: 0.2 meters
+  - Tip Chord: 0.1 meters
+  - Span: 0.2 meters
+  - Cant Angle: 0 degrees for straightforward drag-minimizing design.
+  - Thickness: 0.004 meters
+
+#### Step 5: Tail
+- **Material**: Use **carbon_fiber** for a strong and light structure.
+- **Design**: A flared design for stability; top radius 0.08 meters and bottom radius 0.09 meters.
+
+#### Step 6: Parachute System
+- **Main Parachute**:
+  - **Cd_S**: Larger value such as 0.6 to ensure a gentler landing speed.
+- **Drogue Parachute**:
+  - **Cd_S**: Adjusted to 0.3 for controlled descent after reaching apogee.
+
+#### Step 7: Launch Rail
+- **Length**: 5 meters for ample stabilization during launch.
+- **Inclination and Heading**: Set to 88 degrees inclination with a 180-degree heading to counteract the 20 m/s wind from the east.
+
+#### Step 8: Payload
+- **Payload mass**: 0.5 kg for a modest additional mass.
+- **Position**: Centered at 1.25 meters to balance the rocket.
+
+### Proposed Design
+
+```python
+config = {
+    "motor_choice": "CesaroniM1670",
+    "rocket_body": {
+        "radius": 0.08,
+        "length": 2.5,
+        "material": "fiberglass",
+        "thickness": 0.005,
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",
+            "length": 0.3,
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.2,
+            "tip_chord": 0.1,
+            "span": 0.2,
+            "cant_angle": 0,
+            "material": "carbon_fiber",
+            "thickness": 0.004,
+        },
+        "tail": {
+            "length": 0.2,
+            "top_radius": 0.08,
+            "bottom_radius": 0.09,
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 0.6,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 5.0,
+        "inclination": 88,
+        "heading": 180,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 1.25,
+    }
+}
+```
+
+### Final Thoughts
+This design aims to achieve the target apogee of 3048 meters with a more powerful motor and optimized aerodynamic properties. By making these adjustments, the rocket should be able to reach the desired height efficiently, while also staying within cost constraints and ensuring a safe recovery.

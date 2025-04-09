@@ -1,9 +1,16 @@
 import os
+import math
 import argparse
 import json
+import numpy as np
 from rocket_package.src.models.simulation import RocketSimulation
 from rocket_package.src.models.motors.motor_loader import _save_predefined_motors
-from rocket_package.calculate_reward import calculate_reward
+from rocket_package.calculate_reward import calculate_bullseye_landing_reward, format_bullseye_landing_report
+
+# Define target landing coordinates (far from the origin for challenge)
+TARGET_X = 1000.0  # Target X coordinate in meters
+TARGET_Y = 1000.0  # Target Y coordinate in meters
+
 config = {
     "motor_choice": "CesaroniO5800",
     "rocket_body": {
@@ -23,7 +30,7 @@ config = {
             "root_chord": 0.11,      # Fin root chord in meters (slightly reduced)
             "tip_chord": 0.055,      # Fin tip chord in meters (slightly reduced)
             "span": 0.24,             # Fin span in meters (slightly reduced)
-            "cant_angle": 0.5,        # Cant angle in degrees
+            "cant_angle": 2.0,        # Cant angle in degrees - increased for directional control
             "material": "fiberglass",
             "thickness": 0.0015       # Fin thickness in meters (further reduced to save mass)
         },
@@ -54,8 +61,16 @@ config = {
     },
     "launch": {
         "rail_length": 0.95,           # Length of the launch rail in meters (slightly reduced)
-        "inclination": 90,             # Rail inclination in degrees (vertical launch)
-        "heading": 0,                  # Launch heading in degrees (straight up)
+        "inclination": 65,             # Rail inclination in degrees (angled for targeting)
+        "heading": 45,                 # Launch heading in degrees (northeast toward target)
+    },
+    # Add wind to help reach the target
+    "environment": {
+        "wind": {
+            "speed": 5.0,              # Wind speed in m/s
+            "direction": "NE",         # Wind direction (toward target)
+            "turbulence": 0.1          # Small amount of turbulence
+        }
     },
     "payload": {
         "mass": 1.57,                   # Payload mass in kg (includes ballast)
@@ -81,59 +96,68 @@ results = simulation.analyze_results()
 # Print summary
 simulation.print_summary()
 
-# After running the simulation
-simulation = RocketSimulation(config)
-simulation.setup_environment()
-simulation.build_rocket()
-simulation.run_simulation()
+# Access key flight results
+flight_results = results["flight"]
+landing_x = float(flight_results.get("x_final", 0))
+landing_y = float(flight_results.get("y_final", 0))
 
-# Get all results
-results = simulation.analyze_results()
+# Access other important values
+max_apogee = float(flight_results["max_apogee"])
+flight_time = float(flight_results["flight_time"])
+total_cost = float(results["materials"]["total_cost"])
+structural_failure = bool(results["structural"]["overall_failure"])
+impact_velocity = float(flight_results.get("impact_velocity", 10.0))  # Default if not available
 
-# Access specific values
-max_apogee = results["flight"]["max_apogee"]
-max_speed = results["flight"]["max_speed"]
-flight_time = results["flight"]["flight_time"]
-horizontal_distance = results["flight"]["horizontal_distance"]
+# Calculate distance to target
+distance_to_target = math.sqrt((landing_x - TARGET_X)**2 + (landing_y - TARGET_Y)**2)
 
-# Access structural analysis
-structural_failure = results["structural"]["overall_failure"]
-fin_safety_factor = results["structural"]["fins"]["safety_factor"]
-body_safety_factor = results["structural"]["body"]["bending_safety_factor"]
-
-# Access costs
-total_cost = results["materials"]["total_cost"]
-material_costs = results["materials"]["costs"]  # Dictionary of costs by material
-material_masses = results["materials"]["materials"]  # Dictionary of masses by material
-
-
-
-
-
-# Example: print specific results
+# Print flight details
+print(f"\n----- FLIGHT DETAILS -----")
 print(f"Max Apogee: {max_apogee:.2f} m")
+print(f"Flight Time: {flight_time:.2f} s")
+print(f"Landing Position: ({landing_x:.2f}m, {landing_y:.2f}m)")
+print(f"Target Position: ({TARGET_X:.2f}m, {TARGET_Y:.2f}m)")
+print(f"Distance to Target: {distance_to_target:.2f}m")
 print(f"Total Cost: ${total_cost:.2f}")
-print(f"Structural Failure: {structural_failure}")
+print(f"Structural Integrity: {'FAILED' if structural_failure else 'PASSED'}")
 
-print(results)
-
-# # Save plots
-# saved_files = simulation.save_plots()
-# print(f"\nSaved {len(saved_files)} files to outputs")
-
-# Calculate the reward score using the specific values from the results
-reward_score, reward_breakdown = calculate_reward(
-    apogee=max_apogee,
-    target_apogee=3048,
-    horizontal_distance=horizontal_distance,
+# Calculate reward using dynamic bullseye landing reward function
+reward_score, reward_breakdown = calculate_bullseye_landing_reward(
+    landing_x=landing_x,
+    landing_y=landing_y,
+    target_x=TARGET_X,
+    target_y=TARGET_Y,
     total_cost=total_cost,
-    impact_velocity=results["flight"].get("impact_velocity", 0),
+    impact_velocity=impact_velocity,
     structural_failure=structural_failure
 )
 
-# Format reward score as percentage 
+# Format and print the reward report
+reward_report = format_bullseye_landing_report(reward_score, reward_breakdown)
+print("\n" + reward_report)
+
+# Save the reward details to a file
+with open("outputs/dynamic_bullseye_reward.json", "w") as f:
+    json.dump({k: float(v) if isinstance(v, np.number) else v 
+              for k, v in reward_breakdown.items()}, f, indent=2)
+
+# Save plots
+saved_files = simulation.save_plots()
+print(f"\nSaved {len(saved_files)} files to outputs")
+
+# Print final score as percentage
 reward_percentage = reward_score * 100
+print(f"\nFinal Bullseye Score: {reward_percentage:.2f}%")
 
-# Print the reward score
-print(f"\nPerformance Score: {reward_percentage:.2f}%")
+# Save the landing accuracy details for future analysis
+landing_data = {
+    "target": {"x": TARGET_X, "y": TARGET_Y},
+    "landing": {"x": float(landing_x), "y": float(landing_y)},
+    "error": float(reward_breakdown["landing_error"]),
+    "sigma": float(reward_breakdown.get("landing_sigma", 50.0)),
+    "bullseye_class": reward_breakdown.get("bullseye_class", "UNKNOWN"),
+    "score": float(reward_percentage)
+}
 
+with open("outputs/landing_accuracy.json", "w") as f:
+    json.dump(landing_data, f, indent=2)

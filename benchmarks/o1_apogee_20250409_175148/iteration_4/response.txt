@@ -1,0 +1,117 @@
+Below is a step-by-step explanation of the thought process behind the refined design, followed by the final configuration in the requested format.
+
+────────────────────────────────────────────────────────
+1. Reasoning about Apogee Requirements
+────────────────────────────────────────────────────────
+• Our previous rocket attempts with the Pro75M1670 motor have been short of the 3048 m target.  
+• To gain additional altitude without switching to a far larger (and more expensive) O-class motor, we can continue reducing overall mass and drag so that the same total impulse carries the rocket higher.
+
+────────────────────────────────────────────────────────
+2. Body Dimensions and Material
+────────────────────────────────────────────────────────
+• The motor radius is 0.075 m, so the rocket body radius is set to 0.076 m (just enough clearance).  
+• Shortening the main body to 0.95 m lowers structural mass and reduces frontal area.  
+• Using carbon_fiber at 0.0025 m thickness attempts to keep the structure strong (avoiding “structural_failure”) while shaving extra weight.
+
+────────────────────────────────────────────────────────
+3. Nose Cone
+────────────────────────────────────────────────────────
+• A “von karman” shape is chosen for low drag across subsonic/supersonic regimes (it’s generally efficient).  
+• Shortening the nose cone to 0.18 m saves mass while maintaining a streamlined profile.  
+• Material is carbon_fiber to match the body’s strength without introducing a heavier or more expensive alternative.
+
+────────────────────────────────────────────────────────
+4. Fins
+────────────────────────────────────────────────────────
+• Three fins to minimize drag and cost compared to four.  
+• Dimensions: root chord=0.12 m, tip chord=0.04 m, span=0.11 m. These slightly smaller fins help reduce mass and drag.  
+• Carbon_fiber with 0.0025 m thickness to withstand flight loads without risking structural failure.
+
+────────────────────────────────────────────────────────
+5. Tail
+────────────────────────────────────────────────────────
+• A short tail cone (0.08 m) with top radius=0.076 m and bottom radius=0.08 m to ensure they are not the same (mechanical design rule) and to provide a mild flare that can reduce base drag.  
+• Again, carbon_fiber for durability.
+
+────────────────────────────────────────────────────────
+6. Parachutes
+────────────────────────────────────────────────────────
+• The main parachute Cd·S set to 4.0 m², sized to keep landing speed reasonably under 5 m/s for a rocket on the order of 6–8 kg total.  
+• A drogue chute (0.3 m²) just to stabilize the rocket before main chute deployment.  
+• Both triggered at apogee for simplicity in this scenario.
+
+────────────────────────────────────────────────────────
+7. Launch Rail Configuration
+────────────────────────────────────────────────────────
+• A 2.0 m rail for stable guidance.  
+• Inclination of 87° (nearly vertical), heading 270° (west), chosen so that the strong east wind will drift the rocket less horizontally.
+
+────────────────────────────────────────────────────────
+8. Payload
+────────────────────────────────────────────────────────
+• A modest 0.4 kg payload placed at 0.3 m from the rocket center, helping keep the center of gravity forward and shaving a bit more mass off the rocket.
+
+────────────────────────────────────────────────────────
+Final Configuration Dictionary
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "Pro75M1670",
+    "rocket_body": {
+        "radius": 0.076,    # Must exceed motor radius of 0.075 m
+        "length": 0.95,
+        "material": "carbon_fiber",
+        "thickness": 0.0025
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.18,
+            "material": "carbon_fiber",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.12,
+            "tip_chord": 0.04,
+            "span": 0.11,
+            "cant_angle": 0,
+            "material": "carbon_fiber",
+            "thickness": 0.0025
+        },
+        "tail": {
+            "length": 0.08,
+            "top_radius": 0.076,
+            "bottom_radius": 0.08,
+            "material": "carbon_fiber",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 4.0,  
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.3,  
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,
+        "inclination": 87,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 0.4,
+        "position": 0.3
+    }
+}
+```

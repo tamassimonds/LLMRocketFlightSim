@@ -1,0 +1,116 @@
+Below is a step-by-step rationale for an alternative design using the Cesaroni O5800 motor. Compared to previous O-class attempts, the main goal is to keep the rocket as compact and light as possible—while still strong enough to avoid structural failure—so that the high-thrust, short-burn O5800 booster can loft it closer to 3 km.
+
+────────────────────────────────────────────────────────
+1. Motor Choice: CesaroniO5800
+────────────────────────────────────────────────────────
+• The O5800 provides around 30,400 Ns of total impulse and an average thrust of over 5000 N, which is higher than the O3700’s ~2800 N average.  
+• Its radius is 150 mm, so the rocket’s internal radius must be larger than 0.150 m.
+
+────────────────────────────────────────────────────────
+2. Body Dimensions and Material
+────────────────────────────────────────────────────────
+• Chosen body radius: 0.152 m, just above the motor’s 0.150 m requirement to minimize frontal area and mass.  
+• Overall body length: 1.2 m. This houses the 0.754 m-long motor plus space for parachutes and a small payload.  
+• “fiberglass” at 0.004 m wall thickness to resist the high thrust loads while keeping mass in check.
+
+────────────────────────────────────────────────────────
+3. Nose Cone
+────────────────────────────────────────────────────────
+• A “von karman” profile, 0.25 m long, for efficient aerodynamics during the short but intense burn.  
+• Same fiberglass material for consistent structural properties.
+
+────────────────────────────────────────────────────────
+4. Fins
+────────────────────────────────────────────────────────
+• Three fins minimize drag and cost.  
+• Root chord = 0.19 m, tip chord = 0.07 m, span = 0.12 m. These dimensions provide enough aerodynamic leverage for a moderate-diameter rocket.  
+• Thickness = 0.003 m in fiberglass balances strength with weight to help avoid structural failure under high dynamic pressures.
+
+────────────────────────────────────────────────────────
+5. Tail
+────────────────────────────────────────────────────────
+• 0.08 m tail cone with top radius = 0.152 m and bottom radius = 0.16 m (they cannot be the same).  
+• Fiberglass material ensures a robust transition near the motor exhaust.
+
+────────────────────────────────────────────────────────
+6. Parachutes
+────────────────────────────────────────────────────────
+• The O5800 plus structural components will yield a rocket mass likely in the mid-teens of kilograms.  
+• Main parachute Cd·S = 5.0 m² is chosen, large enough to help keep landing speeds ~5 m/s or below.  
+• Drogue chute Cd·S = 0.4 m² for stable descent prior to main deployment, both triggered at apogee for simplicity.
+
+────────────────────────────────────────────────────────
+7. Launch Configuration
+────────────────────────────────────────────────────────
+• A 3.0 m rail ensures a stable initial launch under high thrust.  
+• Inclination of 88° (near vertical) and heading 270° (to the west) counters the 20 m/s easterly wind.
+
+────────────────────────────────────────────────────────
+8. Payload
+────────────────────────────────────────────────────────
+• 1.0 kg payload at 0.55 m from rocket center, helping keep the center of gravity forward for stable flight.
+
+────────────────────────────────────────────────────────
+Final Configuration Dictionary
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.152,
+        "length": 1.2,
+        "material": "fiberglass",
+        "thickness": 0.004
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.25,
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.19,
+            "tip_chord": 0.07,
+            "span": 0.12,
+            "cant_angle": 0,
+            "material": "fiberglass",
+            "thickness": 0.003
+        },
+        "tail": {
+            "length": 0.08,
+            "top_radius": 0.152,
+            "bottom_radius": 0.16,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 5.0,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.4,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 3.0,
+        "inclination": 88,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 1.0,
+        "position": 0.55
+    }
+}
+```

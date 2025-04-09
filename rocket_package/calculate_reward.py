@@ -319,139 +319,6 @@ def format_landing_accuracy_report(reward: float, breakdown: Dict[str, Any]) -> 
     return "\n".join(report)
 
 
-def calculate_precise_landing_reward(
-    landing_distance: float,
-    target_landing_distance: float,
-    total_cost: float = 0,
-    impact_velocity: float = 0,
-    structural_failure: bool = False
-) -> Tuple[float, Dict[str, Any]]:
-    """
-    Calculate a performance reward based solely on landing precision.
-    
-    The reward is calculated based on:
-    1. Landing accuracy - how close to the target landing spot
-    2. Cost-effectiveness of the design
-    3. Structural integrity 
-    4. Impact velocity (soft landing)
-    
-    Args:
-        landing_distance (float): Distance from launch site to landing site in meters
-        target_landing_distance (float): Target distance for landing in meters
-        total_cost (float): Total cost of the rocket
-        impact_velocity (float): Impact velocity in m/s
-        structural_failure (bool): Whether structural failure occurred
-        
-    Returns:
-        tuple: (total_reward, reward_breakdown)
-            - total_reward (float): Overall performance score (0-1.0)
-            - reward_breakdown (dict): Detailed breakdown of the reward calculation
-    """
-    reward = 0.0
-    reward_breakdown = {}
-    
-    # Landing accuracy reward - using Gaussian function for more sensitivity
-    landing_difference = abs(landing_distance - target_landing_distance)
-    landing_sigma = 50  # Standard deviation for landing accuracy (meters)
-    landing_reward = math.exp(-(landing_difference**2) / (2 * landing_sigma**2))
-    
-    reward_breakdown["landing_reward"] = landing_reward
-    reward_breakdown["landing_distance"] = landing_distance
-    reward_breakdown["target_landing_distance"] = target_landing_distance
-    reward_breakdown["landing_error"] = landing_difference
-    
-    # Structural failure reward
-    structural_failure_reward = 0 if structural_failure else 1
-    
-    # Cost reward (linear version)
-    max_cost = 1000
-    cost_reward = max(0, 1 - total_cost / max_cost)
-    
-    # Impact velocity reward (exponential version - emphasizes soft landings)
-    max_impact_velocity = 30
-    impact_reward = math.exp(-impact_velocity / max_impact_velocity)
-    
-    # Add rewards with weights prioritizing landing accuracy
-    reward = (landing_reward * 0.6 +          # Landing accuracy is most important
-              cost_reward * 0.1 +             # Cost is less important
-              impact_reward * 0.1 +           # Soft landing still matters
-              structural_failure_reward * 0.2)  # Structural integrity is important
-    
-    # Cap reward at 1.0
-    total_reward = min(1.0, reward)
-    
-    # Update reward breakdown
-    reward_breakdown.update({
-        "cost_total": total_cost,
-        "cost_reward": cost_reward,
-        "impact_velocity": impact_velocity,
-        "impact_reward": impact_reward,
-        "structural_failure": structural_failure,
-        "structural_failure_reward": structural_failure_reward,
-        "total_reward": total_reward,
-        "message": "Simulation successful" if not structural_failure else "Structural failure detected"
-    })
-    
-    return total_reward, reward_breakdown
-
-
-def format_precise_landing_report(reward: float, breakdown: Dict[str, Any]) -> str:
-    """
-    Format the precise landing reward calculation as a human-readable report.
-    
-    Args:
-        reward (float): Total reward value
-        breakdown (dict): Reward breakdown dictionary
-        
-    Returns:
-        str: Formatted report
-    """
-    if "error" in breakdown:
-        return f"REWARD CALCULATION FAILED: {breakdown['error']}"
-    
-    report = []
-    report.append("="*60)
-    report.append(" PRECISE LANDING REWARD ".center(60, "="))
-    report.append("="*60)
-    
-    # Basic stats
-    report.append(f"Target Landing Distance: {breakdown['target_landing_distance']:.2f} m")
-    report.append(f"Actual Landing Distance: {breakdown['landing_distance']:.2f} m")
-    report.append(f"Landing Error: {breakdown['landing_error']:.2f} m")
-    
-    report.append(f"\nTotal Cost: ${breakdown['cost_total']:.2f}")
-    report.append(f"Impact Velocity: {breakdown['impact_velocity']:.2f} m/s")
-    
-    # Reward breakdown
-    report.append("\nReward Components:")
-    report.append(f"  Landing Accuracy (60%): {breakdown['landing_reward']*100:.2f} points")
-    report.append(f"  Cost Efficiency (10%): {breakdown['cost_reward']*100:.2f} points")
-    report.append(f"  Soft Landing (10%): {breakdown['impact_reward']*100:.2f} points")
-    report.append(f"  Structural Integrity (20%): {breakdown['structural_failure_reward']*100:.2f} points")
-    
-    # Structural failure note if applicable
-    if breakdown["structural_failure"]:
-        report.append("\nStructural Failure detected!")
-    
-    # Final score (as percentage)
-    reward_percent = reward * 100
-    report.append(f"\nTOTAL LANDING PRECISION SCORE: {reward_percent:.2f} / 100")
-    
-    if reward_percent >= 90:
-        report.append("OUTSTANDING LANDING PRECISION!")
-    elif reward_percent >= 75:
-        report.append("EXCELLENT LANDING PRECISION!")
-    elif reward_percent >= 60:
-        report.append("GOOD LANDING PRECISION")
-    elif reward_percent >= 40:
-        report.append("ACCEPTABLE LANDING PRECISION")
-    else:
-        report.append("NEEDS IMPROVEMENT IN LANDING PRECISION")
-    
-    report.append("="*60)
-    
-    return "\n".join(report)
-
 
 def calculate_bullseye_landing_reward(
     landing_x: float,
@@ -490,10 +357,11 @@ def calculate_bullseye_landing_reward(
     
     # Calculate 2D distance from target (Euclidean distance)
     landing_error = math.sqrt((landing_x - target_x)**2 + (landing_y - target_y)**2)
+    target_distance = math.sqrt(target_x**2 + target_y**2)
     
     # Landing accuracy reward - using Gaussian function for sensitivity to precision
     # Smaller sigma = tighter precision requirements
-    landing_sigma = 25  # Standard deviation for landing accuracy (meters)
+    landing_sigma = 0.3*target_distance  # Standard deviation for landing accuracy (meters)
     landing_reward = math.exp(-(landing_error**2) / (2 * landing_sigma**2))
     
     # Store info in breakdown
@@ -512,8 +380,8 @@ def calculate_bullseye_landing_reward(
     cost_reward = max(0, 1 - total_cost / max_cost)
     
     # Impact velocity reward (exponential version - emphasizes soft landings)
-    max_impact_velocity = 10
-    impact_reward = math.exp(-impact_velocity / max_impact_velocity)
+    max_impact_velocity = 20
+    impact_reward = max(0, 1 - impact_velocity / max_impact_velocity)
     
     # Add rewards with weights prioritizing landing accuracy
     reward = (landing_reward * 0.7 +          # Landing accuracy is most important
@@ -786,186 +654,122 @@ def format_target_point_report(reward: float, breakdown: Dict[str, Any]) -> str:
     return "\n".join(report)
 
 
-def calculate_dynamic_bullseye_reward(
+def calculate_complex_bullseye_reward(
     landing_x: float,
     landing_y: float,
     target_x: float,
     target_y: float,
-    total_cost: float = 0,
-    impact_velocity: float = 0,
-    structural_failure: bool = False
+    actual_apogee: float,
+    target_apogee: float,
+    total_cost: float,
+    impact_velocity: float,
+    structural_failure: bool
 ) -> Tuple[float, Dict[str, Any]]:
     """
-    Calculate a performance reward based on landing precision with dynamic difficulty.
-    
-    The reward is calculated with:
-    1. Dynamic precision requirements based on target distance
-    2. Linear impact velocity reward with cutoff
-    3. Cost-effectiveness
-    4. Structural integrity
+    Calculate a complex reward that considers both precision landing and apogee targeting.
     
     Args:
-        landing_x (float): X-coordinate of landing point
-        landing_y (float): Y-coordinate of landing point
-        target_x (float): X-coordinate of target landing point
-        target_y (float): Y-coordinate of target landing point
-        total_cost (float): Total cost of the rocket
-        impact_velocity (float): Impact velocity in m/s
-        structural_failure (bool): Whether structural failure occurred
+        landing_x, landing_y: Actual landing coordinates (meters)
+        target_x, target_y: Target landing coordinates (meters)
+        actual_apogee: Achieved maximum altitude (meters)
+        target_apogee: Desired maximum altitude (meters)
+        total_cost: Total cost of the rocket (USD)
+        impact_velocity: Landing velocity (m/s)
+        structural_failure: Whether the rocket structure failed
         
     Returns:
-        tuple: (total_reward, reward_breakdown)
-            - total_reward (float): Overall performance score (0-1.0)
-            - reward_breakdown (dict): Detailed breakdown of the reward calculation
+        Tuple of (total_reward, reward_breakdown)
     """
-    reward = 0.0
     reward_breakdown = {}
     
-    # Calculate target distance from origin
-    target_distance_from_origin = math.sqrt(target_x**2 + target_y**2)
-    
-    # Calculate 2D distance from target (Euclidean distance)
+    # Landing accuracy (40% of total score)
     landing_error = math.sqrt((landing_x - target_x)**2 + (landing_y - target_y)**2)
+    landing_sigma = 50.0  # Adjust sensitivity to landing error
+    landing_reward = math.exp(-0.5 * (landing_error / landing_sigma)**2)
     
-    # Dynamic sigma - 20% of the target distance from origin
-    # With a minimum to prevent division by zero
-    min_sigma = 5.0  # meters
-    landing_sigma = max(min_sigma, 0.2 * target_distance_from_origin)
-    
-    # Calculate landing reward using Gaussian function
-    landing_reward = math.exp(-(landing_error**2) / (2 * landing_sigma**2))
-    
-    # Store info in breakdown
-    reward_breakdown["landing_reward"] = landing_reward
-    reward_breakdown["landing_x"] = landing_x
-    reward_breakdown["landing_y"] = landing_y
-    reward_breakdown["target_x"] = target_x
-    reward_breakdown["target_y"] = target_y
-    reward_breakdown["target_distance_from_origin"] = target_distance_from_origin
-    reward_breakdown["landing_error"] = landing_error
-    reward_breakdown["landing_sigma"] = landing_sigma
-    
-    # Structural failure reward
-    structural_failure_reward = 0 if structural_failure else 1
-    
-    # Cost reward (linear version)
-    max_cost = 1000
-    cost_reward = max(0, 1 - total_cost / max_cost)
-    
-    # Impact velocity reward (linear with cutoff)
-    max_impact_velocity = 30
-    impact_reward = 0 if impact_velocity > max_impact_velocity else max(0, 1 - impact_velocity / max_impact_velocity)
-    
-    # Add rewards with weights prioritizing landing accuracy
-    reward = (landing_reward * 0.7 +          # Landing accuracy is most important
-              cost_reward * 0.05 +            # Cost is less important for precision landing
-              impact_reward * 0.05 +          # Soft landing still matters
-              structural_failure_reward * 0.2)  # Structural integrity is important
-    
-    # Cap reward at 1.0
-    total_reward = min(1.0, reward)
-    
-    # Calculate bullseye classifications for reporting
-    # Using the landing_sigma as a reference
-    bullseye_class = "MISS"
-    if landing_error < landing_sigma * 0.2:
-        bullseye_class = "PERFECT BULLSEYE"
-    elif landing_error < landing_sigma * 0.4:
+    # Classify landing accuracy
+    if landing_error <= 10:
         bullseye_class = "BULLSEYE"
-    elif landing_error < landing_sigma * 0.8:
-        bullseye_class = "INNER RING"
-    elif landing_error < landing_sigma * 1.5:
-        bullseye_class = "OUTER RING"
+    elif landing_error <= 25:
+        bullseye_class = "EXCELLENT"
+    elif landing_error <= 50:
+        bullseye_class = "GOOD"
+    elif landing_error <= 100:
+        bullseye_class = "FAIR"
+    else:
+        bullseye_class = "MISS"
     
-    # Update reward breakdown
-    reward_breakdown.update({
+    # Apogee accuracy (25% of total score)
+    apogee_error_percent = abs(actual_apogee - target_apogee) / target_apogee * 100
+    apogee_reward = math.exp(-0.5 * (apogee_error_percent / 20)**2)  # 20% error = 1 sigma
+    
+    # Cost efficiency (15% of total score)
+    cost_reward = math.exp(-0.5 * (total_cost / 1000)**2)  # Scale based on expected cost range
+    
+    # Safety (20% of total score)
+    if structural_failure:
+        safety_reward = 0.0
+    else:
+        # Impact velocity component
+        safe_velocity = 10.0  # m/s
+        velocity_reward = math.exp(-0.5 * ((impact_velocity - safe_velocity) / 5)**2)
+        safety_reward = velocity_reward
+    
+    # Calculate weighted total reward
+    total_reward = (
+        0.45 * landing_reward +    # Landing accuracy
+        0.35 * apogee_reward +     # Apogee accuracy
+        0.15 * cost_reward +       # Cost efficiency
+        0.05 * safety_reward       # Safety
+    )
+    
+    # Build reward breakdown dictionary
+    reward_breakdown = {
+        "landing_error": landing_error,
+        "landing_reward": landing_reward,
+        "landing_sigma": landing_sigma,
         "bullseye_class": bullseye_class,
-        "cost_total": total_cost,
+        "apogee_error_percent": apogee_error_percent,
+        "apogee_reward": apogee_reward,
         "cost_reward": cost_reward,
+        "safety_reward": safety_reward,
         "impact_velocity": impact_velocity,
-        "impact_reward": impact_reward,
         "structural_failure": structural_failure,
-        "structural_failure_reward": structural_failure_reward,
-        "total_reward": total_reward,
-        "message": f"{bullseye_class}: {landing_error:.2f}m from target" 
-                   if not structural_failure else "Structural failure detected"
-    })
+        "total_cost": total_cost,
+        "weights": {
+            "landing": 0.40,
+            "apogee": 0.25,
+            "cost": 0.15,
+            "safety": 0.20
+        }
+    }
     
     return total_reward, reward_breakdown
 
-
-def format_dynamic_bullseye_report(reward: float, breakdown: Dict[str, Any]) -> str:
-    """
-    Format the dynamic bullseye reward calculation as a human-readable report.
-    
-    Args:
-        reward (float): Total reward value
-        breakdown (dict): Reward breakdown dictionary
-        
-    Returns:
-        str: Formatted report
-    """
-    if "error" in breakdown:
-        return f"REWARD CALCULATION FAILED: {breakdown['error']}"
-    
-    report = []
-    report.append("="*60)
-    report.append(" DYNAMIC BULLSEYE REWARD ".center(60, "="))
-    report.append("="*60)
-    
-    # Landing classification
-    bullseye_class = breakdown["bullseye_class"]
-    if bullseye_class == "PERFECT BULLSEYE":
-        report.append("🎯🎯 PERFECT BULLSEYE! 🎯🎯")
-    elif bullseye_class == "BULLSEYE":
-        report.append("🎯 BULLSEYE! 🎯")
-    elif bullseye_class == "INNER RING":
-        report.append("👌 INNER RING")
-    elif bullseye_class == "OUTER RING":
-        report.append("👍 OUTER RING")
-    else:
-        report.append("❌ MISSED TARGET")
-    
-    # Basic stats
-    report.append(f"\nTarget Position: ({breakdown['target_x']:.2f}m, {breakdown['target_y']:.2f}m)")
-    report.append(f"Target Distance from Origin: {breakdown['target_distance_from_origin']:.2f}m")
-    report.append(f"Landing Position: ({breakdown['landing_x']:.2f}m, {breakdown['landing_y']:.2f}m)")
-    report.append(f"Landing Error: {breakdown['landing_error']:.2f}m")
-    report.append(f"Dynamic Precision (sigma): {breakdown['landing_sigma']:.2f}m")
-    
-    report.append(f"\nTotal Cost: ${breakdown['cost_total']:.2f}")
-    report.append(f"Impact Velocity: {breakdown['impact_velocity']:.2f} m/s")
-    
-    # Structural status
-    if breakdown["structural_failure"]:
-        report.append("\n⚠️ STRUCTURAL FAILURE DETECTED!")
-    else:
-        report.append("\n✅ Structural integrity maintained")
-    
-    # Reward breakdown
-    report.append("\nReward Components:")
-    report.append(f"  Landing Accuracy (70%): {breakdown['landing_reward']*100:.2f} points")
-    report.append(f"  Cost Efficiency (5%): {breakdown['cost_reward']*100:.2f} points")
-    report.append(f"  Safe Landing Speed (5%): {breakdown['impact_reward']*100:.2f} points")
-    report.append(f"  Structural Integrity (20%): {breakdown['structural_failure_reward']*100:.2f} points")
-    
-    # Final score (as percentage)
-    reward_percent = reward * 100
-    report.append(f"\nTOTAL BULLSEYE SCORE: {reward_percent:.2f} / 100")
-    
-    if reward_percent >= 90:
-        report.append("OUTSTANDING PRECISION!")
-    elif reward_percent >= 75:
-        report.append("EXCELLENT PRECISION!")
-    elif reward_percent >= 60:
-        report.append("GOOD PRECISION")
-    elif reward_percent >= 40:
-        report.append("ACCEPTABLE PRECISION")
-    else:
-        report.append("NEEDS IMPROVEMENT IN TARGETING PRECISION")
-    
-    report.append("="*60)
-    
+def format_complex_bullseye_report(reward: float, breakdown: Dict[str, Any]) -> str:
+    """Format a detailed report of the complex bullseye reward calculation."""
+    report = [
+        "=== COMPLEX BULLSEYE LANDING REPORT ===",
+        f"Total Score: {reward * 100:.2f}/100",
+        "",
+        "Landing Accuracy:",
+        f"  • Error: {breakdown['landing_error']:.2f}m",
+        f"  • Class: {breakdown['bullseye_class']}",
+        f"  • Score: {breakdown['landing_reward'] * 100:.2f}/100",
+        "",
+        "Apogee Targeting:",
+        f"  • Error: {breakdown['apogee_error_percent']:.2f}%",
+        f"  • Score: {breakdown['apogee_reward'] * 100:.2f}/100",
+        "",
+        "Cost Efficiency:",
+        f"  • Total Cost: ${breakdown['total_cost']:.2f}",
+        f"  • Score: {breakdown['cost_reward'] * 100:.2f}/100",
+        "",
+        "Safety:",
+        f"  • Impact Velocity: {breakdown['impact_velocity']:.2f} m/s",
+        f"  • Structural Integrity: {'FAILED' if breakdown['structural_failure'] else 'PASSED'}",
+        f"  • Score: {breakdown['safety_reward'] * 100:.2f}/100",
+    ]
     return "\n".join(report)
 
 

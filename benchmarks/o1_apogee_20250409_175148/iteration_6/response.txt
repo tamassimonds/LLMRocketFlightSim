@@ -1,0 +1,118 @@
+Below is a step‐by‐step reasoning followed by a proposed configuration that uses a larger O‐class motor to reach 3 km while still trying to keep mass (and thus cost) under control and avoid structural failure. The design rationale is:
+
+────────────────────────────────────────────────────────
+1. Why Switch to an O‐Class Motor?
+────────────────────────────────────────────────────────
+• All previous attempts with the M1670 (~6000 Ns) ended up in the 2400–2600 m range.  
+• To reach 3048 m more reliably, we use the CesaroniO3700 motor (≈30 kNs of total impulse), which provides roughly 5× the impulse of an M‐class.  
+• This bigger motor makes it easier to reach 3 km, but it also imposes higher structural loads, so we must reinforce the rocket and watch the cost.
+
+────────────────────────────────────────────────────────
+2. Body Dimensions & Material Choice
+────────────────────────────────────────────────────────
+• The O3700 motor has a 161 mm (0.161 m) external radius and 957 mm (0.957 m) length. Our rocket body must exceed 0.161 m radius.  
+• A 0.17 m radius allows just enough clearance to mount the motor and avionics without going excessively large in diameter (which would push up drag, mass, and cost).  
+• Chosen length of 1.4 m accommodates the ~0.96 m motor plus space for the parachutes and payload.  
+• Material selected is “fiberglass” at 0.008 m thickness for a robust wall that resists the high thrust loads and dynamic pressures from the O‐class motor. Fiberglass is typically cheaper than carbon fiber yet still strong enough if we keep adequate thickness.
+
+────────────────────────────────────────────────────────
+3. Nose Cone
+────────────────────────────────────────────────────────
+• A moderately long (0.30 m) “von karman” nose cone is chosen for low drag while not adding unnecessary length or weight.  
+• Material: fiberglass, matching the body for simplicity and consistent structural strength.
+
+────────────────────────────────────────────────────────
+4. Fins
+────────────────────────────────────────────────────────
+• Three fins to minimize cost and drag versus four.  
+• Large root chord (0.25 m) and moderate tip chord (0.08 m) to ensure stable flight on a big‐diameter rocket. Span of 0.15 m provides enough aerodynamic leverage for stability.  
+• Thickness set to 0.006 m (6 mm) in fiberglass. While thicker, it is advisable for the high loads from a 4 kN thrust motor.
+
+────────────────────────────────────────────────────────
+5. Tail
+────────────────────────────────────────────────────────
+• Tail cone length of 0.15 m transitions from top radius 0.17 m to bottom radius 0.18 m, ensuring they are not the same.  
+• Material: fiberglass to match the rest of the airframe and avoid abrupt stiffness changes.
+
+────────────────────────────────────────────────────────
+6. Parachutes
+────────────────────────────────────────────────────────
+• With a large O‐class motor (dry mass ~14 kg) plus the rocket structure, total mass can exceed 20 kg.  
+• A main parachute Cd·S = 7.0 m² is chosen to keep descent speeds near or below 5 m/s, improving safe landing chances.  
+• A drogue chute at 0.4 m² stabilizes the rocket at high altitude before main deployment (triggered at apogee for simplicity).
+
+────────────────────────────────────────────────────────
+7. Launch Configuration
+────────────────────────────────────────────────────────
+• 3.0 m rail length for stable guidance, giving the rocket enough time to build up speed while constrained.  
+• Inclination of 88° (almost vertical) and heading of 270° (west), since winds are from the east at 20 m/s; this helps reduce total horizontal drift.
+
+────────────────────────────────────────────────────────
+8. Payload
+────────────────────────────────────────────────────────
+• 1.0 kg payload placed 0.7 m from the rocket center helps shift the center of gravity forward, aiding stability, while being a realistic mass for a modest instrumentation package (camera, sensors, etc.).
+
+────────────────────────────────────────────────────────
+Final Configuration Dictionary
+────────────────────────────────────────────────────────
+
+```python
+config = {
+    "motor_choice": "CesaroniO3700",
+    "rocket_body": {
+        "radius": 0.17,               # Must exceed 0.161 m (motor radius)
+        "length": 1.4,
+        "material": "fiberglass",
+        "thickness": 0.008
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "von karman",
+            "length": 0.30,
+            "material": "fiberglass",
+        },
+        "fins": {
+            "number": 3,
+            "root_chord": 0.25,
+            "tip_chord": 0.08,
+            "span": 0.15,
+            "cant_angle": 0,
+            "material": "fiberglass",
+            "thickness": 0.006
+        },
+        "tail": {
+            "length": 0.15,
+            "top_radius": 0.17,
+            "bottom_radius": 0.18,
+            "material": "fiberglass",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 7.0,     # Larger area for safe landing of heavier rocket
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 0.4,
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 3.0,
+        "inclination": 88,
+        "heading": 270,
+    },
+    "payload": {
+        "mass": 1.0,
+        "position": 0.7
+    }
+}
+```

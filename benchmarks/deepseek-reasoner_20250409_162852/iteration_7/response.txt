@@ -1,0 +1,60 @@
+```python
+config = {
+    "motor_choice": "CesaroniO5800",
+    "rocket_body": {
+        "radius": 0.155,  # 155mm > motor radius (150mm), minimizes drag
+        "length": 2.0,  # Increased length for added mass to reduce overshoot
+        "material": "aluminum",  # Cost-effective with structural safety
+        "thickness": 0.005,  # Thicker walls to prevent structural failure
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "conical",  # Intentional drag increase for altitude control
+            "length": 0.4,  # Shorter length than optimal to limit apogee
+            "material": "aluminum",
+        },
+        "fins": {
+            "number": 4,
+            "root_chord": 0.25,  # Increased root chord for stability/drag
+            "tip_chord": 0.1,
+            "span": 0.3,  # Larger span for wind counteraction
+            "cant_angle": 0.4,  # Compensates for 5 m/s crosswind
+            "material": "aluminum",
+            "thickness": 0.005,
+        },
+        "tail": {
+            "length": 0.3,
+            "top_radius": 0.154,  # Gradual transition for structural integrity
+            "bottom_radius": 0.155,
+            "material": "ABS_plastic",
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 25.0,  # Sized for 4.8 m/s descent (38.8 kg total mass)
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 1.5,  # Targets 20 m/s descent during drogue phase
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.2,  # Ensures >30 m/s exit velocity for wind stability
+        "inclination": 90,
+        "heading": 0,
+    },
+    "payload": {
+        "mass": 0.5,
+        "position": 1.0  # Adjusted CG for 2.0m body length
+    }
+}
+```

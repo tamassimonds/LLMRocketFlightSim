@@ -1,0 +1,130 @@
+# Rocket Design Analysis for 3048m Apogee Target
+
+## Comprehensive Analysis of Previous Attempts
+
+After analyzing the five previous attempts, I can identify clear patterns and lessons:
+
+| Attempt | Motor | Apogee (m) | Error (%) | Structural | Cost ($) | Score |
+|---------|-------|------------|-----------|------------|----------|-------|
+| 1 | Pro75M1670 | 2447.52 | 19.70% | PASSED | 619.70 | 74.92 |
+| 2 | CesaroniK160 | 398.21 | 86.94% | FAILED | 242.67 | 29.89 |
+| 3 | Pro75M1670 | 2280.61 | 25.18% | PASSED | 610.15 | 73.80 |
+| 4 | AeroTechK700W | 1819.67 | 40.30% | PASSED | 296.84 | 68.18 |
+| 5 | AeroTechK700W | 2019.49 | 33.74% | FAILED | 211.36 | 61.92 |
+
+Key observations:
+1. The Pro75M1670 motor gets us closest to target but still undershoots by ~20-25%
+2. Lightweight designs with AeroTechK700W are cost-effective but underpowered
+3. Attempt 5 failed structurally, indicating we pushed the lightweight design too far
+4. We need more impulse than Pro75M1670 provides, but not as much as O-class motors
+
+## Motor Selection for Optimal Performance
+
+Looking at our available motors again:
+
+| Motor | Total Impulse (Ns) | Avg Thrust (N) | Mass (kg) | Burn Time (s) |
+|-------|-------------------|----------------|-----------|--------------|
+| Pro75M1670 | 6023.6 | 1533.9 | 1.815 | 3.9 |
+| AeroTechK700W | 2249 | 658.7 | 0.732 | 3.5 |
+| CesaroniM1670 | 6023.6 | 1533.9 | 3.101 | 3.6 |
+| AeroTechH128W | 176.5 | 141.2 | 0.108 | 1.29 |
+| CesaroniO3700 | 29930.2 | 2836.9 | 14.194 | 8.2 |
+| CesaroniO5800 | 30382.7 | 5040.2 | 12.418 | 5.2 |
+| CesaroniK160 | 1521.7 | 190.2 | 0.7 | 9.7 |
+
+Since we need more impulse than Pro75M1670 provides, but the O-class motors would cause significant overshoot and are expensive, I'll try the CesaroniO3700 motor with a heavier, more robust design that can handle the increased power while still reaching our target apogee.
+
+## Altitude Estimation and Optimization
+
+Using the rocket equation approximation and our previous results:
+- With Pro75M1670, we reached ~2350m (average of attempts 1 & 3)
+- To reach 3048m (30% increase), we need more impulse
+
+The CesaroniO3700 has about 5 times the impulse of Pro75M1670, but is also much heavier. To prevent overshooting, I'll design a heavier rocket with:
+1. Larger diameter to increase drag
+2. Stronger materials to ensure structural integrity
+3. Larger fins for stability with the more powerful motor
+
+## Structural Integrity Considerations
+
+The CesaroniO3700 produces significantly more thrust (2836.9 N avg) than the motors in our previous attempts. To ensure structural integrity:
+1. Use aluminum for the body and tail for maximum strength
+2. Use carbon fiber for the nose cone and fins for strength with reasonable weight
+3. Increase wall thickness to handle the higher forces
+
+## Wind Compensation Strategy
+
+With 20 m/s easterly winds, I'll angle the launch rail slightly into the wind:
+- Launch inclination: 87 degrees (slightly off vertical)
+- Heading: 270 degrees (west, into the wind)
+
+## Recovery System Sizing
+
+For a safe landing (< 5 m/s) with a heavier rocket (est. ~18-20 kg):
+- Terminal velocity = √(2mg/ρACD)
+- For v < 5 m/s, CD_S ≈ 16 m²
+
+## Final Design Configuration
+
+```python
+config = {
+    "motor_choice": "CesaroniO3700",
+    "rocket_body": {
+        "radius": 0.17,  # Body radius in meters (larger than motor radius of 161mm)
+        "length": 1.5,   # Body length in meters
+        "material": "aluminum",  # Strong material for structural integrity
+        "thickness": 0.004,  # Wall thickness in meters
+    },
+    "aerodynamics": {
+        "nose_cone": {
+            "kind": "ogive",  # Good balance of performance and stability
+            "length": 0.4,  # Nose cone length in meters
+            "material": "carbon_fiber",  # Strong but not as heavy as aluminum
+        },
+        "fins": {
+            "number": 4,  # For stability with powerful motor
+            "root_chord": 0.25,  # Fin root chord in meters
+            "tip_chord": 0.12,   # Fin tip chord in meters
+            "span": 0.2,        # Fin span in meters
+            "cant_angle": 0,     # No cant angle for minimum drag
+            "material": "carbon_fiber",  # Strong material for structural integrity
+            "thickness": 0.006   # Fin thickness in meters
+        },
+        "tail": {
+            "length": 0.3,  # Tail length in meters
+            "top_radius": 0.165,  # Top radius in meters
+            "bottom_radius": 0.17,  # Bottom radius in meters
+            "material": "aluminum",  # Strong material for structural integrity
+        },
+    },
+    "parachutes": {
+        "main": {
+            "name": "Main",
+            "cd_s": 16.0,  # Main parachute CD_s for heavier rocket
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+        "drogue": {
+            "name": "Drogue",
+            "cd_s": 1.5,  # Drogue parachute CD_s
+            "trigger": "apogee",
+            "sampling_rate": 105,
+            "lag": 1.5,
+            "noise": (0, 8.3, 0.5),
+        },
+    },
+    "launch": {
+        "rail_length": 2.0,  # Length of the launch rail in meters (longer for powerful motor)
+        "inclination": 87,   # Rail inclination in degrees (slightly angled into wind)
+        "heading": 270,      # Launch heading in degrees (west, into the wind)
+    },
+    "payload": {
+        "mass": 1.0,  # Payload mass in kg
+        "position": 0.6  # Payload position relative to rocket center in meters
+    }
+}
+```
+
+This design uses the powerful CesaroniO3700 motor with a robust, heavier rocket design to achieve our target apogee. The aluminum body and tail provide excellent structural integrity to handle the powerful motor, while the carbon fiber nose cone and fins offer a good balance of strength and weight. The larger diameter increases drag to prevent overshooting our target altitude. The recovery system is sized appropriately for the heavier rocket to ensure a safe landing.
