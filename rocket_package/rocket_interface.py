@@ -120,6 +120,8 @@ async def simulate_from_config(
         material_results = results["materials"]
         
         # Format simple results for reward calculation
+
+        
         simple_results = {
             "apogee": flight_results["max_apogee"],
             "apogee_error": abs(flight_results["max_apogee"] - target_apogee),

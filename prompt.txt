@@ -3,7 +3,7 @@
 ## Design Requirements
 
 - **Target Apogee**: 3048.0 meters
-- **Wind Conditions**: 20 m/s from E direction
+- **Wind Conditions**: 5 m/s from E direction
 
 ## You are scored off the following
 Distance to max apogee
@@ -14,40 +14,37 @@ Horz distance: How far is it from the intial launch site
 
 #Score func code shown below:
 structural_failure = None  # Whether the rocket structure failed during flight
-structural_failure_reward = 0
-
-if structural_failure is not None:
-    if structural_failure:
-        structural_failure_reward = 0
-    else:
-        # Structural failure did not occur
-        structural_failure_reward = 1
-
-# Calculate horizontal distance reward
-# Lower horizontal distance from launch site is better
-horz_distance = abs(horizontal_distance)  # Distance in meters from launch site
-max_horz_distance = target_apogee * 0.3  # Maximum acceptable horizontal distance
-horz_distance_reward = max(0, 1 - horz_distance / max_horz_distance)
-
-# Calculate cost reward
-# Lower cost designs receive higher rewards
-cost = total_cost  # Total cost of rocket components
-max_cost = 1000  # Maximum cost threshold
-cost_reward = max(0, 1 - cost / max_cost)
-
-# Calculate landing impact velocity reward
-# Lower impact velocity (safer landing) is better
-impact_velocity = abs(impact_velocity)  # Landing speed in m/s
-max_impact_velocity = 50  # Maximum acceptable impact velocity
-impact_reward = max(0, 1 - impact_velocity / max_impact_velocity)
-
-percent_difference = abs(apogee - target_apogee) / target_apogee
 distance_reward = 1.0 - percent_difference
 distance_reward = max(0, distance_reward)
 
 
-# Calculate total reward with component weights
-reward = distance_reward + horz_distance_reward * 0.2 + cost_reward * 0.3 + impact_reward * 0.3 + structural_failure_reward * 0.2
+
+
+# Structural failure reward
+structural_failure_reward = 0 if structural_failure else 1
+
+# Horizontal distance reward (linear version)
+max_horz_distance = target_apogee * 0.3  # Scale factor
+horz_distance_reward = max(0, 1 - horizontal_distance / max_horz_distance)
+
+# Cost reward (linear version)
+max_cost = 1000.0  # Base cost scale
+cost_factor = total_cost / max_cost
+cost_reward = 1.0 - cost_factor
+cost_reward = max(0, cost_reward)  # Clamp to minimum of 0
+
+# Impact velocity reward (linear version)
+max_impact_velocity = 25  # m/s
+impact_factor = abs(impact_velocity) / max_impact_velocity
+impact_reward = 1.0 - impact_factor
+impact_reward = max(0, impact_reward)  # Clamp to minimum of 0
+
+# Add additional rewards with weights
+reward = (distance_reward*0.5 +
+            horz_distance_reward * 0.1 + 
+            cost_reward * 0.15 + 
+            impact_reward * 0.15 + 
+            structural_failure_reward * 0.1)
 
 
 
@@ -57,16 +54,19 @@ reward = distance_reward + horz_distance_reward * 0.2 + cost_reward * 0.3 + impa
 The following materials are available for the rocket components:
 aluminum, composite, fiberglass, carbon_fiber, balsa_wood, plywood, ABS_plastic
 
+##Cost Calculation
+Cost is calculated based off the cost of the motor + the weight of material * cost of material
+
 ## Available Motors
 
-Name,Manufacturer,Radius (mm),Length (mm),Dry Mass (kg),Max Thrust (N),Avg Thrust (N),Burn Time (s),Total Impulse (Ns),Isp (s)
-Pro75M1670,CTI,75,757,1.815,2200,1533.9,3.9,6023.6,198
-AeroTechK700W,AT,54,568,0.732,1029.3,658.7,3.5,2249,177.5
-CesaroniM1670,CTI,75,757,3.101,2200,1533.9,3.6,6023.6,198
-AeroTechH128W,AT,29,194,0.108,190.5,141.2,1.29,176.5,191.3
-CesaroniO3700,CTI,161,957,14.194,4030.3,2836.9,8.2,29930.2,177.8
-CesaroniO5800,CTI,150,754,12.418,6395.5,5040.2,5.2,30382.7,222
-CesaroniK160,CTI,54,404,0.7,272.2,190.2,9.7,1521.7,182.9
+Name,Manufacturer,Radius (mm),Length (mm),Dry Mass (kg),Max Thrust (N),Avg Thrust (N),Burn Time (s),Total Impulse (Ns),Isp (s), Cost ($)
+Pro75M1670,CTI,75,757,1.815,2200,1533.9,3.9,6023.6,198, 520
+AeroTechK700W,AT,54,568,0.732,1029.3,658.7,3.5,2249,177.5, 180
+CesaroniM1670,CTI,75,757,3.101,2200,1533.9,3.6,6023.6,198, 550
+AeroTechH128W,AT,29,194,0.108,190.5,141.2,1.29,176.5,191.3, 65
+CesaroniO3700,CTI,161,957,14.194,4030.3,2836.9,8.2,29930.2,177.8, 1250
+CesaroniO5800,CTI,150,754,12.418,6395.5,5040.2,5.2,30382.7,222, 1100
+CesaroniK160,CTI,54,404,0.7,272.2,190.2,9.7,1521.7,182.9, 130
 
 ## Design Task
 

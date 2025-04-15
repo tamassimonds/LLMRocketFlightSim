@@ -1,0 +1,16 @@
+{
+  "landing_reward": 3.726653172078671e-06,
+  "landing_x": 0.0,
+  "landing_y": 0.0,
+  "target_x": 4000.0,
+  "target_y": 4000.0,
+  "landing_error": 5656.85424949238,
+  "cost_total": 524.2563132899124,
+  "cost_reward": 0.4757436867100876,
+  "impact_velocity": -9.376012776628672,
+  "impact_reward": 0.6249594889348531,
+  "structural_failure": false,
+  "structural_failure_reward": 1,
+  "total_reward": 0.2550377674394675,
+  "message": "Simulation successful"
+}

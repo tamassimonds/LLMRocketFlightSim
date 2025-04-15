@@ -3,6 +3,7 @@ import argparse
 import asyncio
 import json
 import math
+import statistics
 from typing import Dict, Any, List, Tuple, Optional
 from utils.inference import generate_text
 from rocket_package.src.utils.model_parser import extract_config_from_response, add_wind_settings
@@ -10,8 +11,8 @@ from rocket_package.rocket_interface import simulate_from_config, print_result_s
 from rocket_package.calculate_reward import (
     calculate_reward,
     format_reward_report,
-    calculate_complex_bullseye_reward,
-    format_complex_bullseye_report
+    calculate_target_point_reward,
+    format_target_point_report
 )
 
 async def llm_benchmark(
@@ -24,7 +25,8 @@ async def llm_benchmark(
     output_dir: str = "outputs",
     save_plots: bool = False,
     target_x: Optional[float] = None,
-    target_y: Optional[float] = None
+    target_y: Optional[float] = None,
+    batch_size: int = 1
 ) -> Dict[str, Any]:
     """
     Run an iterative benchmarking process with an LLM for rocket design optimization.
@@ -40,6 +42,7 @@ async def llm_benchmark(
         save_plots: Whether to save simulation plots
         target_x: Optional X-coordinate for bullseye landing target
         target_y: Optional Y-coordinate for bullseye landing target
+        batch_size: Number of simulations to run per iteration
         
     Returns:
         Dictionary with benchmark results
@@ -64,13 +67,14 @@ async def llm_benchmark(
                 full_prompt += f"\n--- ATTEMPT {i+1} ---\n"
                 full_prompt += f"Design:\n{entry['response']}\n"
                 full_prompt += f"Score: {entry['score']:.2f}/100\n"
-                if 'simple_results' in entry['result']:
+                if 'simple_results' in entry['result'] and 'full_results' in entry['result']:
                     r = entry['result']['simple_results']
+                    flight_r = entry['result']['full_results'].get('flight', {})
                     
                     if bullseye_mode:
-                        # Include bullseye-specific information in prompt
-                        landing_x = r.get('landing_x', 0)
-                        landing_y = r.get('landing_y', 0)
+                        # Get landing positions directly from flight_results
+                        landing_x = float(flight_r.get('x_final', 0))
+                        landing_y = float(flight_r.get('y_final', 0))
                         landing_error = math.sqrt((landing_x - target_x)**2 + (landing_y - target_y)**2)
                         full_prompt += f"Target Position: ({target_x}m, {target_y}m), Landing Position: ({landing_x:.2f}m, {landing_y:.2f}m), Error: {landing_error:.2f}m\n"
                     else:
@@ -91,115 +95,121 @@ async def llm_benchmark(
         with open(os.path.join(iter_dir, "prompt.txt"), "w") as f:
             f.write(full_prompt)
             
-        print(f"Generating response using {model}...")
-        llm_response = await generate_text(model=model, prompt=full_prompt)
+        print(f"Generating {batch_size} responses using {model}...")
+        batch_results = []
+        batch_scores = []
         
-        # Save the raw response
-        with open(os.path.join(iter_dir, "response.txt"), "w") as f:
-            f.write(llm_response)
-            
-        # Process the response and run simulation
-        print(f"Running simulation with the generated design...")
         try:
-            # Extract configuration from response
-            config = extract_config_from_response(llm_response)
-            
-            # Run simulation
-            result = await simulate_from_config(
-                config=config,
-                target_apogee=target_apogee,
-                output_dir=iter_dir,
-                wind_speed=wind_speed,
-                wind_direction=wind_direction,
-                save_outputs=save_plots
-            )
-            
-            # Get the specific values needed for reward calculation
-            if "simple_results" in result and "full_results" in result:
-                simple_results = result["simple_results"]
-                flight_results = result["full_results"].get("flight", {})
+            for batch_num in range(batch_size):
+                print(f"\n=== Design {batch_num + 1}/{batch_size} ===")
                 
-                # Extract common values
-                apogee = simple_results["apogee"]
-                total_cost = simple_results["total_cost"]
-                horizontal_distance = simple_results["horizontal_distance"]
-                impact_velocity = flight_results.get("impact_velocity", 10.0)
-                structural_failure = simple_results["structural_failure"]
+                # Get a new response for each batch
+                llm_response = await generate_text(model=model, prompt=full_prompt)
                 
-                # Extract or calculate landing coordinates
-                landing_x = float(flight_results.get("x_final", 0))
-                landing_y = float(flight_results.get("y_final", 0))
+                # Save the raw response
+                with open(os.path.join(iter_dir, f"response_{batch_num+1}.txt"), "w") as f:
+                    f.write(llm_response)
+                    
+                # Extract configuration for this response
+                config = extract_config_from_response(llm_response)
                 
-                # Add landing coordinates to simple_results for future iterations
-                simple_results["landing_x"] = landing_x
-                simple_results["landing_y"] = landing_y
+                # Run simulation
+                batch_result = await simulate_from_config(
+                    config=config,
+                    target_apogee=target_apogee,
+                    output_dir=os.path.join(iter_dir, f"design_{batch_num+1}"),
+                    wind_speed=wind_speed,
+                    wind_direction=wind_direction,
+                    save_outputs=save_plots
+                )
                 
-                # Calculate reward based on mode
+                if "simple_results" in batch_result and "full_results" in batch_result:
+                    simple_results = batch_result["simple_results"]
+                    flight_results = batch_result["full_results"].get("flight", {})
+                    
+                    # Extract values for reward calculation
+                    apogee = simple_results["apogee"]
+                    total_cost = simple_results["total_cost"]
+                    horizontal_distance = simple_results["horizontal_distance"]
+                    impact_velocity = flight_results.get("impact_velocity", 10.0)
+                    structural_failure = simple_results["structural_failure"]
+                    landing_x = float(flight_results.get("x_final", 0))
+                    landing_y = float(flight_results.get("y_final", 0))
+                    
+                    # Calculate reward based on mode
+                    if bullseye_mode:
+                        reward_score, reward_breakdown = calculate_target_point_reward(
+                            landing_x=landing_x,
+                            landing_y=landing_y,
+                            target_x=target_x,
+                            target_y=target_y,
+                            total_cost=total_cost,
+                            impact_velocity=impact_velocity,
+                            structural_failure=structural_failure
+                        )
+                    else:
+                        reward_score, reward_breakdown = calculate_reward(
+                            apogee=apogee,
+                            target_apogee=target_apogee,
+                            horizontal_distance=horizontal_distance,
+                            total_cost=total_cost,
+                            impact_velocity=impact_velocity,
+                            structural_failure=structural_failure
+                        )
+                    
+                    batch_result["reward"] = reward_score * 100
+                    batch_result["reward_breakdown"] = reward_breakdown
+                    batch_results.append(batch_result)
+                    batch_scores.append(reward_score * 100)
+
+            # After batch loop, calculate statistics
+            if batch_results:
+                avg_score = sum(batch_scores) / len(batch_scores)
+                best_score = max(batch_scores)
+                worst_score = min(batch_scores)
+                score_std = statistics.stdev(batch_scores) if len(batch_scores) > 1 else 0
+                
+                # Use best result for history
+                best_idx = batch_scores.index(best_score)
+                result = batch_results[best_idx]
+                
+                # Add batch statistics to result
+                result["batch_stats"] = {
+                    "average_score": avg_score,
+                    "best_score": best_score,
+                    "worst_score": worst_score,
+                    "std_dev": score_std,
+                    "num_simulations": len(batch_scores),
+                    "all_scores": batch_scores
+                }
+                
+                score = avg_score  # Use average score for iteration comparison
+                
+                print(f"\nBatch Statistics:")
+                print(f"  Average Score: {avg_score:.2f}")
+                print(f"  Best Score: {best_score:.2f}")
+                print(f"  Worst Score: {worst_score:.2f}")
+                print(f"  Standard Deviation: {score_std:.2f}")
+                
+                # Print summary based on mode
                 if bullseye_mode:
-                    # Bullseye landing reward calculation
-                    reward_score, reward_breakdown = calculate_complex_bullseye_reward(
-                        landing_x=landing_x,
-                        landing_y=landing_y,
-                        target_x=target_x,
-                        target_y=target_y,
-                        total_cost=total_cost,
-                        impact_velocity=impact_velocity,
-                        structural_failure=structural_failure,
-                        actual_apogee=apogee,
-                        target_apogee=target_apogee
-                    )
-                    
-                    # Format reward report
-                    reward_report = format_complex_bullseye_report(reward_score, reward_breakdown)
+                    print_bullseye_summary(result, target_x, target_y)
                 else:
-                    # Traditional apogee-based reward calculation
-                    reward_score, reward_breakdown = calculate_reward(
-                        apogee=apogee,
-                        target_apogee=target_apogee,
-                        horizontal_distance=horizontal_distance,
-                        total_cost=total_cost,
-                        impact_velocity=impact_velocity,
-                        structural_failure=structural_failure
-                    )
-                    
-                    # Format reward report
-                    reward_report = format_reward_report(reward_score, reward_breakdown)
+                    print_result_summary(result, target_apogee)
                 
-                # Override the reward in the result
-                result["reward"] = reward_score * 100  # Convert to percentage
-                result["reward_breakdown"] = reward_breakdown
+                # Save to history
+                history.append({
+                    "iteration": iteration + 1,
+                    "response": llm_response,
+                    "result": result,
+                    "score": score
+                })
                 
-                # Get the score
-                score = reward_score * 100
-                
-                # Save reward report
-                with open(os.path.join(iter_dir, "reward_report.txt"), "w") as f:
-                    f.write(reward_report)
-            else:
-                # If simple_results is not available, use the original reward
-                score = result.get("reward", 0)
-            
-            print(f"Score: {score:.2f}/100")
-            
-            # Print summary based on mode
-            if bullseye_mode:
-                print_bullseye_summary(result, target_x, target_y)
-            else:
-                print_result_summary(result, target_apogee)
-            
-            # Save to history
-            history.append({
-                "iteration": iteration + 1,
-                "response": llm_response,
-                "result": result,
-                "score": score
-            })
-            
-            # Update best result if needed
-            if score > best_score:
-                best_result = result
-                best_score = score
-                print(f"New best score: {best_score:.2f}/100")
+                # Update best result if needed
+                if score > best_score:
+                    best_result = result
+                    best_score = score
+                    print(f"New best score: {best_score:.2f}/100")
                 
         except Exception as e:
             print(f"Error processing response: {str(e)}")
@@ -269,6 +279,15 @@ def print_bullseye_summary(result: Dict[str, Any], target_x: float, target_y: fl
     print(f"\nReward Score: {result['reward']:.2f} / 100")
     print("="*60)
 
+    if "batch_stats" in result:
+        print("\nBatch Statistics:")
+        stats = result["batch_stats"]
+        print(f"Average Score: {stats['average_score']:.2f}")
+        print(f"Best Score: {stats['best_score']:.2f}")
+        print(f"Worst Score: {stats['worst_score']:.2f}")
+        print(f"Standard Deviation: {stats['std_dev']:.2f}")
+        print(f"Number of Simulations: {stats['num_simulations']}")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="LLM Rocket Design Benchmark")
     parser.add_argument("--prompt", type=str, required=True, help="Path to prompt file or raw prompt")
@@ -281,6 +300,7 @@ if __name__ == "__main__":
     parser.add_argument("--save-plots", action="store_true", help="Save simulation plots and outputs")
     parser.add_argument("--target-x", type=float, help="X-coordinate for bullseye landing target")
     parser.add_argument("--target-y", type=float, help="Y-coordinate for bullseye landing target")
+    parser.add_argument("--batch-size", type=int, default=1, help="Number of simulations to run per iteration")
     
     args = parser.parse_args()
     
@@ -311,7 +331,8 @@ if __name__ == "__main__":
         output_dir=output_dir,
         save_plots=args.save_plots,
         target_x=args.target_x,
-        target_y=args.target_y
+        target_y=args.target_y,
+        batch_size=args.batch_size
     ))
     
     # Print final results
