@@ -24,7 +24,7 @@ The project contains tooling to benchmark models on metrics used in paper aswell
 - **Wind Effects**: Account for wind conditions in flight simulation
 
 
-#Benchmarking
+# Benchmarking
 
 ### Apogee Targeting Benchmark
 
