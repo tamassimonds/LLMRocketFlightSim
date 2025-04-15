@@ -1,10 +1,69 @@
-# Rocket Package
+# LLM Rocket Flight Simulator
 
-A Python package for rocket flight simulation and design analysis, built on RocketPy.
+A Python package for rocket flight simulation, design optimization, and benchmarking using Large Language Models (LLMs).
 
 ## Overview
 
-Rocket Package provides tools for rocket design, flight simulation, and performance evaluation. It's designed to work with LLM (Large Language Model) responses to evaluate and score rocket designs automatically.
+This project combines rocket flight simulation with LLM-powered design optimization to create an intelligent rocket design system. It allows you to:
+
+1. **Simulate rocket flights** with realistic physics using RocketPy
+2. **Optimize rocket designs** using LLMs to target specific performance goals
+3. **Benchmark LLM performance** in rocket design tasks
+4. **Evaluate landing precision** with dynamic reward functions
+
+The project contains tooling to benchmark models on metrics used in paper aswell as the simulation tools you need to create your own benchmarks
+
+## Features
+
+- **Realistic Flight Simulation**: Physics-based simulation using RocketPy
+- **LLM Integration**: Seamless integration with various LLM models (GPT-4, Claude, etc.)
+- **Iterative Design Optimization**: LLMs improve designs based on simulation results
+- **Dynamic Reward Functions**: Sophisticated scoring for landing precision
+- **Batch Processing**: Run multiple simulations in parallel
+- **Comprehensive Output**: Detailed reports, plots, and data for analysis
+- **Wind Effects**: Account for wind conditions in flight simulation
+
+
+#Benchmarking
+
+### Apogee Targeting Benchmark
+
+Run a benchmark to optimize rocket designs for reaching a specific apogee:
+
+```bash
+python benchmark.py --prompt prompt.txt --model claude-3-7-sonnet-20250219 --apogee 3048 --iterations 5 --wind-speed 5 --wind-direction E --output-dir benchmarks
+```
+
+### Target Landing Benchmark
+
+Run a benchmark to optimize rocket designs for precise landing at specific coordinates:
+
+```bash
+python benchmark.py --prompt prompt-target.txt --model o1-mini --target-x 4000 --target-y 4000 --iterations 1 --batch-size 5 --wind-speed 5 --wind-direction E --output-dir target-benchmarks
+```
+
+### Command Line Arguments
+
+- `--prompt`: Path to prompt file or raw prompt text
+- `--model`: LLM model to use (e.g., "gpt-4", "claude-3-opus", "o1-mini")
+- `--apogee`: Target apogee in meters (for apogee targeting mode)
+- `--target-x`: X-coordinate for bullseye landing target
+- `--target-y`: Y-coordinate for bullseye landing target
+- `--iterations`: Maximum number of improvement iterations
+- `--batch-size`: Number of simulations to run per iteration
+- `--wind-speed`: Wind speed in m/s
+- `--wind-direction`: Wind direction (N, S, E, W)
+- `--output-dir`: Base directory for outputs
+- `--save-plots`: Save simulation plots
+
+## Reward Functions
+
+The system includes several reward functions for evaluating rocket performance:
+
+1. **Apogee Targeting**: Evaluates how close the rocket gets to the target apogee
+2. **Bullseye Landing**: Evaluates landing precision at specific coordinates
+3. **Complex Bullseye**: Combines landing precision with other factors like cost and structural integrity
+
 
 ## Installation
 
@@ -24,160 +83,53 @@ pip install -e .
 
 ## Usage
 
-### Basic Usage
+### Basic Simulation
 
 ```python
-from rocket_package.rocket_interface import process_llm_response
+from rocket_package.rocket_interface import simulate_from_config
 
-# Your LLM response containing a rocket design
-llm_response = """
-### Reasoning for Rocket Design Choices
-
-#### **1. Motor Selection**
-- **Target Apogee**: 3000 meters is a moderately high altitude, requiring a motor with sufficient total impulse.
-- **Choice**: **Pro75M1670** (best balance of thrust, impulse, and weight).
-
-... (truncated for brevity) ...
-
-### Final Design (Python Dictionary)
-```python
+# Define your rocket configuration
 config = {
     "motor_choice": "Pro75M1670",
     "rocket_body": {
-        "radius": 0.075,
-        "length": 3,
+        "radius": 0.1,
+        "length": 3.0,
         "material": "carbon_fiber",
         "thickness": 0.002,
     },
-    "aerodynamics": {
-        "nose_cone": {
-            "kind": "von karman",
-            "length": 0.6,
-            "material": "carbon_fiber",
-        },
-        "fins": {
-            "number": 4,
-            "root_chord": 0.2,
-            "tip_chord": 0.1,
-            "span": 0.15,
-            "cant_angle": 0,
-            "material": "composite",
-            "thickness": 0.003,
-        },
-        "tail": {
-            "length": 0.1,
-            "top_radius": 0.075,
-            "bottom_radius": 0.074,
-            "material": "carbon_fiber",
-        },
-    },
-    "parachutes": {
-        "main": {
-            "name": "Main",
-            "cd_s": 1.0,
-            "trigger": "apogee",
-            "sampling_rate": 105,
-            "lag": 1.5,
-            "noise": (0, 8.3, 0.5),
-        },
-        "drogue": {
-            "name": "Drogue",
-            "cd_s": 0.2,
-            "trigger": "apogee",
-            "sampling_rate": 105,
-            "lag": 1.5,
-            "noise": (0, 8.3, 0.5),
-        },
-    },
-    "launch": {
-        "rail_length": 5.0,
-        "inclination": 85,
-        "heading": 90,
-    },
+    # ... other configuration details ...
 }
-```
-"""
 
-# Process the LLM response with a target apogee of 3000 meters
-response = process_llm_response(
-    llm_response, 
-    target_apogee=3000, 
-    wind_speed=20,  # m/s
-    wind_direction="E",  # East
-    save_outputs=True  # Save simulation outputs to files
+# Run simulation
+result = simulate_from_config(
+    config=config,
+    target_apogee=3000,
+    wind_speed=5,
+    wind_direction="E",
+    save_outputs=True
 )
 
-# Calculate reward based on how close the rocket got to the target apogee
-from math import exp
-
-target_apogee = 3000
-reward = 0
-
-if response['simple_results']:
-    # Basic reward for valid design that could be simulated
-    reward += 0.05 
-    
-    # Calculate distance-based reward (exponential decay based on error)
-    distance_reward = exp(-abs(response['simple_results']["apogee"] - target_apogee) / (target_apogee*0.1))
-    reward += distance_reward
-
-print(f"Reward score: {reward}")
-print(f"Apogee: {response['simple_results']['apogee']} m")
+# Print summary
+print_result_summary(result)
 ```
 
-### Design Rule Checks
-
-The package includes design rule checks to validate rocket configurations:
-
-- Motor compatibility with body dimensions
-- Material validation
-- Component dimension constraints
-- Aerodynamic stability checks
-- Physical feasibility validation
-
-Key constraints include:
-- Top and bottom radius of the tail cannot be the same
-- Body radius must be larger than the motor radius
-- Body thickness must be less than body radius
-- Total rocket length has realistic bounds
-
-### Output Files
-
-When `save_outputs=True`, the following files are generated in the `outputs` directory:
-
-- Flight trajectory plots
-- 3D rocket visualization
-- Detailed simulation results
-- KML files for Google Earth visualization
-
-## Package Structure
+## Project Structure
 
 ```
-rocket_package/
-├── configs/             # Engine files and configuration data
-├── src/                 # Source code
-│   ├── analysis/        # Analysis tools
-│   ├── models/          # Rocket and simulation models
-│   │   └── motors/      # Motor definitions
-│   └── utils/           # Utility functions
-├── rocket_interface.py  # Main interface for LLM integration
-├── rocket_designer.py   # Design optimization tools
-├── rocket_simulator.py  # Core simulation functionality
-├── calculate_reward.py  # Reward calculation utilities
-└── default_configs.py   # Default rocket configurations
+LLMRocketFlightSim/
+├── rocket_package/       # Core rocket simulation package
+│   ├── src/              # Source code
+│   │   ├── models/       # Rocket and simulation models
+│   │   └── utils/        # Utility functions
+│   ├── rocket_interface.py  # Main interface
+│   └── calculate_reward.py  # Reward calculation
+├── utils/                # Utility functions
+│   └── inference.py      # LLM inference
+├── main.py               # Main simulation script
+├── benchmark.py          # Benchmarking script
+├── prompt.txt            # Prompt for apogee targeting
+└── prompt-target.txt     # Prompt for bullseye landing
 ```
-
-## Available Motors
-
-The package includes several pre-configured motors:
-
-- Pro75M1670
-- AeroTechK700W
-- CesaroniM1670
-- AeroTechH128W
-- CesaroniO3700
-- CesaroniO5800
-- CesaroniK160
 
 ## Dependencies
 
@@ -186,10 +138,8 @@ The package includes several pre-configured motors:
 - matplotlib
 - pandas
 - tabulate
+- asyncio
 
 ## License
 
 MIT License
-
-python3 benchmark.py --prompt prompt.txt --model claude-3-7-sonnet-20250219  --apogee 3048 --iterations 5 --wind-speed 5 --wind-direction E --output-dir benchmarks
-python3 benchmark.py --prompt prompt-target.txt --model o1-mini --target-x 4000 --target-y 4000 --iterations 1 --batch-size 5 --wind-speed 5 --wind-direction E --output-dir target-benchmarks 
