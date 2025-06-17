@@ -1,6 +1,9 @@
+
 # LLM Rocket Flight Simulator
 
 A Python package for rocket flight simulation, design optimization, and benchmarking using Large Language Models (LLMs).
+
+This repo contains code for this [paper](https://arxiv.org/abs/2504.19394)
 
 ## Overview
 
