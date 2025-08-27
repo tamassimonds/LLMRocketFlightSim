@@ -1,6 +1,10 @@
 
 # LLM Rocket Flight Simulator
 
+<div align="center">
+  <img src="docs/rocket.png" alt="Rocket Flight Simulation" width="300"/>
+</div>
+
 A Python package for rocket flight simulation, design optimization, and benchmarking using Large Language Models (LLMs).
 
 This repo contains code for this [paper](https://arxiv.org/abs/2504.19394)
@@ -77,6 +81,16 @@ pip install git+https://github.com/tamassimonds/LLMRocketFlightSim.git
 ```
 
 ### Local Development
+
+#### Using UV (Recommended)
+
+```bash
+git clone https://github.com/tamassimonds/LLMRocketFlightSim.git
+cd LLMRocketFlightSim
+uv sync
+```
+
+#### Using pip
 
 ```bash
 git clone https://github.com/tamassimonds/LLMRocketFlightSim.git

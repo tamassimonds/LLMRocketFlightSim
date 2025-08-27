@@ -13,7 +13,12 @@ readme = "README.md"
 requires-python = ">=3.9"
 
 dependencies = [
+    "aiohttp>=3.12.15",
+    "anthropic>=0.64.0",
+    "openai>=1.102.0",
+    "pandas>=2.3.2",
     "requests>=2.25.1",
+    "rocketpy>=1.10.0",
 ]
 
 [project.urls]
@@ -26,3 +31,9 @@ packages=["rocket_package", "rocket_package.src", "rocket_package.configs", "roc
 [tool.setuptools.package-data]
 rocket_package = ["*.txt", "*.dat"] 
 "rocket_package.configs" = ["*.eng", "*.csv", "*.txt"]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0",
+    "matplotlib>=3.5.0",
+]
