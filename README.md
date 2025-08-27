@@ -1,9 +1,9 @@
 
-# LLM Rocket Flight Simulator
-
 <div align="center">
   <img src="docs/rocket.png" alt="Rocket Flight Simulation" width="70%"/>
 </div>
+
+# LLM Rocket Flight Simulator
 
 A Python package for rocket flight simulation, design optimization, and benchmarking using Large Language Models (LLMs).
 
