@@ -87,3 +87,4 @@ target-benchmarks/
 
 .ruff_cache
 .claude
+.coverage
